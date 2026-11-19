@@ -460,4 +460,42 @@ export function playFlowerAttach() {
   });
 }
 
+// Authentic cheerful steam train whistle (dual-tone chord: toot toot!)
+export function playTrainWhistle() {
+  if (!soundEnabled) return;
+  const ctx = getAudioContext();
+  if (!ctx) return;
+
+  const whistleChords = [
+    { start: 0, dur: 0.18 },
+    { start: 0.24, dur: 0.35 }
+  ];
+
+  whistleChords.forEach(pulse => {
+    const startTime = ctx.currentTime + pulse.start;
+    const tones = [587.33, 739.99]; // D5 and F#5 harmonic steam whistle
+
+    tones.forEach(freq => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(freq, startTime);
+      osc.frequency.linearRampToValueAtTime(freq + 8, startTime + pulse.dur * 0.5);
+      osc.frequency.linearRampToValueAtTime(freq, startTime + pulse.dur);
+
+      gain.gain.setValueAtTime(0.01, startTime);
+      gain.gain.linearRampToValueAtTime(0.14, startTime + 0.04);
+      gain.gain.linearRampToValueAtTime(0.12, startTime + pulse.dur - 0.04);
+      gain.gain.exponentialRampToValueAtTime(0.001, startTime + pulse.dur);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc.start(startTime);
+      osc.stop(startTime + pulse.dur);
+    });
+  });
+}
+
 
