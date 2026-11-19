@@ -10,6 +10,7 @@ import {
 } from '../../../core/soundEffects';
 import { BookOpen, Volume2, Sparkles, Flame, ShieldAlert, Award } from 'lucide-react';
 import spec from './spec.json';
+import tilesTexture from './tiles.png';
 
 // Child-friendly slow speech synthesis helper
 function speak(text, rate = 0.82, pitch = 1.15) {
@@ -34,13 +35,12 @@ export default function LavaHopGame({ onBack }) {
   const [stars, setStars] = useState(0);
 
   // Road configuration:
-  // We represent the road as a sequence of tiles (safe white stones and hot red lava cracks)
-  // Initially, none of the white stones show numbers! Numbers appear only when hopped on!
+  // Using authentic pavement paver tiles (Red Terracotta = Lava, White/Cream = Safe)
   const ROAD_LEVELS = {
     1: {
-      name: "The Suburban Street Crossing",
+      name: "The Suburban Footpath Crossing",
       targetCount: 5,
-      description: "Hop across 5 white stepping stones without stepping on the red lava!",
+      description: "Hop across 5 white paver stones without stepping on the red lava tiles!",
       tiles: [
         { id: 1, type: 'safe', targetNum: 1 },
         { id: 2, type: 'lava' },
@@ -53,9 +53,9 @@ export default function LavaHopGame({ onBack }) {
       ]
     },
     2: {
-      name: "The Wide Avenue Crossing",
+      name: "The Wide Avenue Promenade",
       targetCount: 7,
-      description: "A wider street! Hop across all 7 white stones to reach the other sidewalk!",
+      description: "A wider street! Hop across all 7 white paver stones to reach the other side!",
       tiles: [
         { id: 1, type: 'safe', targetNum: 1 },
         { id: 2, type: 'lava' },
@@ -71,7 +71,7 @@ export default function LavaHopGame({ onBack }) {
       ]
     },
     3: {
-      name: "The Grand Volcano Highway",
+      name: "The Grand Volcano Boulevard",
       targetCount: 10,
       description: "The ultimate 10-stone challenge! Count all 10 white stepping stones to safety!",
       tiles: [
@@ -106,14 +106,14 @@ export default function LavaHopGame({ onBack }) {
   useEffect(() => {
     if (showStoryIntro) {
       const timer = setTimeout(() => {
-        speak("Have you ever walked down the street and imagined the road turning into boiling hot red lava? Every child knows the game: you must only hop on the safe white stones! When you hop on a stone, its secret number appears!");
+        speak("Look at this tiled footpath! Have you ever walked on these red and white paver tiles? The red tiles are scorching hot volcano lava! You must only hop on the clean white stones to stay safe!");
       }, 400);
       return () => clearTimeout(timer);
     }
   }, [showStoryIntro]);
 
   const handleReadStoryAloud = () => {
-    speak("Have you ever walked down the street and imagined the road turning into boiling hot red lava? Every child knows the game: you must only hop on the safe white stones! When you hop on a stone, its secret number appears!");
+    speak("Look at this tiled footpath! Have you ever walked on these red and white paver tiles? The red tiles are scorching hot volcano lava! You must only hop on the clean white stones to stay safe! As you hop, the secret numbers appear: one, two, three!");
   };
 
   const handleStartPlaying = () => {
@@ -122,7 +122,7 @@ export default function LavaHopGame({ onBack }) {
     setRevealedNumbers({});
     setReachedFinish(false);
     setFeedback(null);
-    speak(`You are on the sidewalk. Look at the road ahead! Hop on the first white stone to reveal number 1!`);
+    speak(`You are on the start sidewalk. Hop on the first white paver stone to reveal number 1!`);
   };
 
   // Safe stones sequence
@@ -135,22 +135,21 @@ export default function LavaHopGame({ onBack }) {
   const handleHopOnTile = (tileIndex) => {
     const tile = currentRoad.tiles[tileIndex];
 
-    // Case 1: Tapped on Lava!
+    // Case 1: Tapped on Red Lava Paver Tile!
     if (tile.type === 'lava') {
       playLavaSizzle();
       playGentleBoing();
       setSizzleEffect(tileIndex);
       setTimeout(() => setSizzleEffect(null), 600);
-      speak("Ouch! Sizzling hot lava! Only hop on the clean white stones!");
+      speak("Ouch! Sizzling hot red tile! Only hop on the clean white stones!");
       setFeedback({
         type: 'error',
-        text: "🔥 SIZZLE! That's boiling red lava! Your shoes will burn! Only hop on the white stones!"
+        text: "🔥 SIZZLE! That's a red volcano tile! Your shoes will burn! Only hop on the white paver stones!"
       });
       return;
     }
 
-    // Case 2: Tapped a safe white stone
-    // Check if it's the expected next stone in order
+    // Case 2: Tapped a safe white paver stone
     if (tileIndex === nextExpectedSafeIndex) {
       playHop();
       const currentStepNumber = Object.keys(revealedNumbers).length + 1;
@@ -173,7 +172,7 @@ export default function LavaHopGame({ onBack }) {
           speak(`Hooray! You safely hopped across all ${currentRoad.targetCount} stones to the sidewalk!`);
           setFeedback({
             type: 'success',
-            text: `🎉 Hooray! You reached the safe sidewalk! All ${currentRoad.targetCount} stones counted safely!`
+            text: `🎉 Hooray! You reached the safe sidewalk! All ${currentRoad.targetCount} paver stones counted safely!`
           });
           setStars(s => s + 3);
           setTimeout(() => {
@@ -215,7 +214,7 @@ export default function LavaHopGame({ onBack }) {
       speak(`Level ${nextLvl}! Welcome to ${ROAD_LEVELS[nextLvl].name}!`);
     } else {
       setLevel(1);
-      speak("Back to Level 1 street crossing!");
+      speak("Back to Level 1 footpath crossing!");
     }
   };
 
@@ -228,17 +227,34 @@ export default function LavaHopGame({ onBack }) {
     speak("Let's cross the volcano street again!");
   };
 
+  // Sprite position helpers for the 8 paver tiles in tiles.png
+  // Even indices [0, 2, 4, 6] = Red Terracotta Pavers
+  // Odd indices [1, 3, 5, 7] = White/Cream Pavers
+  const getPaverBackground = (isSafe, idx) => {
+    if (isSafe) {
+      const safeSpriteList = [1, 3, 5, 7];
+      const spriteIdx = safeSpriteList[idx % safeSpriteList.length];
+      const posPct = (spriteIdx * 100) / 7;
+      return `url(${tilesTexture}) ${posPct}% 50% / 800% 100% no-repeat, #f5f5f4`;
+    } else {
+      const lavaSpriteList = [0, 2, 4, 6];
+      const spriteIdx = lavaSpriteList[idx % lavaSpriteList.length];
+      const posPct = (spriteIdx * 100) / 7;
+      return `url(${tilesTexture}) ${posPct}% 50% / 800% 100% no-repeat, #ea580c`;
+    }
+  };
+
   return (
     <QuizLayout
       title="Lava Hop Adventure"
-      subtitle="Hop on the white road stones, dodge the boiling lava, and count 1, 2, 3 as you go!"
+      subtitle="Hop on the white footpath stones, dodge the red volcano tiles, and count 1, 2, 3 as you go!"
       category="Counting & Number Line"
       level={level}
       stars={stars}
       spec={spec}
       onBack={onBack}
     >
-      <div style={{ width: '100%', maxWidth: '900px' }}>
+      <div style={{ width: '100%', maxWidth: '920px' }}>
 
         {/* ============================================================== */}
         {/* STORY INTRODUCTION: The Classic Childhood Game                 */}
@@ -261,7 +277,7 @@ export default function LavaHopGame({ onBack }) {
               border: '1px solid var(--clr-border)',
               borderRadius: 'var(--radius-pill)',
               padding: '8px 22px',
-              marginBottom: '20px'
+              marginBottom: '16px'
             }}>
               <span style={{ fontSize: '2.2rem' }}>🌋</span>
               <h2 style={{
@@ -272,6 +288,49 @@ export default function LavaHopGame({ onBack }) {
               }}>
                 The Secret Game Every Child Plays!
               </h2>
+            </div>
+
+            {/* Real Footpath Paver Tiles Banner */}
+            <div style={{
+              margin: '0 auto 20px auto',
+              maxWidth: '520px',
+              background: 'var(--clr-surface)',
+              borderRadius: '16px',
+              padding: '12px 16px',
+              border: '2px solid var(--clr-border)',
+              boxShadow: 'var(--shadow-card)'
+            }}>
+              <div style={{
+                fontSize: '0.88rem',
+                fontWeight: 700,
+                color: 'var(--clr-text)',
+                marginBottom: '8px',
+                textAlign: 'center'
+              }}>
+                🧱 Real Street Footpath Paver Tiles:
+              </div>
+              <img
+                src={tilesTexture}
+                alt="Footpath Paver Tiles Strip"
+                style={{
+                  width: '100%',
+                  height: '56px',
+                  objectFit: 'cover',
+                  borderRadius: '10px',
+                  border: '2px solid #78716c',
+                  display: 'block'
+                }}
+              />
+              <div style={{
+                display: 'flex',
+                justifyContent: 'space-around',
+                marginTop: '8px',
+                fontSize: '0.85rem',
+                fontWeight: 800
+              }}>
+                <span style={{ color: '#ef4444' }}>🔥 Red Tiles = HOT LAVA!</span>
+                <span style={{ color: '#10b981' }}>⚪ White/Cream Tiles = SAFE!</span>
+              </div>
             </div>
 
             {/* Visual Childhood Street Story Cards */}
@@ -291,10 +350,10 @@ export default function LavaHopGame({ onBack }) {
               }}>
                 <div style={{ fontSize: '2rem', marginBottom: '8px' }}>🚶‍♂️ 🛣️</div>
                 <h3 style={{ fontSize: '1.05rem', margin: '0 0 6px 0', color: 'var(--clr-text)' }}>
-                  1. Walking Down the Road
+                  1. Walking on the Footpath
                 </h3>
                 <p style={{ fontSize: '0.9rem', color: 'var(--clr-text-soft)', margin: 0, lineHeight: 1.5 }}>
-                  Remember when you walked on the street and looked down at the pavement? Suddenly, the ordinary road felt special!
+                  Remember when you walked on tiled roads and footpaths with your parents? Every child looks down at these tiles!
                 </p>
               </div>
 
@@ -307,10 +366,10 @@ export default function LavaHopGame({ onBack }) {
               }}>
                 <div style={{ fontSize: '2rem', marginBottom: '8px' }}>🌋 🔥</div>
                 <h3 style={{ fontSize: '1.05rem', margin: '0 0 6px 0', color: 'var(--clr-text)' }}>
-                  2. "The Road is Hot LAVA!"
+                  2. "The Red Tiles are Lava!"
                 </h3>
                 <p style={{ fontSize: '0.9rem', color: 'var(--clr-text-soft)', margin: 0, lineHeight: 1.5 }}>
-                  In your imagination, the red rocks and asphalt turned into a bubbling volcano! If you step on red lava... SIZZLE! 👟🔥
+                  In your imagination, the red waffle tiles become boiling hot volcano lava! If you step on them... SIZZLE! 👟🔥
                 </p>
               </div>
 
@@ -321,12 +380,12 @@ export default function LavaHopGame({ onBack }) {
                 padding: '16px',
                 boxShadow: 'var(--shadow-card)'
               }}>
-                <div style={{ fontSize: '2rem', marginBottom: '8px' }}>⬜ 🛡️</div>
+                <div style={{ fontSize: '2rem', marginBottom: '8px' }}>⚪ 🛡️</div>
                 <h3 style={{ fontSize: '1.05rem', margin: '0 0 6px 0', color: 'var(--clr-text)' }}>
                   3. Hop on the White Stones!
                 </h3>
                 <p style={{ fontSize: '0.9rem', color: 'var(--clr-text-soft)', margin: 0, lineHeight: 1.5 }}>
-                  Every child knows the survival rule: <strong>You must ONLY hop on the white stones</strong> to stay 100% safe!
+                  To stay safe, you must <strong>ONLY hop on the white/cream patterned stones</strong> without touching the red ones!
                 </p>
               </div>
 
@@ -342,7 +401,7 @@ export default function LavaHopGame({ onBack }) {
                   4. Numbers Appear & Speak!
                 </h3>
                 <p style={{ fontSize: '0.9rem', color: 'var(--clr-text-soft)', margin: 0, lineHeight: 1.5 }}>
-                  The stones look blank at first. But when you hop on each one, its number magically appears and says: <strong>1, 2, 3...!</strong>
+                  The stones look blank at first. But when you take a hop, their secret numbers pop up and say: <strong>1, 2, 3...!</strong>
                 </p>
               </div>
             </div>
@@ -398,7 +457,7 @@ export default function LavaHopGame({ onBack }) {
           </div>
         ) : (
           /* ============================================================== */
-          /* THE REALISTIC VOLCANO ROAD ARENA                               */
+          /* THE REALISTIC PAVEMENT ROAD ARENA                              */
           /* ============================================================== */
           <div>
             {/* Level Controls & Stats Header */}
@@ -435,7 +494,7 @@ export default function LavaHopGame({ onBack }) {
                   color: 'var(--clr-text-soft)',
                   marginRight: '6px'
                 }}>
-                  Safe Stones Counted: <strong style={{ color: 'var(--clr-correct)' }}>{Object.keys(revealedNumbers).length} / {currentRoad.targetCount}</strong>
+                  White Stones Hopped: <strong style={{ color: 'var(--clr-correct)' }}>{Object.keys(revealedNumbers).length} / {currentRoad.targetCount}</strong>
                 </span>
 
                 <button
@@ -460,10 +519,10 @@ export default function LavaHopGame({ onBack }) {
               </div>
             </div>
 
-            {/* THE ROAD CONTAINER (Looks like an authentic road with asphalt, curbs, and lava) */}
+            {/* THE ROAD CONTAINER (Authentic road pavement with paver tiles & curbs) */}
             <div style={{
-              background: '#181513',
-              border: '3px solid #3e2820',
+              background: '#1c1917',
+              border: '3px solid #44403c',
               borderRadius: '24px',
               padding: '24px 16px',
               boxShadow: '0 12px 32px rgba(0,0,0,0.5)',
@@ -472,7 +531,7 @@ export default function LavaHopGame({ onBack }) {
               overflow: 'hidden'
             }}>
 
-              {/* TOP ROAD CURB (Yellow/Black Hazard Striped Curb) */}
+              {/* TOP ROAD CURB (Yellow/Black Concrete Sidewalk Curb) */}
               <div style={{
                 height: '14px',
                 borderRadius: '8px',
@@ -504,14 +563,13 @@ export default function LavaHopGame({ onBack }) {
                   <span>🚩 START SIDEWALK</span>
                 </div>
 
-                {/* Road dashed lane marking hint */}
                 <div style={{
                   fontSize: '0.85rem',
                   fontWeight: 700,
                   color: '#f59e0b',
-                  letterSpacing: '0.05em'
+                  letterSpacing: '0.04em'
                 }}>
-                  ⚠️ VOLCANO ROAD: HOP ONLY ON WHITE STONES! ⚠️
+                  ⚠️ HOP ON WHITE PAVER TILES • DODGE RED LAVA TILES! ⚠️
                 </div>
 
                 <div style={{
@@ -530,16 +588,16 @@ export default function LavaHopGame({ onBack }) {
                 </div>
               </div>
 
-              {/* ASPHALT ROADBED WITH ROAD MARKINGS AND TILES */}
+              {/* PAVEMENT ROADBED WITH AUTHENTIC TILES */}
               <div style={{
-                background: '#24201d',
+                background: '#292524',
                 borderRadius: '18px',
                 padding: '24px 16px',
                 border: '2px dashed rgba(245, 158, 11, 0.3)',
                 boxShadow: 'inset 0 4px 16px rgba(0,0,0,0.6)',
                 position: 'relative'
               }}>
-                {/* Yellow Dashed Center Line across the road */}
+                {/* Yellow Dashed Center Line */}
                 <div style={{
                   position: 'absolute',
                   top: '50%',
@@ -552,7 +610,7 @@ export default function LavaHopGame({ onBack }) {
                   pointerEvents: 'none'
                 }} />
 
-                {/* PATH TILES (Safe White Stones vs Bubbling Lava) */}
+                {/* THE TILES TRAIL */}
                 <div style={{
                   display: 'flex',
                   alignItems: 'center',
@@ -563,14 +621,14 @@ export default function LavaHopGame({ onBack }) {
                   zIndex: 2
                 }}>
 
-                  {/* START PLATFORM (Where the kid stands before first hop) */}
+                  {/* START PLATFORM */}
                   <div
                     onClick={() => {
                       setCurrentTileIdx(-1);
-                      speak("Ready! Hop on the first white stone!");
+                      speak("Ready on the start sidewalk! Hop on the first white paver stone!");
                     }}
                     style={{
-                      width: '68px',
+                      width: '70px',
                       height: '74px',
                       borderRadius: '16px',
                       background: '#10b981',
@@ -600,7 +658,7 @@ export default function LavaHopGame({ onBack }) {
                     <span style={{ fontSize: '10px', fontWeight: 800, color: '#ffffff' }}>START</span>
                   </div>
 
-                  {/* ROAD TILES */}
+                  {/* REAL PAVER TILES */}
                   {currentRoad.tiles.map((tile, idx) => {
                     const isSafe = tile.type === 'safe';
                     const isPlayerHere = currentTileIdx === idx;
@@ -612,28 +670,25 @@ export default function LavaHopGame({ onBack }) {
                         key={tile.id}
                         onClick={() => handleHopOnTile(idx)}
                         style={{
-                          width: isSafe ? '72px' : '58px',
-                          height: '74px',
-                          borderRadius: isSafe ? '20px' : '14px',
-                          // Safe stone: Clean pure white marble paver!
-                          // Lava tile: Dark magma rock glowing with red/orange fire!
-                          background: isSafe
-                            ? '#ffffff'
-                            : 'linear-gradient(135deg, #b91c1c 0%, #7f1d1d 100%)',
+                          width: isSafe ? '76px' : '64px',
+                          height: '76px',
+                          borderRadius: '16px',
+                          // Exact texture sliced from user's uploaded tiles image!
+                          background: getPaverBackground(isSafe, idx),
                           border: isPlayerHere
                             ? '4px solid #f59e0b'
                             : isSafe
-                            ? '3px solid #cbd5e1'
+                            ? '3px solid #e7e5e4'
                             : isSizzling
-                            ? '3px solid #fbbf24'
-                            : '2px solid #ef4444',
+                            ? '4px solid #fbbf24'
+                            : '3px solid #b91c1c',
                           boxShadow: isPlayerHere
-                            ? '0 0 20px #f59e0b'
+                            ? '0 0 22px #f59e0b'
                             : isSafe
-                            ? '0 6px 14px rgba(0,0,0,0.35), inset 0 2px 4px #ffffff'
+                            ? '0 6px 16px rgba(0,0,0,0.45)'
                             : isSizzling
-                            ? '0 0 24px #ef4444'
-                            : '0 4px 12px rgba(239, 68, 68, 0.4)',
+                            ? '0 0 28px #ef4444'
+                            : '0 4px 14px rgba(239, 68, 68, 0.45)',
                           display: 'flex',
                           flexDirection: 'column',
                           alignItems: 'center',
@@ -660,7 +715,7 @@ export default function LavaHopGame({ onBack }) {
                           </div>
                         )}
 
-                        {/* Sizzle Steam Effect if stepped on lava */}
+                        {/* Sizzle Steam Effect if stepped on lava tile */}
                         {isSizzling && (
                           <div style={{
                             position: 'absolute',
@@ -672,45 +727,62 @@ export default function LavaHopGame({ onBack }) {
                           </div>
                         )}
 
-                        {/* Safe White Stone Content: NO NUMBER INITIALLY! */}
+                        {/* Tile Content */}
                         {isSafe ? (
                           revealedNum !== undefined ? (
                             /* Number REVEALED upon hopping! */
-                            <div className="anim-pop" style={{ textAlign: 'center' }}>
+                            <div className="anim-pop" style={{
+                              width: '42px',
+                              height: '42px',
+                              borderRadius: '50%',
+                              background: 'rgba(255, 255, 255, 0.95)',
+                              border: '2px solid #10b981',
+                              boxShadow: '0 4px 10px rgba(0,0,0,0.35)',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center'
+                            }}>
                               <span style={{
-                                fontSize: '1.85rem',
-                                fontWeight: 800,
+                                fontSize: '1.45rem',
+                                fontWeight: 900,
                                 fontFamily: 'var(--font-kids)',
-                                color: '#1e293b',
+                                color: '#0f172a',
                                 lineHeight: 1
                               }}>
                                 {revealedNum}
                               </span>
-                              <div style={{
-                                fontSize: '9px',
-                                fontWeight: 800,
-                                color: '#10b981',
-                                marginTop: '2px'
-                              }}>
-                                ✓ SAFE
-                              </div>
                             </div>
                           ) : (
-                            /* Blank White Stone before hopping */
-                            <div style={{ opacity: 0.45, textAlign: 'center' }}>
-                              <span style={{ fontSize: '1.4rem' }}>👣</span>
-                              <div style={{ fontSize: '9px', fontWeight: 700, color: '#64748b' }}>
-                                HOP!
-                              </div>
+                            /* Blank White Paver Stone before hopping */
+                            <div style={{
+                              width: '32px',
+                              height: '32px',
+                              borderRadius: '50%',
+                              background: 'rgba(255, 255, 255, 0.78)',
+                              boxShadow: '0 2px 6px rgba(0,0,0,0.2)',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              fontSize: '1rem'
+                            }}>
+                              👣
                             </div>
                           )
                         ) : (
-                          /* Hot Red Lava Tile */
-                          <div style={{ textAlign: 'center' }}>
-                            <span style={{ fontSize: '1.5rem' }}>🔥</span>
-                            <div style={{ fontSize: '8px', fontWeight: 800, color: '#fca5a5' }}>
-                              LAVA
-                            </div>
+                          /* Hot Red Lava Paver Tile */
+                          <div style={{
+                            width: '30px',
+                            height: '30px',
+                            borderRadius: '50%',
+                            background: 'rgba(185, 28, 28, 0.85)',
+                            border: '1px solid #f87171',
+                            boxShadow: '0 2px 6px rgba(0,0,0,0.3)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: '0.95rem'
+                          }}>
+                            🔥
                           </div>
                         )}
                       </div>
@@ -725,7 +797,7 @@ export default function LavaHopGame({ onBack }) {
                       }
                     }}
                     style={{
-                      width: '68px',
+                      width: '70px',
                       height: '74px',
                       borderRadius: '16px',
                       background: reachedFinish ? '#10b981' : '#334155',
@@ -759,7 +831,7 @@ export default function LavaHopGame({ onBack }) {
                 </div>
               </div>
 
-              {/* BOTTOM ROAD CURB (Yellow/Black Hazard Striped Curb) */}
+              {/* BOTTOM ROAD CURB */}
               <div style={{
                 height: '14px',
                 borderRadius: '8px',
@@ -830,7 +902,7 @@ export default function LavaHopGame({ onBack }) {
       {showCelebration && (
         <CelebrationModal
           title="Street Crossing Champion!"
-          subtitle={`You bravely hopped across all ${currentRoad.targetCount} white stones and conquered the boiling lava road!`}
+          subtitle={`You bravely hopped across all ${currentRoad.targetCount} white paver stones and conquered the boiling lava road!`}
           stars={3}
           onNextLevel={handleNextLevel}
           onReplay={handleReplay}
