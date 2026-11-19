@@ -498,4 +498,40 @@ export function playTrainWhistle() {
   });
 }
 
+// Cheerful friendly school bus horn (honk honk!)
+export function playBusHorn() {
+  if (!soundEnabled) return;
+  const ctx = getAudioContext();
+  if (!ctx) return;
+
+  const honks = [
+    { start: 0, dur: 0.14 },
+    { start: 0.18, dur: 0.22 }
+  ];
+
+  honks.forEach(h => {
+    const t = ctx.currentTime + h.start;
+    const freqs = [392.0, 440.0]; // G4 and A4 friendly bus horn chord
+
+    freqs.forEach(f => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(f, t);
+
+      gain.gain.setValueAtTime(0.01, t);
+      gain.gain.linearRampToValueAtTime(0.16, t + 0.02);
+      gain.gain.linearRampToValueAtTime(0.14, t + h.dur - 0.03);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + h.dur);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc.start(t);
+      osc.stop(t + h.dur);
+    });
+  });
+}
+
 

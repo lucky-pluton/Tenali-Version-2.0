@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import QuizLayout from '../../../components/QuizLayout';
 import CelebrationModal from '../../../components/CelebrationModal';
 import GameStoryModal from '../../../components/GameStoryModal';
-import { playSuccessChime, playGentleBoing, playTrainWhistle } from '../../../core/soundEffects';
+import { playSuccessChime, playGentleBoing, playBusHorn } from '../../../core/soundEffects';
 import spec from './spec.json';
 import { Volume2, ChevronRight, RotateCcw } from 'lucide-react';
 
@@ -24,20 +24,6 @@ function speak(text, rate = 0.82, pitch = 1.1) {
 // Landmark and kid configurations
 const KID_AVATARS = ['🧒', '👧', '👦', '🧑', '👧🏽', '👦🏾', '🧒🏻', '👧🏼', '👦🏿', '🧒🏼'];
 
-// Vibrant coach colors for the train bogies
-const COACH_COLORS = [
-  { body: '#2563eb', border: '#1d4ed8', roof: '#60a5fa' }, // Blue
-  { body: '#059669', border: '#047857', roof: '#34d399' }, // Green
-  { body: '#d97706', border: '#b45309', roof: '#fbbf24' }, // Amber
-  { body: '#db2777', border: '#be185d', roof: '#f472b6' }, // Pink
-  { body: '#7c3aed', border: '#6d28d9', roof: '#a78bfa' }, // Purple
-  { body: '#0891b2', border: '#0e7490', roof: '#22d3ee' }, // Cyan
-  { body: '#ea580c', border: '#c2410c', roof: '#fb923c' }, // Orange
-  { body: '#65a30d', border: '#4d7c0f', roof: '#a3e635' }, // Lime
-  { body: '#4f46e5', border: '#4338ca', roof: '#818cf8' }, // Indigo
-  { body: '#e11d48', border: '#be123c', roof: '#fb7185' }  // Rose
-];
-
 export default function SchoolBusCountdownGame({ onBack }) {
   const [level, setLevel] = useState(1);
   const [stars, setStars] = useState(0);
@@ -46,9 +32,9 @@ export default function SchoolBusCountdownGame({ onBack }) {
   // Level 1 follows the exact NCERT textbook poem from Grade 1 (Screenshot 2026-11-19 131202.png)
   const LEVEL_1_STOPS = [
     {
-      stopName: "Cozy Red Cottage Station",
+      stopName: "Cozy Red Cottage",
       landmarkIcon: "🏡",
-      landmarkDetail: "Red Roof Cottage",
+      landmarkDetail: "Red Roof House",
       poemLines: [
         "Five little children",
         "Raise your hand",
@@ -62,7 +48,7 @@ export default function SchoolBusCountdownGame({ onBack }) {
       targetRemaining: 4
     },
     {
-      stopName: "The Shady Tree Station",
+      stopName: "The Shady Tree",
       landmarkIcon: "🌳",
       landmarkDetail: "Big Mango Tree",
       poemLines: [
@@ -78,7 +64,7 @@ export default function SchoolBusCountdownGame({ onBack }) {
       targetRemaining: 3
     },
     {
-      stopName: "Cobbler's Village Station",
+      stopName: "Cobbler's Shop",
       landmarkIcon: "👞",
       landmarkDetail: "Shoemaker Shop",
       poemLines: [
@@ -94,7 +80,7 @@ export default function SchoolBusCountdownGame({ onBack }) {
       targetRemaining: 2
     },
     {
-      stopName: "Sunny Hillside Station",
+      stopName: "Sunny Hillside",
       landmarkIcon: "☀️",
       landmarkDetail: "Warm Golden Sun",
       poemLines: [
@@ -110,7 +96,7 @@ export default function SchoolBusCountdownGame({ onBack }) {
       targetRemaining: 1
     },
     {
-      stopName: "School Terminal Station",
+      stopName: "School Terminal",
       landmarkIcon: "🏫",
       landmarkDetail: "School Gate & Bell",
       poemLines: [
@@ -129,11 +115,11 @@ export default function SchoolBusCountdownGame({ onBack }) {
 
   const LEVEL_2_STOPS = [
     {
-      stopName: "Dinosaur Museum Station",
+      stopName: "Dinosaur Museum",
       landmarkIcon: "🦕",
       landmarkDetail: "Museum Gate",
       poemLines: [
-        "Ten children on the Choo-Choo train!",
+        "Ten children on the excursion bus!",
         "Raise your hands and see the sights.",
         "Two step out to see dinosaur fossils..."
       ],
@@ -144,7 +130,7 @@ export default function SchoolBusCountdownGame({ onBack }) {
       targetRemaining: 8
     },
     {
-      stopName: "Starlit Planetarium Station",
+      stopName: "Starlit Planetarium",
       landmarkIcon: "🪐",
       landmarkDetail: "Observatory Dome",
       poemLines: [
@@ -158,7 +144,7 @@ export default function SchoolBusCountdownGame({ onBack }) {
       targetRemaining: 5
     },
     {
-      stopName: "Botanical Rose Garden Station",
+      stopName: "Botanical Rose Garden",
       landmarkIcon: "🌸",
       landmarkDetail: "Flower Garden",
       poemLines: [
@@ -172,7 +158,7 @@ export default function SchoolBusCountdownGame({ onBack }) {
       targetRemaining: 3
     },
     {
-      stopName: "Home Village Station",
+      stopName: "Home Terminal",
       landmarkIcon: "🏡",
       landmarkDetail: "Happy Village",
       poemLines: [
@@ -203,7 +189,7 @@ export default function SchoolBusCountdownGame({ onBack }) {
 
     if (ans === cur.targetRemaining) {
       playSuccessChime();
-      playTrainWhistle();
+      playBusHorn();
       setDisembarking(true);
       setStars(s => s + 2);
       setFeedback({
@@ -225,7 +211,7 @@ export default function SchoolBusCountdownGame({ onBack }) {
       playGentleBoing();
       setFeedback({
         type: 'error',
-        text: `Count again! There were ${cur.initialCount} children on the train, and ${cur.leaving} stepped off.`
+        text: `Count again! There were ${cur.initialCount} children on the bus, and ${cur.leaving} stepped out.`
       });
     }
   };
@@ -248,7 +234,7 @@ export default function SchoolBusCountdownGame({ onBack }) {
   return (
     <QuizLayout
       title="Five Little Children"
-      subtitle="Ride the joyful Choo-Choo Train, chant the rhyming poem, and discover subtraction down to zero!"
+      subtitle="Ride the cheerful yellow school bus, chant the rhyming poem, and discover subtraction down to zero!"
       category="Subtraction & Rhymes"
       level={level}
       stars={stars}
@@ -257,7 +243,7 @@ export default function SchoolBusCountdownGame({ onBack }) {
       onOpenStory={() => setShowStory(true)}
     >
       <div style={{ width: '100%', maxWidth: '860px', margin: '0 auto' }}>
-        {/* Top Control Bar: Station Info & Level Switcher */}
+        {/* Top Control Bar: Stop Info & Level Switcher */}
         <div style={{
           display: 'flex',
           justifyContent: 'space-between',
@@ -280,11 +266,11 @@ export default function SchoolBusCountdownGame({ onBack }) {
               alignItems: 'center',
               gap: '8px'
             }}>
-              <span>🚉 Station {stopIdx + 1} of {currentStops.length}:</span>
+              <span>🚏 Stop {stopIdx + 1} of {currentStops.length}:</span>
               <span style={{ color: 'var(--clr-accent)' }}>{cur.stopName}</span>
             </h2>
             <p style={{ margin: '2px 0 0 0', fontSize: '0.85rem', color: 'var(--clr-text-soft)' }}>
-              Choo-Choo Countdown: <strong>{cur.initialCount} ➔ {cur.targetRemaining}</strong>
+              Bus Countdown: <strong>{cur.initialCount} ➔ {cur.targetRemaining}</strong>
             </p>
           </div>
 
@@ -302,7 +288,7 @@ export default function SchoolBusCountdownGame({ onBack }) {
                 cursor: 'pointer'
               }}
             >
-              🚂 Rhyme Express (5 Kids)
+              🚌 Rhyme Bus (5 Kids)
             </button>
             <button
               onClick={() => { setLevel(2); handleReplay(); }}
@@ -317,12 +303,12 @@ export default function SchoolBusCountdownGame({ onBack }) {
                 cursor: 'pointer'
               }}
             >
-              🚂 Tour Express (10 Kids)
+              🚌 Tour Bus (10 Kids)
             </button>
           </div>
         </div>
 
-        {/* Main Stage: Countryside Scenery, Station Platform & Animated Choo-Choo Train */}
+        {/* Main Stage: Scenic Neighborhood, Bus Stop & Animated Cartoon School Bus */}
         <div style={{
           background: 'var(--clr-card)',
           border: '1px solid var(--clr-border)',
@@ -332,10 +318,10 @@ export default function SchoolBusCountdownGame({ onBack }) {
           textAlign: 'center',
           marginBottom: '20px'
         }}>
-          {/* Animated Countryside Railway Stage */}
+          {/* Animated Landscape Stage with Road */}
           <div style={{
             position: 'relative',
-            background: 'linear-gradient(180deg, #7dd3fc 0%, #bae6fd 45%, #86efac 48%, #4ade80 75%, #a8a29e 77%, #78716c 100%)',
+            background: 'linear-gradient(180deg, #7dd3fc 0%, #bae6fd 45%, #86efac 48%, #4ade80 72%, #64748b 74%, #334155 100%)',
             borderRadius: '24px',
             padding: '24px 16px 20px 16px',
             border: '3px solid #0284c7',
@@ -356,11 +342,11 @@ export default function SchoolBusCountdownGame({ onBack }) {
             <div style={{ position: 'absolute', top: '16px', left: '30px', fontSize: '1.6rem', opacity: 0.85 }}>
               ☁️
             </div>
-            <div style={{ position: 'absolute', top: '24px', left: '140px', fontSize: '1.2rem', opacity: 0.75 }}>
+            <div style={{ position: 'absolute', top: '24px', left: '160px', fontSize: '1.2rem', opacity: 0.75 }}>
               ☁️
             </div>
 
-            {/* Station Landmark Destination Display */}
+            {/* Landmark Destination Display in Background */}
             <div style={{
               position: 'absolute',
               top: '28px',
@@ -368,15 +354,15 @@ export default function SchoolBusCountdownGame({ onBack }) {
               textAlign: 'center',
               zIndex: 2
             }}>
-              <div style={{ fontSize: '3rem', filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.25))' }}>
+              <div style={{ fontSize: '3.2rem', filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.25))' }}>
                 {cur.landmarkIcon}
               </div>
               <div style={{
-                fontSize: '0.78rem',
+                fontSize: '0.8rem',
                 fontWeight: 700,
                 color: '#1e293b',
-                background: 'rgba(255,255,255,0.92)',
-                padding: '3px 10px',
+                background: 'rgba(255,255,255,0.95)',
+                padding: '3px 12px',
                 borderRadius: '8px',
                 border: '1px solid #cbd5e1',
                 boxShadow: '0 2px 6px rgba(0,0,0,0.1)'
@@ -385,7 +371,7 @@ export default function SchoolBusCountdownGame({ onBack }) {
               </div>
             </div>
 
-            {/* Station Platform Name Sign */}
+            {/* Bus Stop Name Sign */}
             <div style={{
               position: 'absolute',
               top: '14px',
@@ -396,318 +382,355 @@ export default function SchoolBusCountdownGame({ onBack }) {
               border: '2px solid #facc15',
               borderRadius: '8px',
               padding: '3px 16px',
-              fontSize: '0.82rem',
+              fontSize: '0.85rem',
               fontWeight: 800,
-              letterSpacing: '0.08em',
+              letterSpacing: '0.06em',
               boxShadow: '0 3px 8px rgba(0,0,0,0.25)',
               zIndex: 3
             }}>
-              🚉 {cur.stopName.toUpperCase()}
+              🚏 {cur.stopName.toUpperCase()}
             </div>
 
             {/* ============================================================== */}
-            {/* THE COLORFUL CHOO-CHOO TRAIN (Locomotive Engine + Bogie Coaches) */}
+            {/* AUTHENTIC CARTOON YELLOW SCHOOL BUS (Matching NCERT textbook) */}
             {/* ============================================================== */}
-            <div style={{
-              display: 'flex',
-              alignItems: 'flex-end',
-              justifyContent: 'center',
-              gap: '6px',
-              margin: '36px auto 10px auto',
-              padding: '10px 12px',
-              overflowX: 'auto',
-              maxWidth: '100%',
-              position: 'relative',
-              zIndex: 4
-            }}>
-
-              {/* STEAM LOCOMOTIVE ENGINE (Front of Train) */}
+            <div
+              style={{
+                position: 'relative',
+                zIndex: 4,
+                margin: '34px auto 10px auto',
+                maxWidth: '680px',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center'
+              }}
+            >
+              {/* Main Bus Body */}
               <div
                 style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  flexShrink: 0,
-                  position: 'relative'
+                  width: '100%',
+                  background: 'linear-gradient(180deg, #fde047 0%, #facc15 15%, #eab308 85%, #ca8a04 100%)',
+                  border: '4px solid #854d0e',
+                  borderRadius: '34px 56px 18px 18px',
+                  padding: '14px 18px 18px 18px',
+                  boxShadow: '0 12px 28px rgba(0,0,0,0.35)',
+                  position: 'relative',
+                  overflow: 'hidden'
                 }}
               >
-                {/* Puffing Steam Animation */}
+                {/* White Roof Trim Highlight */}
                 <div style={{
                   position: 'absolute',
-                  top: '-28px',
+                  top: 0,
                   left: '20px',
+                  right: '40px',
+                  height: '8px',
+                  background: '#ffffff',
+                  opacity: 0.65,
+                  borderRadius: '0 0 8px 8px'
+                }} />
+
+                {/* Top Arched Sign: "SCHOOL BUS" with flashing warning lights */}
+                <div style={{
                   display: 'flex',
-                  gap: '4px',
-                  fontSize: '1.2rem',
-                  animation: 'bounceSlow 1.2s infinite'
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px',
+                  marginBottom: '10px'
                 }}>
-                  <span>💨</span>
-                  <span style={{ fontSize: '0.9rem', opacity: 0.8 }}>💨</span>
+                  <div style={{
+                    width: '12px',
+                    height: '12px',
+                    borderRadius: '50%',
+                    background: '#ef4444',
+                    border: '2px solid #991b1b',
+                    boxShadow: '0 0 8px #ef4444',
+                    animation: 'pulse 1s infinite'
+                  }} />
+
+                  <div
+                    onClick={() => playBusHorn()}
+                    title="Click to Honk Bus Horn!"
+                    style={{
+                      background: 'linear-gradient(180deg, #dc2626 0%, #b91c1c 100%)',
+                      border: '2px solid #7f1d1d',
+                      color: '#ffffff',
+                      fontFamily: 'var(--font-kids)',
+                      fontWeight: 900,
+                      fontSize: '1rem',
+                      letterSpacing: '0.14em',
+                      padding: '4px 22px',
+                      borderRadius: '8px',
+                      boxShadow: '0 3px 6px rgba(0,0,0,0.25)',
+                      cursor: 'pointer',
+                      userSelect: 'none'
+                    }}
+                  >
+                    🚌 SCHOOL BUS 📢
+                  </div>
+
+                  <div style={{
+                    width: '12px',
+                    height: '12px',
+                    borderRadius: '50%',
+                    background: '#f59e0b',
+                    border: '2px solid #b45309',
+                    boxShadow: '0 0 8px #f59e0b',
+                    animation: 'pulse 1s infinite 0.5s'
+                  }} />
                 </div>
 
-                {/* Locomotive Cabin & Boiler Body */}
+                {/* Upper Deck: Front Windshield with Eyes & Passenger Windows */}
                 <div style={{
-                  background: 'linear-gradient(180deg, #dc2626 0%, #991b1b 100%)',
-                  border: '3px solid #7f1d1d',
-                  borderRadius: '16px 28px 8px 8px',
-                  padding: '8px 12px',
-                  width: '100px',
-                  boxShadow: '0 6px 14px rgba(0,0,0,0.3)',
-                  position: 'relative',
-                  textAlign: 'center'
+                  display: 'flex',
+                  alignItems: 'stretch',
+                  gap: '10px',
+                  marginBottom: '12px'
                 }}>
-                  {/* Brass Whistle & Chimney */}
+                  {/* Front Driver Windshield with Friendly Cartoon Eyes */}
                   <div style={{
-                    position: 'absolute',
-                    top: '-16px',
-                    left: '16px',
-                    width: '14px',
-                    height: '16px',
-                    background: '#1e293b',
-                    borderRadius: '4px 4px 0 0',
-                    border: '2px solid #0f172a'
-                  }} />
-                  <div style={{
-                    position: 'absolute',
-                    top: '-12px',
-                    right: '24px',
-                    fontSize: '0.9rem'
+                    flex: '0 0 110px',
+                    background: 'linear-gradient(135deg, #e0f2fe 0%, #38bdf8 100%)',
+                    border: '3px solid #0284c7',
+                    borderRadius: '16px 28px 12px 12px',
+                    padding: '8px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    boxShadow: 'inset 0 2px 6px rgba(0,0,0,0.2)',
+                    position: 'relative'
                   }}>
-                    🔔
+                    {/* Glass glare line */}
+                    <div style={{
+                      position: 'absolute',
+                      top: '6px',
+                      right: '12px',
+                      width: '30px',
+                      height: '4px',
+                      background: 'rgba(255,255,255,0.7)',
+                      borderRadius: '2px',
+                      transform: 'rotate(-25deg)'
+                    }} />
+
+                    {/* Friendly Cartoon Eyes looking forward */}
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      background: '#ffffff',
+                      padding: '4px 10px',
+                      borderRadius: '16px',
+                      border: '2px solid #0369a1',
+                      boxShadow: '0 2px 4px rgba(0,0,0,0.15)'
+                    }}>
+                      <span style={{ fontSize: '1.25rem' }}>👀</span>
+                      <span style={{ fontSize: '1rem' }}>🧑‍✈️</span>
+                    </div>
+
+                    <span style={{ fontSize: '10px', fontWeight: 800, color: '#0369a1', marginTop: '4px' }}>
+                      DRIVER
+                    </span>
                   </div>
 
-                  {/* Engine Sign */}
+                  {/* Passenger Windows carrying the Children! */}
                   <div style={{
-                    background: '#facc15',
-                    color: '#713f12',
-                    fontSize: '9px',
-                    fontWeight: 900,
-                    borderRadius: '4px',
-                    padding: '1px 4px',
-                    marginBottom: '4px',
-                    letterSpacing: '0.04em'
-                  }}>
-                    CHOO-CHOO
-                  </div>
-
-                  {/* Driver Window & Face */}
-                  <div style={{
+                    flex: 1,
                     background: '#0284c7',
-                    border: '2px solid #0369a1',
-                    borderRadius: '8px',
-                    padding: '3px',
+                    border: '3px solid #0369a1',
+                    borderRadius: '16px',
+                    padding: '8px 10px',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    gap: '4px',
-                    marginBottom: '6px'
+                    gap: '8px',
+                    overflowX: 'auto',
+                    boxShadow: 'inset 0 3px 8px rgba(0,0,0,0.25)'
                   }}>
-                    <span style={{ fontSize: '1.1rem' }}>🧑‍✈️</span>
-                    <span style={{ fontSize: '0.9rem' }}>😃</span>
-                  </div>
+                    {cur.initialCount === 0 ? (
+                      <span style={{ color: '#ffffff', fontWeight: 800, fontSize: '1rem' }}>
+                        🎉 Bus is Empty! 0 Children Left!
+                      </span>
+                    ) : (
+                      Array.from({ length: cur.initialCount }).map((_, i) => {
+                        const isExiting = i >= cur.targetRemaining;
+                        const avatar = KID_AVATARS[i % KID_AVATARS.length];
 
-                  {/* Golden Headlight */}
+                        return (
+                          <div
+                            key={i}
+                            onClick={() => speak(String(i + 1), 0.85)}
+                            title={`Child ${i + 1} - click to count`}
+                            style={{
+                              background: '#ffffff',
+                              border: isExiting && disembarking ? '2px dashed #94a3b8' : '2px solid #38bdf8',
+                              borderRadius: '12px',
+                              padding: '4px 6px',
+                              minWidth: '50px',
+                              textAlign: 'center',
+                              cursor: 'pointer',
+                              transform: isExiting && disembarking ? 'translateY(8px) scale(0.8)' : 'scale(1)',
+                              opacity: isExiting && disembarking ? 0.4 : 1,
+                              transition: 'all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)',
+                              boxShadow: '0 2px 6px rgba(0,0,0,0.1)'
+                            }}
+                          >
+                            {/* Window Child Number */}
+                            <div style={{
+                              fontSize: '10px',
+                              fontWeight: 900,
+                              color: '#0284c7',
+                              marginBottom: '2px',
+                              fontFamily: 'var(--font-kids)'
+                            }}>
+                              #{i + 1}
+                            </div>
+
+                            {/* Child Avatar waving */}
+                            <div style={{ fontSize: '1.75rem', lineHeight: 1 }}>
+                              {isExiting && disembarking ? '💺' : avatar}
+                            </div>
+                          </div>
+                        );
+                      })
+                    )}
+                  </div>
+                </div>
+
+                {/* Lower Bus Body: Black Safety Rub Stripes & Smiling Front Radiator Grill */}
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '4px 8px',
+                  background: 'rgba(0,0,0,0.06)',
+                  borderRadius: '10px'
+                }}>
+                  {/* Fold-out Red Stop Sign */}
                   <div style={{
+                    background: '#dc2626',
+                    border: '2px solid #ffffff',
+                    color: '#ffffff',
+                    fontWeight: 900,
+                    fontSize: '10px',
+                    borderRadius: '6px',
+                    padding: '2px 8px',
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
                     display: 'flex',
                     alignItems: 'center',
-                    justifyContent: 'center',
                     gap: '4px'
                   }}>
+                    <span>🛑</span>
+                    <span>STOP</span>
+                  </div>
+
+                  {/* Smiling Bumper & Headlights */}
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '10px'
+                  }}>
+                    {/* Left Glowing Headlight */}
                     <div style={{
-                      width: '12px',
-                      height: '12px',
+                      width: '18px',
+                      height: '18px',
                       borderRadius: '50%',
                       background: '#fef08a',
-                      border: '2px solid #eab308',
+                      border: '2px solid #ca8a04',
                       boxShadow: '0 0 10px #fde047'
                     }} />
-                    <span style={{ fontSize: '10px', fontWeight: 800, color: '#fef08a' }}>EXPRESS</span>
-                  </div>
-                </div>
 
-                {/* Locomotive Large Driving Wheels */}
-                <div style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  width: '92px',
-                  marginTop: '-8px'
-                }}>
-                  <div style={{
-                    width: '28px',
-                    height: '28px',
-                    borderRadius: '50%',
-                    background: '#1e293b',
-                    border: '3px solid #facc15',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '12px',
-                    color: '#94a3b8',
-                    boxShadow: '0 2px 6px rgba(0,0,0,0.4)'
-                  }}>
-                    ⚙️
+                    {/* Happy Smiling Radiator Grill */}
+                    <div style={{
+                      background: '#1e293b',
+                      border: '2px solid #475569',
+                      borderRadius: '0 0 16px 16px',
+                      padding: '2px 14px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px'
+                    }}>
+                      <span style={{ fontSize: '1.1rem' }}>😃</span>
+                      <span style={{ fontSize: '10px', fontWeight: 800, color: '#facc15' }}>BEEP BEEP!</span>
+                    </div>
+
+                    {/* Right Glowing Headlight */}
+                    <div style={{
+                      width: '18px',
+                      height: '18px',
+                      borderRadius: '50%',
+                      background: '#fef08a',
+                      border: '2px solid #ca8a04',
+                      boxShadow: '0 0 10px #fde047'
+                    }} />
                   </div>
+
+                  {/* Boarding Passenger Door */}
                   <div style={{
-                    width: '28px',
-                    height: '28px',
-                    borderRadius: '50%',
-                    background: '#1e293b',
-                    border: '3px solid #facc15',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '12px',
-                    color: '#94a3b8',
-                    boxShadow: '0 2px 6px rgba(0,0,0,0.4)'
+                    background: '#fde047',
+                    border: '2px solid #ca8a04',
+                    borderRadius: '6px',
+                    padding: '2px 8px',
+                    fontSize: '10px',
+                    fontWeight: 800,
+                    color: '#713f12'
                   }}>
-                    ⚙️
+                    🚪 EXIT DOOR
                   </div>
                 </div>
               </div>
 
-              {/* TRAIN COUPLER LINK 🔗 */}
+              {/* Realistic Bus Rubber Wheels */}
               <div style={{
-                width: '10px',
-                height: '4px',
-                background: '#475569',
-                marginBottom: '20px',
-                borderRadius: '2px'
-              }} />
+                display: 'flex',
+                justifyContent: 'space-between',
+                width: '84%',
+                marginTop: '-16px',
+                position: 'relative',
+                zIndex: 6
+              }}>
+                {/* Front Heavy Bus Wheel */}
+                <div style={{
+                  width: '48px',
+                  height: '48px',
+                  borderRadius: '50%',
+                  background: 'radial-gradient(circle, #64748b 25%, #1e293b 60%, #0f172a 100%)',
+                  border: '4px solid #0f172a',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  boxShadow: '0 4px 10px rgba(0,0,0,0.5)'
+                }}>
+                  <div style={{
+                    width: '18px',
+                    height: '18px',
+                    borderRadius: '50%',
+                    background: '#cbd5e1',
+                    border: '2px solid #94a3b8'
+                  }} />
+                </div>
 
-              {/* PASSENGER COACHES / BOGIES (Each carrying one child!) */}
-              {Array.from({ length: cur.initialCount }).map((_, i) => {
-                const isExiting = i >= cur.targetRemaining;
-                const avatar = KID_AVATARS[i % KID_AVATARS.length];
-                const coachColor = COACH_COLORS[i % COACH_COLORS.length];
-
-                return (
-                  <React.Fragment key={i}>
-                    <div
-                      style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        flexShrink: 0
-                      }}
-                    >
-                      {/* Coach Body */}
-                      <div
-                        onClick={() => speak(String(i + 1), 0.85)}
-                        title={`Coach ${i + 1} - Child ${i + 1} (Click to count)`}
-                        style={{
-                          background: coachColor.body,
-                          border: `3px solid ${coachColor.border}`,
-                          borderRadius: '12px 12px 6px 6px',
-                          padding: '6px 8px',
-                          minWidth: '64px',
-                          boxShadow: '0 6px 12px rgba(0,0,0,0.25)',
-                          position: 'relative',
-                          textAlign: 'center',
-                          cursor: 'pointer',
-                          transform: isExiting && disembarking ? 'scale(0.92)' : 'scale(1)',
-                          transition: 'all 0.3s'
-                        }}
-                      >
-                        {/* Coach Roof Strip */}
-                        <div style={{
-                          background: coachColor.roof,
-                          height: '6px',
-                          borderRadius: '6px 6px 0 0',
-                          margin: '-6px -8px 6px -8px'
-                        }} />
-
-                        {/* Coach Number Label */}
-                        <div style={{
-                          fontSize: '9px',
-                          fontWeight: 800,
-                          color: '#ffffff',
-                          background: 'rgba(0,0,0,0.25)',
-                          borderRadius: '4px',
-                          padding: '1px 4px',
-                          marginBottom: '4px'
-                        }}>
-                          COACH {i + 1}
-                        </div>
-
-                        {/* Window with Child Avatar */}
-                        <div style={{
-                          background: '#f8fafc',
-                          border: '2px solid #cbd5e1',
-                          borderRadius: '8px',
-                          padding: '4px',
-                          minHeight: '44px',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.15)'
-                        }}>
-                          {isExiting && disembarking ? (
-                            <span style={{ fontSize: '1.2rem', opacity: 0.4 }}>💺</span>
-                          ) : (
-                            <span
-                              style={{
-                                fontSize: '1.75rem',
-                                transform: 'scale(1)',
-                                display: 'inline-block'
-                              }}
-                            >
-                              {avatar}
-                            </span>
-                          )}
-                        </div>
-                      </div>
-
-                      {/* Coach Wheels */}
-                      <div style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        width: '54px',
-                        marginTop: '-6px'
-                      }}>
-                        <div style={{
-                          width: '20px',
-                          height: '20px',
-                          borderRadius: '50%',
-                          background: '#1e293b',
-                          border: '2px solid #94a3b8',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          fontSize: '9px',
-                          color: '#cbd5e1'
-                        }}>
-                          ⚙️
-                        </div>
-                        <div style={{
-                          width: '20px',
-                          height: '20px',
-                          borderRadius: '50%',
-                          background: '#1e293b',
-                          border: '2px solid #94a3b8',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          fontSize: '9px',
-                          color: '#cbd5e1'
-                        }}>
-                          ⚙️
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Coupler link between coaches */}
-                    {i < cur.initialCount - 1 && (
-                      <div style={{
-                        width: '6px',
-                        height: '4px',
-                        background: '#475569',
-                        marginBottom: '16px',
-                        borderRadius: '2px'
-                      }} />
-                    )}
-                  </React.Fragment>
-                );
-              })}
+                {/* Rear Heavy Bus Wheel */}
+                <div style={{
+                  width: '48px',
+                  height: '48px',
+                  borderRadius: '50%',
+                  background: 'radial-gradient(circle, #64748b 25%, #1e293b 60%, #0f172a 100%)',
+                  border: '4px solid #0f172a',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  boxShadow: '0 4px 10px rgba(0,0,0,0.5)'
+                }}>
+                  <div style={{
+                    width: '18px',
+                    height: '18px',
+                    borderRadius: '50%',
+                    background: '#cbd5e1',
+                    border: '2px solid #94a3b8'
+                  }} />
+                </div>
+              </div>
             </div>
 
             {/* Sidewalk & Stepping-Out Disembark Animation */}
@@ -737,7 +760,7 @@ export default function SchoolBusCountdownGame({ onBack }) {
                   <span style={{ fontSize: '2.1rem' }}>🎒🧒👋</span>
                   <div style={{ textAlign: 'left' }}>
                     <div style={{ fontWeight: 800, fontSize: '0.95rem', color: '#047857' }}>
-                      Step off the train!
+                      Step out!
                     </div>
                     <div style={{ fontSize: '0.78rem', color: '#065f46', fontWeight: 600 }}>
                       Safe at {cur.stopName}!
@@ -747,32 +770,21 @@ export default function SchoolBusCountdownGame({ onBack }) {
               )}
             </div>
 
-            {/* REALISTIC WOODEN & STEEL RAILWAY TRACKS (Rails and Sleepers) */}
+            {/* Asphalt Road with White Dashed Center Divider Line */}
             <div style={{
-              height: '22px',
-              background: 'repeating-linear-gradient(90deg, #78350f 0px, #78350f 8px, #d6d3d1 8px, #d6d3d1 22px)',
-              borderTop: '3px solid #475569',
-              borderBottom: '3px solid #334155',
-              boxShadow: '0 3px 8px rgba(0,0,0,0.3)',
+              height: '24px',
+              background: '#334155',
+              borderTop: '3px solid #1e293b',
               margin: '6px -16px -20px -16px',
-              position: 'relative'
+              position: 'relative',
+              display: 'flex',
+              alignItems: 'center'
             }}>
-              {/* Top and Bottom Steel Rail Lines */}
               <div style={{
-                position: 'absolute',
-                top: '2px',
-                left: 0,
-                right: 0,
-                height: '2px',
-                background: '#cbd5e1'
-              }} />
-              <div style={{
-                position: 'absolute',
-                bottom: '2px',
-                left: 0,
-                right: 0,
-                height: '2px',
-                background: '#94a3b8'
+                width: '100%',
+                height: '4px',
+                background: 'repeating-linear-gradient(90deg, #facc15, #facc15 24px, transparent 24px, transparent 48px)',
+                opacity: 0.8
               }} />
             </div>
           </div>
@@ -857,7 +869,7 @@ export default function SchoolBusCountdownGame({ onBack }) {
               color: 'var(--clr-text-soft)',
               marginBottom: '14px'
             }}>
-              How many children are still on the train?
+              How many children are still on the bus?
             </p>
             <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', flexWrap: 'wrap' }}>
               {Array.from({ length: 6 }).map((_, i) => (
@@ -910,19 +922,19 @@ export default function SchoolBusCountdownGame({ onBack }) {
       <GameStoryModal
         isOpen={showStory}
         onClose={() => setShowStory(false)}
-        title="The Joyful Choo-Choo Train Ride! 🚂"
-        icon="🚂"
-        badge="Choo-Choo Math Rhyme"
-        story="Choo-choo! The cheerful colourful train is rolling down the railway tracks with five happy children singing together in their coaches. At each village station, one child waves goodbye and steps off onto the platform. Chant the poem and count down backwards as the train empties until none are left: zero (0)!"
-        buttonText="Next ➔ Board the Choo-Choo Train!"
+        title="The Joyful School Bus Ride! 🚌"
+        icon="🚌"
+        badge="Joyful Math Rhyme"
+        story="Honk honk! The cheerful yellow school bus is rolling down the road with five happy children singing together. At each neighborhood stop, one child waves goodbye and steps off the bus. Chant the poem and count down backwards as the bus empties until none are left: zero (0)!"
+        buttonText="Next ➔ Board the School Bus!"
       />
 
       {/* Celebration Modal */}
       {showCelebration && (
         <CelebrationModal
-          title="Five Little Children Complete! 🚂"
+          title="Five Little Children Complete! 🚌"
           subtitle={level === 1
-            ? "All five little children reached their stations safely on the Choo-Choo Express! 'Now, there are none!' (0)"
+            ? "All five little children reached their stops safely on the yellow school bus! 'Now, there are none!' (0)"
             : "All passengers reached their destination! Subtraction countdown mastered!"}
           stars={3}
           onNextLevel={handleNextLevel}

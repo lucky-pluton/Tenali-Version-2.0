@@ -8,28 +8,28 @@
   "competency": "Counting down backwards, stepwise subtraction, linking action rhymes with mathematical removal",
   "targetAge": "Ages 5-8 (Grades 1-2)",
   "ncertStandard": "Grade 1 Mathematics: Joyful Mathematics Chapter 3 (Five Little Children)",
-  "overview": "A colorful Choo-Choo Train travels across railway stations. Children wave and disembark one by one to the tune of the NCERT rhyme ('Five little children, raise your hand... Now, we are four!'). Children calculate remaining passengers down to 'none' (0).",
+  "overview": "A cheerful cartoon school bus travels along neighborhood stops. Children wave and step out one by one to the tune of the NCERT rhyme ('Five little children, raise your hand... Now, we are four!'). Children calculate remaining passengers down to 'none' (0).",
   "learningOutcomes": [
     "Recite and apply sequential backwards counting (5, 4, 3, 2, 1, 0)",
     "Model subtraction sentences (initial - leaving = remaining)",
-    "Recognize 'none' as zero in daily life situations (train passengers leaving at stations)"
+    "Recognize 'none' as zero in daily life situations (school bus passengers stepping down at stops)"
   ],
   "levels": [
     {
       "level": 1,
-      "name": "Rhyme Express (5 Children)",
-      "description": "NCERT original 5-verse rhyme with 1 child stepping off per station",
+      "name": "Rhyme Bus (5 Children)",
+      "description": "NCERT original 5-verse rhyme with 1 child stepping out per stop",
       "range": "5 to 0"
     },
     {
       "level": 2,
-      "name": "Tour Express (10 Children)",
-      "description": "Groups of 2 or 3 passengers stepping off at each station",
+      "name": "Excursion Tour Bus (10 Children)",
+      "description": "Groups of 2 or 3 passengers stepping out at each stop",
       "range": "10 to 0"
     }
   ],
   "stateMachine": [
-    "train_station_arrival",
+    "bus_stop_arrival",
     "verse_presentation",
     "passenger_exit_animation",
     "remaining_count_input",

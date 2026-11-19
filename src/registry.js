@@ -74,10 +74,10 @@ export const MODULE_REGISTRY = [
     id: 'school-bus',
     name: "Five Little Children",
     component: schoolBusModule.Component,
-    icon: '🚂',
+    icon: '🚌',
     domainId: 'subtraction',
     levelsCount: 2,
-    tags: ['subtraction', 'train', 'choo-choo', 'station', 'countdown', 'poem']
+    tags: ['subtraction', 'bus', 'school bus', 'five little children', 'countdown', 'poem', 'ncert']
   },
   {
     id: 'lava-hop',
