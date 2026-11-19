@@ -4,6 +4,21 @@ import CelebrationModal from '../../../components/CelebrationModal';
 import { playSuccessChime, playGentleBoing, playPop } from '../../../core/soundEffects';
 import spec from './spec.json';
 
+// Child-friendly slow speech synthesis helper
+function speak(text, rate = 0.82, pitch = 1.15) {
+  if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+    try {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(String(text));
+      utterance.rate = rate;
+      utterance.pitch = pitch;
+      window.speechSynthesis.speak(utterance);
+    } catch (e) {
+      // ignore
+    }
+  }
+}
+
 export default function SunChariotWheelGame({ onBack }) {
   const [level, setLevel] = useState(1);
   const [stars, setStars] = useState(0);
@@ -11,17 +26,18 @@ export default function SunChariotWheelGame({ onBack }) {
   const [feedback, setFeedback] = useState(null);
   const [showCelebration, setShowCelebration] = useState(false);
 
+  // Targets are 6, 8, and 9 (Target 7 is reserved for the Sum 7 Dice Game)
   const WHEEL_DATA = [
     {
-      target: 7,
-      name: "Chariot Wheel of 7",
+      target: 6,
+      name: "Chariot Wheel of 6",
       spokes: [
-        { known: 1, userFilled: null, correct: 6 },
-        { known: 6, userFilled: null, correct: 1 },
-        { known: 5, userFilled: null, correct: 2 },
-        { known: 2, userFilled: null, correct: 5 },
-        { known: 3, userFilled: null, correct: 4 },
-        { known: 4, userFilled: null, correct: 3 }
+        { known: 1, userFilled: null, correct: 5 },
+        { known: 5, userFilled: null, correct: 1 },
+        { known: 2, userFilled: null, correct: 4 },
+        { known: 4, userFilled: null, correct: 2 },
+        { known: 3, userFilled: null, correct: 3 },
+        { known: 6, userFilled: null, correct: 0 }
       ]
     },
     {
@@ -63,6 +79,7 @@ export default function SunChariotWheelGame({ onBack }) {
 
     if (num === curSpoke.correct) {
       playSuccessChime();
+      speak(`${curSpoke.known} plus ${num} equals ${currentWheel.target}!`);
       const updated = [...spokesState];
       updated[activeSpokeIdx] = { ...curSpoke, userFilled: num };
       setSpokesState(updated);
@@ -70,7 +87,7 @@ export default function SunChariotWheelGame({ onBack }) {
 
       setFeedback({
         type: 'success',
-        text: `Wonderful! ${curSpoke.known} + ${num} = ${currentWheel.target}!`
+        text: `✨ Wonderful! ${curSpoke.known} + ${num} = ${currentWheel.target}!`
       });
 
       const nextUnfilled = updated.findIndex((s, idx) => idx > activeSpokeIdx && s.userFilled === null);
@@ -81,6 +98,7 @@ export default function SunChariotWheelGame({ onBack }) {
         if (anyUnfilled !== -1) {
           setActiveSpokeIdx(anyUnfilled);
         } else {
+          speak(`Hooray! You completed all spokes of the Chariot Wheel of ${currentWheel.target}!`);
           setTimeout(() => {
             setShowCelebration(true);
           }, 800);
@@ -88,6 +106,7 @@ export default function SunChariotWheelGame({ onBack }) {
       }
     } else {
       playGentleBoing();
+      speak(`Oops! ${curSpoke.known} plus ${num} is ${curSpoke.known + num}, but the sun hub needs ${currentWheel.target}. Try again!`);
       setFeedback({
         type: 'error',
         text: `Oops! ${curSpoke.known} + ${num} = ${curSpoke.known + num}, but the chariot hub needs ${currentWheel.target}!`
@@ -103,6 +122,7 @@ export default function SunChariotWheelGame({ onBack }) {
     setSpokesState(WHEEL_DATA[nextIdx].spokes);
     setActiveSpokeIdx(0);
     setLevel(nextIdx + 1);
+    speak(`Welcome to the ${WHEEL_DATA[nextIdx].name}!`);
   };
 
   const handleReplay = () => {
@@ -110,6 +130,7 @@ export default function SunChariotWheelGame({ onBack }) {
     setFeedback(null);
     setSpokesState(currentWheel.spokes);
     setActiveSpokeIdx(0);
+    speak(`Let's roll the ${currentWheel.name} again!`);
   };
 
   const renderWheel = () => {
@@ -120,6 +141,7 @@ export default function SunChariotWheelGame({ onBack }) {
 
     return (
       <svg width="400" height="400" viewBox="0 0 400 400" style={{ margin: '0 auto', display: 'block' }}>
+        {/* Outer Wheel Rim */}
         <circle
           cx={centerX}
           cy={centerY}
@@ -138,6 +160,7 @@ export default function SunChariotWheelGame({ onBack }) {
           strokeWidth="2"
         />
 
+        {/* Spokes */}
         {spokesState.map((spoke, idx) => {
           const angle = (idx / spokeCount) * 2 * Math.PI - Math.PI / 2;
           const x = centerX + rimRadius * Math.cos(angle);
@@ -153,13 +176,14 @@ export default function SunChariotWheelGame({ onBack }) {
                 x2={x}
                 y2={y}
                 stroke={isActive ? "var(--clr-accent)" : "var(--clr-border)"}
-                strokeWidth={isActive ? "3" : "2"}
+                strokeWidth={isActive ? "4" : "2"}
+                strokeDasharray={isActive ? "none" : "4,2"}
               />
 
               <circle
                 cx={x}
                 cy={y}
-                r="24"
+                r="26"
                 fill={
                   isFilled
                     ? "var(--clr-surface)"
@@ -169,16 +193,20 @@ export default function SunChariotWheelGame({ onBack }) {
                 }
                 stroke={isActive ? "var(--clr-accent)" : isFilled ? "var(--clr-correct)" : "var(--clr-border)"}
                 strokeWidth={isActive ? "3" : "2"}
-                style={{ cursor: 'pointer', transition: 'all 0.3s' }}
+                style={{
+                  cursor: 'pointer',
+                  transition: 'all 0.3s',
+                  filter: isActive ? 'drop-shadow(0 0 8px rgba(232, 134, 74, 0.6))' : 'none'
+                }}
                 onClick={() => setActiveSpokeIdx(idx)}
               />
 
               <text
                 x={x}
-                y={y + 4}
+                y={y + 5}
                 textAnchor="middle"
-                fontSize="12"
-                fontWeight="700"
+                fontSize="13"
+                fontWeight="800"
                 fill={isFilled ? "var(--clr-correct)" : isActive ? "var(--clr-accent)" : "var(--clr-text)"}
               >
                 {spoke.known}+{isFilled ? spoke.userFilled : '?'}
@@ -187,18 +215,19 @@ export default function SunChariotWheelGame({ onBack }) {
           );
         })}
 
+        {/* Central Sun Hub */}
         <circle
           cx={centerX}
           cy={centerY}
-          r="45"
+          r="46"
           fill="var(--clr-accent)"
           style={{ filter: 'drop-shadow(0 0 16px rgba(232, 134, 74, 0.5))' }}
         />
         <text
           x={centerX}
-          y={centerY + 10}
+          y={centerY + 11}
           textAnchor="middle"
-          fontSize="32"
+          fontSize="34"
           fontWeight="800"
           fontFamily="var(--font-kids)"
           fill="#ffffff"
@@ -231,7 +260,9 @@ export default function SunChariotWheelGame({ onBack }) {
           border: '1px solid var(--clr-border)',
           borderRadius: 'var(--radius)',
           padding: '14px 20px',
-          marginBottom: '20px'
+          marginBottom: '20px',
+          flexWrap: 'wrap',
+          gap: '10px'
         }}>
           <div>
             <h2 style={{
@@ -257,6 +288,7 @@ export default function SunChariotWheelGame({ onBack }) {
                   setActiveSpokeIdx(0);
                   setLevel(idx + 1);
                   setFeedback(null);
+                  speak(`Switched to Hub ${w.target}`);
                 }}
                 style={{
                   padding: '6px 14px',
@@ -265,7 +297,8 @@ export default function SunChariotWheelGame({ onBack }) {
                   fontWeight: 600,
                   background: wheelIdx === idx ? 'var(--clr-accent)' : 'var(--clr-surface)',
                   color: wheelIdx === idx ? '#fff' : 'var(--clr-text-soft)',
-                  border: '1px solid var(--clr-border)'
+                  border: '1px solid var(--clr-border)',
+                  cursor: 'pointer'
                 }}
               >
                 Hub {w.target}
@@ -318,8 +351,8 @@ export default function SunChariotWheelGame({ onBack }) {
           </div>
 
           <div style={{ marginTop: '14px' }}>
-            <p style={{ fontSize: '0.85rem', color: 'var(--clr-text-soft)', marginBottom: '10px' }}>
-              Choose the matching number for this spoke:
+            <p style={{ fontSize: '0.88rem', color: 'var(--clr-text-soft)', marginBottom: '10px' }}>
+              Choose the matching number for this spoke to make {currentWheel.target}:
             </p>
             <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '10px' }}>
               {Array.from({ length: currentWheel.target + 1 }).map((_, n) => (
@@ -327,15 +360,16 @@ export default function SunChariotWheelGame({ onBack }) {
                   key={n}
                   onClick={() => handleSelectNumber(n)}
                   style={{
-                    width: '50px',
-                    height: '50px',
+                    width: '52px',
+                    height: '52px',
                     borderRadius: 'var(--radius-sm)',
                     background: 'var(--clr-surface)',
                     border: '1px solid var(--clr-border)',
-                    fontSize: '1.3rem',
+                    fontSize: '1.35rem',
                     fontWeight: 700,
                     color: 'var(--clr-text)',
-                    boxShadow: 'var(--shadow-btn)'
+                    boxShadow: 'var(--shadow-btn)',
+                    cursor: 'pointer'
                   }}
                 >
                   {n}
