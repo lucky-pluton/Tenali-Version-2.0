@@ -388,3 +388,27 @@ export function playScatter() {
     osc.stop(ctx.currentTime + i * 0.05 + 0.07);
   }
 }
+
+// Sizzling hot lava sound
+export function playLavaSizzle() {
+  if (!soundEnabled) return;
+  const ctx = getAudioContext();
+  if (!ctx) return;
+
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+
+  osc.type = 'sawtooth';
+  osc.frequency.setValueAtTime(180, ctx.currentTime);
+  osc.frequency.linearRampToValueAtTime(100, ctx.currentTime + 0.3);
+
+  gain.gain.setValueAtTime(0.2, ctx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.35);
+
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+
+  osc.start();
+  osc.stop(ctx.currentTime + 0.35);
+}
+

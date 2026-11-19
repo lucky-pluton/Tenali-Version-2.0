@@ -1,424 +1,836 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import QuizLayout from '../../../components/QuizLayout';
 import CelebrationModal from '../../../components/CelebrationModal';
-import { playHop, playSuccessChime, playGentleBoing } from '../../../core/soundEffects';
+import {
+  playHop,
+  playSuccessChime,
+  playGentleBoing,
+  playVictoryFanfare,
+  playLavaSizzle
+} from '../../../core/soundEffects';
+import { BookOpen, Volume2, Sparkles, Flame, ShieldAlert, Award } from 'lucide-react';
 import spec from './spec.json';
 
+// Child-friendly slow speech synthesis helper
+function speak(text, rate = 0.82, pitch = 1.15) {
+  if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+    try {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(String(text));
+      utterance.rate = rate; // Gentle, child-friendly slow pace
+      utterance.pitch = pitch;
+      window.speechSynthesis.speak(utterance);
+    } catch (e) {
+      // ignore
+    }
+  }
+}
+
 export default function LavaHopGame({ onBack }) {
+  // Whether to show the childhood imagination story first
+  const [showStoryIntro, setShowStoryIntro] = useState(true);
+
   const [level, setLevel] = useState(1);
   const [stars, setStars] = useState(0);
 
-  const LEVEL_CONFIGS = {
+  // Road configuration:
+  // We represent the road as a sequence of tiles (safe white stones and hot red lava cracks)
+  // Initially, none of the white stones show numbers! Numbers appear only when hopped on!
+  const ROAD_LEVELS = {
     1: {
-      title: "Volcano Trail — Count the Safe Stones",
-      targetCount: 6,
-      blocks: [
-        { id: 1, type: 'safe', label: '1' },
-        { id: 2, type: 'lava', label: '🔥' },
-        { id: 3, type: 'safe', label: '2' },
-        { id: 4, type: 'safe', label: '3' },
-        { id: 5, type: 'lava', label: '🔥' },
-        { id: 6, type: 'safe', label: '4' },
-        { id: 7, type: 'lava', label: '🔥' },
-        { id: 8, type: 'safe', label: '5' },
-        { id: 9, type: 'lava', label: '🔥' },
-        { id: 10, type: 'safe', label: '6' }
+      name: "The Suburban Street Crossing",
+      targetCount: 5,
+      description: "Hop across 5 white stepping stones without stepping on the red lava!",
+      tiles: [
+        { id: 1, type: 'safe', targetNum: 1 },
+        { id: 2, type: 'lava' },
+        { id: 3, type: 'safe', targetNum: 2 },
+        { id: 4, type: 'lava' },
+        { id: 5, type: 'safe', targetNum: 3 },
+        { id: 6, type: 'safe', targetNum: 4 },
+        { id: 7, type: 'lava' },
+        { id: 8, type: 'safe', targetNum: 5 }
       ]
     },
     2: {
-      title: "Skip Hop by 2s — Even Number Stepping Stones",
-      targetCount: 6,
-      blocks: [
-        { id: 1, type: 'lava', label: '🔥' },
-        { id: 2, type: 'safe', label: '2' },
-        { id: 3, type: 'lava', label: '🔥' },
-        { id: 4, type: 'safe', label: '4' },
-        { id: 5, type: 'lava', label: '🔥' },
-        { id: 6, type: 'safe', label: '6' },
-        { id: 7, type: 'lava', label: '🔥' },
-        { id: 8, type: 'safe', label: '8' },
-        { id: 9, type: 'lava', label: '🔥' },
-        { id: 10, type: 'safe', label: '10' },
-        { id: 11, type: 'lava', label: '🔥' },
-        { id: 12, type: 'safe', label: '12' }
+      name: "The Wide Avenue Crossing",
+      targetCount: 7,
+      description: "A wider street! Hop across all 7 white stones to reach the other sidewalk!",
+      tiles: [
+        { id: 1, type: 'safe', targetNum: 1 },
+        { id: 2, type: 'lava' },
+        { id: 3, type: 'safe', targetNum: 2 },
+        { id: 4, type: 'lava' },
+        { id: 5, type: 'safe', targetNum: 3 },
+        { id: 6, type: 'safe', targetNum: 4 },
+        { id: 7, type: 'lava' },
+        { id: 8, type: 'safe', targetNum: 5 },
+        { id: 9, type: 'lava' },
+        { id: 10, type: 'safe', targetNum: 6 },
+        { id: 11, type: 'safe', targetNum: 7 }
       ]
     },
     3: {
-      title: "Volcanic Island Master — Skip Hop by 5s",
-      targetCount: 5,
-      blocks: [
-        { id: 1, type: 'lava', label: '🔥' },
-        { id: 2, type: 'safe', label: '5' },
-        { id: 3, type: 'lava', label: '🔥' },
-        { id: 4, type: 'safe', label: '10' },
-        { id: 5, type: 'lava', label: '🔥' },
-        { id: 6, type: 'safe', label: '15' },
-        { id: 7, type: 'lava', label: '🔥' },
-        { id: 8, type: 'safe', label: '20' },
-        { id: 9, type: 'lava', label: '🔥' },
-        { id: 10, type: 'safe', label: '25' }
+      name: "The Grand Volcano Highway",
+      targetCount: 10,
+      description: "The ultimate 10-stone challenge! Count all 10 white stepping stones to safety!",
+      tiles: [
+        { id: 1, type: 'safe', targetNum: 1 },
+        { id: 2, type: 'lava' },
+        { id: 3, type: 'safe', targetNum: 2 },
+        { id: 4, type: 'safe', targetNum: 3 },
+        { id: 5, type: 'lava' },
+        { id: 6, type: 'safe', targetNum: 4 },
+        { id: 7, type: 'lava' },
+        { id: 8, type: 'safe', targetNum: 5 },
+        { id: 9, type: 'safe', targetNum: 6 },
+        { id: 10, type: 'lava' },
+        { id: 11, type: 'safe', targetNum: 7 },
+        { id: 12, type: 'safe', targetNum: 8 },
+        { id: 13, type: 'lava' },
+        { id: 14, type: 'safe', targetNum: 9 },
+        { id: 15, type: 'safe', targetNum: 10 }
       ]
     }
   };
 
-  const currentConfig = LEVEL_CONFIGS[level] || LEVEL_CONFIGS[1];
-  const [currentBlockIdx, setCurrentBlockIdx] = useState(-1);
-  const [hoppedBlocks, setHoppedBlocks] = useState([]);
+  const currentRoad = ROAD_LEVELS[level] || ROAD_LEVELS[1];
+  const [currentTileIdx, setCurrentTileIdx] = useState(-1); // -1 means standing at Start sidewalk
+  const [revealedNumbers, setRevealedNumbers] = useState({}); // tileIndex -> revealed number
   const [reachedFinish, setReachedFinish] = useState(false);
   const [feedback, setFeedback] = useState(null);
   const [showCelebration, setShowCelebration] = useState(false);
+  const [sizzleEffect, setSizzleEffect] = useState(null);
 
-  const totalSafeBlocks = currentConfig.blocks.filter(b => b.type === 'safe').length;
+  // Play spoken intro when story intro is opened
+  useEffect(() => {
+    if (showStoryIntro) {
+      const timer = setTimeout(() => {
+        speak("Have you ever walked down the street and imagined the road turning into boiling hot red lava? Every child knows the game: you must only hop on the safe white stones! When you hop on a stone, its secret number appears!");
+      }, 400);
+      return () => clearTimeout(timer);
+    }
+  }, [showStoryIntro]);
 
-  const handleHopOnBlock = (index) => {
-    const block = currentConfig.blocks[index];
-    if (block.type === 'lava') {
+  const handleReadStoryAloud = () => {
+    speak("Have you ever walked down the street and imagined the road turning into boiling hot red lava? Every child knows the game: you must only hop on the safe white stones! When you hop on a stone, its secret number appears!");
+  };
+
+  const handleStartPlaying = () => {
+    setShowStoryIntro(false);
+    setCurrentTileIdx(-1);
+    setRevealedNumbers({});
+    setReachedFinish(false);
+    setFeedback(null);
+    speak(`You are on the sidewalk. Look at the road ahead! Hop on the first white stone to reveal number 1!`);
+  };
+
+  // Safe stones sequence
+  const safeTileIndices = currentRoad.tiles
+    .map((t, idx) => (t.type === 'safe' ? idx : -1))
+    .filter(idx => idx !== -1);
+
+  const nextExpectedSafeIndex = safeTileIndices[Object.keys(revealedNumbers).length];
+
+  const handleHopOnTile = (tileIndex) => {
+    const tile = currentRoad.tiles[tileIndex];
+
+    // Case 1: Tapped on Lava!
+    if (tile.type === 'lava') {
+      playLavaSizzle();
       playGentleBoing();
+      setSizzleEffect(tileIndex);
+      setTimeout(() => setSizzleEffect(null), 600);
+      speak("Ouch! Sizzling hot lava! Only hop on the clean white stones!");
       setFeedback({
         type: 'error',
-        text: 'Sizzle! That is bubbling LAVA! Only hop on the safe white blocks!'
+        text: "🔥 SIZZLE! That's boiling red lava! Your shoes will burn! Only hop on the white stones!"
       });
       return;
     }
 
-    playHop();
-    setCurrentBlockIdx(index);
+    // Case 2: Tapped a safe white stone
+    // Check if it's the expected next stone in order
+    if (tileIndex === nextExpectedSafeIndex) {
+      playHop();
+      const currentStepNumber = Object.keys(revealedNumbers).length + 1;
 
-    if (!hoppedBlocks.includes(index)) {
-      setHoppedBlocks(prev => [...prev, index]);
-    }
+      // Reveal number on this brick
+      setRevealedNumbers(prev => ({
+        ...prev,
+        [tileIndex]: currentStepNumber
+      }));
+      setCurrentTileIdx(tileIndex);
 
-    const safeIndices = currentConfig.blocks
-      .map((b, i) => (b.type === 'safe' ? i : -1))
-      .filter(i => i !== -1);
-    const lastSafeIndex = safeIndices[safeIndices.length - 1];
+      // Speak number aloud: "1", "2", "3"...
+      speak(String(currentStepNumber), 0.85);
 
-    if (index === lastSafeIndex) {
-      playSuccessChime();
-      setReachedFinish(true);
-      setFeedback({
-        type: 'info',
-        text: 'Awesome! You reached the FINISH line! Now, how many safe blocks did you hop on?'
-      });
+      // Check if finished
+      if (currentStepNumber === currentRoad.targetCount) {
+        setTimeout(() => {
+          playSuccessChime();
+          setReachedFinish(true);
+          speak(`Hooray! You safely hopped across all ${currentRoad.targetCount} stones to the sidewalk!`);
+          setFeedback({
+            type: 'success',
+            text: `🎉 Hooray! You reached the safe sidewalk! All ${currentRoad.targetCount} stones counted safely!`
+          });
+          setStars(s => s + 3);
+          setTimeout(() => {
+            playVictoryFanfare();
+            setShowCelebration(true);
+          }, 1000);
+        }, 500);
+      } else {
+        setFeedback({
+          type: 'info',
+          text: `✨ Stone ${currentStepNumber} safe! Now hop on the next white stone!`
+        });
+      }
+    } else if (revealedNumbers[tileIndex] !== undefined) {
+      // Already hopped on this stone before
+      playHop();
+      setCurrentTileIdx(tileIndex);
+      speak(String(revealedNumbers[tileIndex]), 0.85);
     } else {
-      setFeedback({
-        type: 'info',
-        text: `Hopped on stone ${block.label}! Keep going to the Finish!`
-      });
-    }
-  };
-
-  const handleCheckCount = (ans) => {
-    const val = parseInt(ans, 10);
-    if (val === totalSafeBlocks) {
-      playSuccessChime();
-      setStars(s => s + 3);
-      setFeedback({
-        type: 'success',
-        text: `You are a Counting Champion! You safely hopped across all ${totalSafeBlocks} stones!`
-      });
-      setTimeout(() => {
-        setShowCelebration(true);
-      }, 800);
-    } else {
+      // Hopped out of order (skipped a stone)
       playGentleBoing();
+      speak("Hop on the next white stone in order!");
       setFeedback({
         type: 'error',
-        text: `Count the safe stones again! You hopped on all the white stones from Start to Finish.`
+        text: "👣 Don't jump too far ahead! Hop on the next white stone right in front of you."
       });
     }
   };
 
   const handleNextLevel = () => {
     setShowCelebration(false);
-    setCurrentBlockIdx(-1);
-    setHoppedBlocks([]);
+    setCurrentTileIdx(-1);
+    setRevealedNumbers({});
     setReachedFinish(false);
     setFeedback(null);
     if (level < 3) {
-      setLevel(l => l + 1);
+      const nextLvl = level + 1;
+      setLevel(nextLvl);
+      speak(`Level ${nextLvl}! Welcome to ${ROAD_LEVELS[nextLvl].name}!`);
     } else {
       setLevel(1);
+      speak("Back to Level 1 street crossing!");
     }
   };
 
   const handleReplay = () => {
     setShowCelebration(false);
-    setCurrentBlockIdx(-1);
-    setHoppedBlocks([]);
+    setCurrentTileIdx(-1);
+    setRevealedNumbers({});
     setReachedFinish(false);
     setFeedback(null);
+    speak("Let's cross the volcano street again!");
   };
 
   return (
     <QuizLayout
-      title="Lava Hop Adventure — Stepping Stones"
-      subtitle="Hop only on safe white blocks, dodge the hot lava, and count as you go!"
-      category="Counting & Pathfinding"
+      title="Lava Hop Adventure"
+      subtitle="Hop on the white road stones, dodge the boiling lava, and count 1, 2, 3 as you go!"
+      category="Counting & Number Line"
       level={level}
       stars={stars}
       spec={spec}
       onBack={onBack}
     >
-      <div style={{ width: '100%', maxWidth: '950px' }}>
-        <div style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          background: 'var(--clr-card)',
-          border: '1px solid var(--clr-border)',
-          borderRadius: 'var(--radius)',
-          padding: '14px 20px',
-          marginBottom: '20px'
-        }}>
-          <div>
-            <h2 style={{
-              fontFamily: 'var(--font-display)',
-              fontSize: '1.2rem',
-              color: 'var(--clr-text)',
-              margin: 0
-            }}>
-              {currentConfig.title}
-            </h2>
-            <p style={{ margin: '2px 0 0 0', fontSize: '0.85rem', color: 'var(--clr-text-soft)' }}>
-              Stones Hopped: {hoppedBlocks.length} / {totalSafeBlocks} • Dodge the Red Lava!
-            </p>
-          </div>
+      <div style={{ width: '100%', maxWidth: '900px' }}>
 
-          <div style={{ display: 'flex', gap: '8px' }}>
-            {[1, 2, 3].map(lvl => (
+        {/* ============================================================== */}
+        {/* STORY INTRODUCTION: The Classic Childhood Game                 */}
+        {/* ============================================================== */}
+        {showStoryIntro ? (
+          <div className="anim-pop" style={{
+            background: 'var(--clr-card)',
+            border: '2px solid var(--clr-border)',
+            borderRadius: 'var(--radius)',
+            padding: '28px 24px',
+            boxShadow: 'var(--shadow-card)',
+            textAlign: 'center'
+          }}>
+            {/* Title badge */}
+            <div style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '12px',
+              background: 'var(--clr-surface)',
+              border: '1px solid var(--clr-border)',
+              borderRadius: 'var(--radius-pill)',
+              padding: '8px 22px',
+              marginBottom: '20px'
+            }}>
+              <span style={{ fontSize: '2.2rem' }}>🌋</span>
+              <h2 style={{
+                fontFamily: 'var(--font-display)',
+                fontSize: '1.4rem',
+                color: 'var(--clr-text)',
+                margin: 0
+              }}>
+                The Secret Game Every Child Plays!
+              </h2>
+            </div>
+
+            {/* Visual Childhood Street Story Cards */}
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))',
+              gap: '16px',
+              textAlign: 'left',
+              marginBottom: '24px'
+            }}>
+              <div style={{
+                background: 'var(--clr-surface)',
+                border: '1px solid var(--clr-border)',
+                borderRadius: '16px',
+                padding: '16px',
+                boxShadow: 'var(--shadow-card)'
+              }}>
+                <div style={{ fontSize: '2rem', marginBottom: '8px' }}>🚶‍♂️ 🛣️</div>
+                <h3 style={{ fontSize: '1.05rem', margin: '0 0 6px 0', color: 'var(--clr-text)' }}>
+                  1. Walking Down the Road
+                </h3>
+                <p style={{ fontSize: '0.9rem', color: 'var(--clr-text-soft)', margin: 0, lineHeight: 1.5 }}>
+                  Remember when you walked on the street and looked down at the pavement? Suddenly, the ordinary road felt special!
+                </p>
+              </div>
+
+              <div style={{
+                background: 'var(--clr-surface)',
+                border: '1px solid var(--clr-border)',
+                borderRadius: '16px',
+                padding: '16px',
+                boxShadow: 'var(--shadow-card)'
+              }}>
+                <div style={{ fontSize: '2rem', marginBottom: '8px' }}>🌋 🔥</div>
+                <h3 style={{ fontSize: '1.05rem', margin: '0 0 6px 0', color: 'var(--clr-text)' }}>
+                  2. "The Road is Hot LAVA!"
+                </h3>
+                <p style={{ fontSize: '0.9rem', color: 'var(--clr-text-soft)', margin: 0, lineHeight: 1.5 }}>
+                  In your imagination, the red rocks and asphalt turned into a bubbling volcano! If you step on red lava... SIZZLE! 👟🔥
+                </p>
+              </div>
+
+              <div style={{
+                background: 'var(--clr-surface)',
+                border: '1px solid var(--clr-border)',
+                borderRadius: '16px',
+                padding: '16px',
+                boxShadow: 'var(--shadow-card)'
+              }}>
+                <div style={{ fontSize: '2rem', marginBottom: '8px' }}>⬜ 🛡️</div>
+                <h3 style={{ fontSize: '1.05rem', margin: '0 0 6px 0', color: 'var(--clr-text)' }}>
+                  3. Hop on the White Stones!
+                </h3>
+                <p style={{ fontSize: '0.9rem', color: 'var(--clr-text-soft)', margin: 0, lineHeight: 1.5 }}>
+                  Every child knows the survival rule: <strong>You must ONLY hop on the white stones</strong> to stay 100% safe!
+                </p>
+              </div>
+
+              <div style={{
+                background: 'var(--clr-surface)',
+                border: '1px solid var(--clr-border)',
+                borderRadius: '16px',
+                padding: '16px',
+                boxShadow: 'var(--shadow-card)'
+              }}>
+                <div style={{ fontSize: '2rem', marginBottom: '8px' }}>🔢 🗣️</div>
+                <h3 style={{ fontSize: '1.05rem', margin: '0 0 6px 0', color: 'var(--clr-text)' }}>
+                  4. Numbers Appear & Speak!
+                </h3>
+                <p style={{ fontSize: '0.9rem', color: 'var(--clr-text-soft)', margin: 0, lineHeight: 1.5 }}>
+                  The stones look blank at first. But when you hop on each one, its number magically appears and says: <strong>1, 2, 3...!</strong>
+                </p>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div style={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              gap: '14px',
+              flexWrap: 'wrap'
+            }}>
               <button
-                key={lvl}
-                onClick={() => {
-                  setLevel(lvl);
-                  handleReplay();
-                }}
+                onClick={handleReadStoryAloud}
                 style={{
-                  padding: '6px 14px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  background: 'var(--clr-surface)',
+                  color: 'var(--clr-text)',
+                  border: '1px solid var(--clr-border)',
                   borderRadius: 'var(--radius-pill)',
-                  fontSize: '0.82rem',
+                  padding: '12px 24px',
+                  fontSize: '1rem',
                   fontWeight: 600,
-                  background: level === lvl ? 'var(--clr-accent)' : 'var(--clr-surface)',
-                  color: level === lvl ? '#fff' : 'var(--clr-text-soft)',
-                  border: '1px solid var(--clr-border)'
+                  cursor: 'pointer'
                 }}
               >
-                Level {lvl}
+                <Volume2 size={18} />
+                <span>Hear Story Aloud</span>
               </button>
-            ))}
-          </div>
-        </div>
 
-        <div style={{
-          background: 'linear-gradient(180deg, #1e1b18 0%, #291a18 100%)',
-          border: '2px solid rgba(239, 68, 68, 0.3)',
-          borderRadius: 'var(--radius)',
-          padding: '30px 20px',
-          boxShadow: 'var(--shadow-card)',
-          textAlign: 'center',
-          marginBottom: '20px',
-          overflowX: 'auto'
-        }}>
-          <div style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '20px',
-            background: 'rgba(0,0,0,0.4)',
-            padding: '8px 20px',
-            borderRadius: 'var(--radius-pill)',
-            marginBottom: '28px',
-            fontSize: '0.9rem'
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <div style={{ width: '18px', height: '18px', background: '#f8fafc', borderRadius: '4px', border: '1px solid #94a3b8' }} />
-              <span style={{ color: '#f8fafc', fontWeight: 600 }}>White Stone = SAFE ✓</span>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <div style={{ width: '18px', height: '18px', background: '#ef4444', borderRadius: '4px', border: '1px solid #b91c1c' }} />
-              <span style={{ color: '#fca5a5', fontWeight: 600 }}>Red Stone = LAVA ✗</span>
+              <button
+                onClick={handleStartPlaying}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  background: 'linear-gradient(135deg, #ef4444, #f97316)',
+                  color: '#ffffff',
+                  border: 'none',
+                  borderRadius: 'var(--radius-pill)',
+                  padding: '14px 34px',
+                  fontSize: '1.15rem',
+                  fontWeight: 800,
+                  cursor: 'pointer',
+                  boxShadow: '0 6px 20px rgba(239, 68, 68, 0.4)'
+                }}
+              >
+                <span>🌋 Start Crossing the Road! ➡️</span>
+              </button>
             </div>
           </div>
-
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '12px',
-            flexWrap: 'wrap',
-            padding: '10px 0'
-          }}>
+        ) : (
+          /* ============================================================== */
+          /* THE REALISTIC VOLCANO ROAD ARENA                               */
+          /* ============================================================== */
+          <div>
+            {/* Level Controls & Stats Header */}
             <div style={{
-              background: '#10b981',
-              color: '#fff',
-              padding: '12px 16px',
-              borderRadius: '12px',
-              fontWeight: 800,
-              fontSize: '0.95rem',
-              boxShadow: '0 4px 12px rgba(16, 185, 129, 0.4)',
-              position: 'relative'
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              background: 'var(--clr-card)',
+              border: '1px solid var(--clr-border)',
+              borderRadius: 'var(--radius)',
+              padding: '12px 20px',
+              marginBottom: '16px',
+              flexWrap: 'wrap',
+              gap: '10px'
             }}>
-              START 🚩
-              {currentBlockIdx === -1 && (
+              <div>
+                <span style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--clr-accent)' }}>
+                  LEVEL {level} OF 3
+                </span>
+                <h3 style={{
+                  fontFamily: 'var(--font-display)',
+                  fontSize: '1.15rem',
+                  color: 'var(--clr-text)',
+                  margin: '2px 0 0 0'
+                }}>
+                  {currentRoad.name}
+                </h3>
+              </div>
+
+              <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                <span style={{
+                  fontSize: '0.88rem',
+                  fontWeight: 600,
+                  color: 'var(--clr-text-soft)',
+                  marginRight: '6px'
+                }}>
+                  Safe Stones Counted: <strong style={{ color: 'var(--clr-correct)' }}>{Object.keys(revealedNumbers).length} / {currentRoad.targetCount}</strong>
+                </span>
+
+                <button
+                  onClick={() => setShowStoryIntro(true)}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    padding: '6px 14px',
+                    borderRadius: 'var(--radius-pill)',
+                    fontSize: '0.82rem',
+                    fontWeight: 600,
+                    background: 'var(--clr-surface)',
+                    color: 'var(--clr-text-soft)',
+                    border: '1px solid var(--clr-border)',
+                    cursor: 'pointer'
+                  }}
+                >
+                  <BookOpen size={14} />
+                  <span>Story</span>
+                </button>
+              </div>
+            </div>
+
+            {/* THE ROAD CONTAINER (Looks like an authentic road with asphalt, curbs, and lava) */}
+            <div style={{
+              background: '#181513',
+              border: '3px solid #3e2820',
+              borderRadius: '24px',
+              padding: '24px 16px',
+              boxShadow: '0 12px 32px rgba(0,0,0,0.5)',
+              textAlign: 'center',
+              position: 'relative',
+              overflow: 'hidden'
+            }}>
+
+              {/* TOP ROAD CURB (Yellow/Black Hazard Striped Curb) */}
+              <div style={{
+                height: '14px',
+                borderRadius: '8px',
+                background: 'repeating-linear-gradient(45deg, #f59e0b, #f59e0b 16px, #1c1917 16px, #1c1917 32px)',
+                marginBottom: '16px',
+                boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.6)'
+              }} />
+
+              {/* START SIDEWALK & FINISH SIDEWALK LABELS */}
+              <div style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                padding: '0 12px',
+                marginBottom: '16px'
+              }}>
+                <div style={{
+                  background: '#10b981',
+                  color: '#ffffff',
+                  padding: '6px 16px',
+                  borderRadius: 'var(--radius-pill)',
+                  fontWeight: 800,
+                  fontSize: '0.85rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  boxShadow: '0 4px 12px rgba(16, 185, 129, 0.3)'
+                }}>
+                  <span>🚩 START SIDEWALK</span>
+                </div>
+
+                {/* Road dashed lane marking hint */}
+                <div style={{
+                  fontSize: '0.85rem',
+                  fontWeight: 700,
+                  color: '#f59e0b',
+                  letterSpacing: '0.05em'
+                }}>
+                  ⚠️ VOLCANO ROAD: HOP ONLY ON WHITE STONES! ⚠️
+                </div>
+
+                <div style={{
+                  background: reachedFinish ? '#10b981' : '#f59e0b',
+                  color: '#ffffff',
+                  padding: '6px 16px',
+                  borderRadius: 'var(--radius-pill)',
+                  fontWeight: 800,
+                  fontSize: '0.85rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  boxShadow: '0 4px 12px rgba(245, 158, 11, 0.3)'
+                }}>
+                  <span>🏁 SAFE SIDEWALK</span>
+                </div>
+              </div>
+
+              {/* ASPHALT ROADBED WITH ROAD MARKINGS AND TILES */}
+              <div style={{
+                background: '#24201d',
+                borderRadius: '18px',
+                padding: '24px 16px',
+                border: '2px dashed rgba(245, 158, 11, 0.3)',
+                boxShadow: 'inset 0 4px 16px rgba(0,0,0,0.6)',
+                position: 'relative'
+              }}>
+                {/* Yellow Dashed Center Line across the road */}
                 <div style={{
                   position: 'absolute',
-                  top: '-32px',
-                  left: '50%',
-                  transform: 'translateX(-50%)',
-                  fontSize: '1.8rem'
+                  top: '50%',
+                  left: '10px',
+                  right: '10px',
+                  height: '4px',
+                  background: 'repeating-linear-gradient(90deg, #f59e0b, #f59e0b 24px, transparent 24px, transparent 48px)',
+                  transform: 'translateY(-50%)',
+                  opacity: 0.25,
+                  pointerEvents: 'none'
+                }} />
+
+                {/* PATH TILES (Safe White Stones vs Bubbling Lava) */}
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '12px',
+                  flexWrap: 'wrap',
+                  position: 'relative',
+                  zIndex: 2
                 }}>
-                  🧒
+
+                  {/* START PLATFORM (Where the kid stands before first hop) */}
+                  <div
+                    onClick={() => {
+                      setCurrentTileIdx(-1);
+                      speak("Ready! Hop on the first white stone!");
+                    }}
+                    style={{
+                      width: '68px',
+                      height: '74px',
+                      borderRadius: '16px',
+                      background: '#10b981',
+                      border: currentTileIdx === -1 ? '4px solid #ffffff' : '2px solid #059669',
+                      boxShadow: currentTileIdx === -1 ? '0 0 18px #10b981' : '0 4px 10px rgba(0,0,0,0.3)',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      cursor: 'pointer',
+                      position: 'relative',
+                      transform: currentTileIdx === -1 ? 'scale(1.08)' : 'scale(1)',
+                      transition: 'all 0.2s'
+                    }}
+                  >
+                    {currentTileIdx === -1 && (
+                      <div style={{
+                        position: 'absolute',
+                        top: '-34px',
+                        fontSize: '2.2rem',
+                        animation: 'bounceSlow 1s infinite'
+                      }}>
+                        🧒
+                      </div>
+                    )}
+                    <span style={{ fontSize: '1.4rem' }}>🚩</span>
+                    <span style={{ fontSize: '10px', fontWeight: 800, color: '#ffffff' }}>START</span>
+                  </div>
+
+                  {/* ROAD TILES */}
+                  {currentRoad.tiles.map((tile, idx) => {
+                    const isSafe = tile.type === 'safe';
+                    const isPlayerHere = currentTileIdx === idx;
+                    const revealedNum = revealedNumbers[idx];
+                    const isSizzling = sizzleEffect === idx;
+
+                    return (
+                      <div
+                        key={tile.id}
+                        onClick={() => handleHopOnTile(idx)}
+                        style={{
+                          width: isSafe ? '72px' : '58px',
+                          height: '74px',
+                          borderRadius: isSafe ? '20px' : '14px',
+                          // Safe stone: Clean pure white marble paver!
+                          // Lava tile: Dark magma rock glowing with red/orange fire!
+                          background: isSafe
+                            ? '#ffffff'
+                            : 'linear-gradient(135deg, #b91c1c 0%, #7f1d1d 100%)',
+                          border: isPlayerHere
+                            ? '4px solid #f59e0b'
+                            : isSafe
+                            ? '3px solid #cbd5e1'
+                            : isSizzling
+                            ? '3px solid #fbbf24'
+                            : '2px solid #ef4444',
+                          boxShadow: isPlayerHere
+                            ? '0 0 20px #f59e0b'
+                            : isSafe
+                            ? '0 6px 14px rgba(0,0,0,0.35), inset 0 2px 4px #ffffff'
+                            : isSizzling
+                            ? '0 0 24px #ef4444'
+                            : '0 4px 12px rgba(239, 68, 68, 0.4)',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          cursor: 'pointer',
+                          position: 'relative',
+                          transform: isPlayerHere
+                            ? 'scale(1.15)'
+                            : isSizzling
+                            ? 'scale(0.92)'
+                            : 'scale(1)',
+                          transition: 'all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1)'
+                        }}
+                      >
+                        {/* Kid Avatar on current hopped tile */}
+                        {isPlayerHere && (
+                          <div style={{
+                            position: 'absolute',
+                            top: '-36px',
+                            fontSize: '2.3rem',
+                            animation: 'bounceSlow 1s infinite'
+                          }}>
+                            🧒
+                          </div>
+                        )}
+
+                        {/* Sizzle Steam Effect if stepped on lava */}
+                        {isSizzling && (
+                          <div style={{
+                            position: 'absolute',
+                            top: '-26px',
+                            fontSize: '1.8rem',
+                            animation: 'popIn 0.3s forwards'
+                          }}>
+                            💨🔥
+                          </div>
+                        )}
+
+                        {/* Safe White Stone Content: NO NUMBER INITIALLY! */}
+                        {isSafe ? (
+                          revealedNum !== undefined ? (
+                            /* Number REVEALED upon hopping! */
+                            <div className="anim-pop" style={{ textAlign: 'center' }}>
+                              <span style={{
+                                fontSize: '1.85rem',
+                                fontWeight: 800,
+                                fontFamily: 'var(--font-kids)',
+                                color: '#1e293b',
+                                lineHeight: 1
+                              }}>
+                                {revealedNum}
+                              </span>
+                              <div style={{
+                                fontSize: '9px',
+                                fontWeight: 800,
+                                color: '#10b981',
+                                marginTop: '2px'
+                              }}>
+                                ✓ SAFE
+                              </div>
+                            </div>
+                          ) : (
+                            /* Blank White Stone before hopping */
+                            <div style={{ opacity: 0.45, textAlign: 'center' }}>
+                              <span style={{ fontSize: '1.4rem' }}>👣</span>
+                              <div style={{ fontSize: '9px', fontWeight: 700, color: '#64748b' }}>
+                                HOP!
+                              </div>
+                            </div>
+                          )
+                        ) : (
+                          /* Hot Red Lava Tile */
+                          <div style={{ textAlign: 'center' }}>
+                            <span style={{ fontSize: '1.5rem' }}>🔥</span>
+                            <div style={{ fontSize: '8px', fontWeight: 800, color: '#fca5a5' }}>
+                              LAVA
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+
+                  {/* FINISH PLATFORM */}
+                  <div
+                    onClick={() => {
+                      if (reachedFinish) {
+                        speak("Safe and sound on the sidewalk!");
+                      }
+                    }}
+                    style={{
+                      width: '68px',
+                      height: '74px',
+                      borderRadius: '16px',
+                      background: reachedFinish ? '#10b981' : '#334155',
+                      border: reachedFinish ? '4px solid #ffffff' : '2px dashed #94a3b8',
+                      boxShadow: reachedFinish ? '0 0 18px #10b981' : 'none',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      position: 'relative',
+                      transform: reachedFinish ? 'scale(1.08)' : 'scale(1)',
+                      transition: 'all 0.3s'
+                    }}
+                  >
+                    {reachedFinish && (
+                      <div style={{
+                        position: 'absolute',
+                        top: '-34px',
+                        fontSize: '2.2rem',
+                        animation: 'bounceSlow 1s infinite'
+                      }}>
+                        🧒
+                      </div>
+                    )}
+                    <span style={{ fontSize: '1.4rem' }}>🏁</span>
+                    <span style={{ fontSize: '10px', fontWeight: 800, color: '#ffffff' }}>
+                      {reachedFinish ? 'SAFE!' : 'FINISH'}
+                    </span>
+                  </div>
+
+                </div>
+              </div>
+
+              {/* BOTTOM ROAD CURB (Yellow/Black Hazard Striped Curb) */}
+              <div style={{
+                height: '14px',
+                borderRadius: '8px',
+                background: 'repeating-linear-gradient(45deg, #f59e0b, #f59e0b 16px, #1c1917 16px, #1c1917 32px)',
+                marginTop: '16px',
+                boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.6)'
+              }} />
+
+              {/* Status / Feedback Banner */}
+              {feedback && (
+                <div className="anim-pop" style={{
+                  marginTop: '18px',
+                  padding: '12px 18px',
+                  borderRadius: '10px',
+                  fontSize: '1rem',
+                  fontWeight: 600,
+                  background: feedback.type === 'success'
+                    ? 'var(--clr-correct-bg)'
+                    : feedback.type === 'error'
+                    ? 'var(--clr-wrong-bg)'
+                    : 'rgba(232, 134, 74, 0.15)',
+                  color: feedback.type === 'success'
+                    ? 'var(--clr-correct)'
+                    : feedback.type === 'error'
+                    ? 'var(--clr-wrong)'
+                    : 'var(--clr-accent)',
+                  border: `1px solid ${feedback.type === 'success' ? 'var(--clr-correct)' : feedback.type === 'error' ? 'var(--clr-wrong)' : 'var(--clr-accent)'}`
+                }}>
+                  {feedback.text}
                 </div>
               )}
             </div>
 
-            {currentConfig.blocks.map((block, idx) => {
-              const isSafe = block.type === 'safe';
-              const isPlayerHere = currentBlockIdx === idx;
-              const isHopped = hoppedBlocks.includes(idx);
-
-              return (
-                <div
-                  key={idx}
-                  onClick={() => handleHopOnBlock(idx)}
-                  style={{
-                    width: '64px',
-                    height: '64px',
-                    borderRadius: '12px',
-                    background: isSafe ? '#f8fafc' : 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
-                    border: isPlayerHere
-                      ? '3px solid var(--clr-accent)'
-                      : isSafe
-                      ? '2px solid #cbd5e1'
-                      : '2px solid #b91c1c',
-                    boxShadow: isPlayerHere
-                      ? '0 0 16px var(--clr-accent)'
-                      : isSafe
-                      ? '0 4px 10px rgba(0,0,0,0.2)'
-                      : '0 4px 12px rgba(239, 68, 68, 0.4)',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    cursor: 'pointer',
-                    position: 'relative',
-                    transform: isPlayerHere ? 'scale(1.15)' : 'scale(1)',
-                    transition: 'transform 0.2s, box-shadow 0.2s'
-                  }}
-                >
-                  {isPlayerHere && (
-                    <div style={{
-                      position: 'absolute',
-                      top: '-34px',
-                      fontSize: '2rem',
-                      animation: 'bounceSlow 1s infinite'
-                    }}>
-                      🧒
-                    </div>
-                  )}
-
-                  <span style={{
-                    fontSize: isSafe ? '1.25rem' : '1.4rem',
-                    fontWeight: 800,
-                    fontFamily: 'var(--font-kids)',
-                    color: isSafe ? '#1e293b' : '#ffffff'
-                  }}>
-                    {block.label}
-                  </span>
-
-                  {isHopped && isSafe && (
-                    <div style={{
-                      position: 'absolute',
-                      bottom: '2px',
-                      fontSize: '0.75rem',
-                      color: '#10b981',
-                      fontWeight: 800
-                    }}>
-                      ✓
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-
+            {/* Level Selector Tabs */}
             <div style={{
-              background: '#f59e0b',
-              color: '#1a1614',
-              padding: '12px 16px',
-              borderRadius: '12px',
-              fontWeight: 800,
-              fontSize: '0.95rem',
-              boxShadow: '0 4px 12px rgba(245, 158, 11, 0.4)'
+              display: 'flex',
+              justifyContent: 'center',
+              gap: '10px',
+              marginTop: '16px'
             }}>
-              🏁 FINISH
-            </div>
-          </div>
-
-          {feedback && (
-            <div className="anim-pop" style={{
-              margin: '24px auto 0 auto',
-              maxWidth: '560px',
-              padding: '12px 18px',
-              borderRadius: '8px',
-              fontSize: '1rem',
-              fontWeight: 600,
-              background: feedback.type === 'success' ? 'var(--clr-correct-bg)' : feedback.type === 'error' ? 'var(--clr-wrong-bg)' : 'var(--clr-accent-soft)',
-              color: feedback.type === 'success' ? 'var(--clr-correct)' : feedback.type === 'error' ? 'var(--clr-wrong)' : 'var(--clr-accent)',
-              border: `1px solid ${feedback.type === 'success' ? 'var(--clr-correct)' : feedback.type === 'error' ? 'var(--clr-wrong)' : 'var(--clr-accent)'}`
-            }}>
-              {feedback.text}
-            </div>
-          )}
-        </div>
-
-        {reachedFinish && (
-          <div className="anim-pop" style={{
-            background: 'var(--clr-card)',
-            border: '2px solid var(--clr-accent)',
-            borderRadius: 'var(--radius)',
-            padding: '24px',
-            textAlign: 'center'
-          }}>
-            <h3 style={{
-              fontFamily: 'var(--font-display)',
-              fontSize: '1.4rem',
-              color: 'var(--clr-text)',
-              marginBottom: '10px'
-            }}>
-              🎉 You Escaped the Lava!
-            </h3>
-            <p style={{ fontSize: '1.1rem', color: 'var(--clr-text-soft)', marginBottom: '18px' }}>
-              How many white safe blocks did you hop on in total?
-            </p>
-
-            <div style={{ display: 'flex', justifyContent: 'center', gap: '12px', flexWrap: 'wrap' }}>
-              {[4, 5, 6, 7, 8, 10, 12].map(n => (
+              {[1, 2, 3].map(lvl => (
                 <button
-                  key={n}
-                  onClick={() => handleCheckCount(n)}
+                  key={lvl}
+                  onClick={() => {
+                    setLevel(lvl);
+                    handleReplay();
+                  }}
                   style={{
-                    width: '60px',
-                    height: '60px',
-                    borderRadius: '12px',
-                    background: 'var(--clr-surface)',
-                    border: '2px solid var(--clr-border)',
-                    fontSize: '1.5rem',
-                    fontWeight: 800,
-                    color: 'var(--clr-text)',
-                    boxShadow: 'var(--shadow-btn)'
+                    padding: '8px 18px',
+                    borderRadius: 'var(--radius-pill)',
+                    fontSize: '0.85rem',
+                    fontWeight: 600,
+                    background: level === lvl ? 'var(--clr-accent)' : 'var(--clr-surface)',
+                    color: level === lvl ? '#ffffff' : 'var(--clr-text-soft)',
+                    border: '1px solid var(--clr-border)',
+                    cursor: 'pointer'
                   }}
                 >
-                  {n}
+                  Lvl {lvl}: {ROAD_LEVELS[lvl].targetCount} Stones
                 </button>
               ))}
             </div>
           </div>
         )}
+
       </div>
 
       {showCelebration && (
         <CelebrationModal
-          title="Counting Champion!"
-          subtitle={`You hopped across all ${totalSafeBlocks} safe stones and conquered the lava!`}
+          title="Street Crossing Champion!"
+          subtitle={`You bravely hopped across all ${currentRoad.targetCount} white stones and conquered the boiling lava road!`}
           stars={3}
           onNextLevel={handleNextLevel}
           onReplay={handleReplay}
