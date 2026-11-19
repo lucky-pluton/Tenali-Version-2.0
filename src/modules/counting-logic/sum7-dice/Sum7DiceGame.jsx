@@ -28,8 +28,24 @@ function speak(text, rate = 0.82, pitch = 1.15) {
 }
 
 export default function Sum7DiceGame({ onBack }) {
-  // Whether to show the magic dice story intro screen first
-  const [showStoryIntro, setShowStoryIntro] = useState(true);
+  // Episodic Story Chapters: Story says something -> Activity happens -> Story continues!
+  const [storyChapter, setStoryChapter] = useState({
+    isOpen: true,
+    title: "The Secret Superpower of Dice!",
+    icon: "🎲",
+    badge: "Chapter 1: The Magic 7 Mystery",
+    story: "Every standard playing die in the world has a secret superpower! Opposite faces always balance together to equal the magic number 7! Look at the wizard's die. Throw the die and see what number is hiding underneath!",
+    buttonText: "Next ➔ Throw the Die!",
+    onProceed: () => {
+      handleRollDie();
+    }
+  });
+
+  const handleCloseStoryChapter = () => {
+    const callback = storyChapter.onProceed;
+    setStoryChapter(prev => ({ ...prev, isOpen: false }));
+    if (callback) callback();
+  };
 
   const [level, setLevel] = useState(1);
   const [stars, setStars] = useState(0);
@@ -53,16 +69,6 @@ export default function Sum7DiceGame({ onBack }) {
     4: [[28, 28], [72, 28], [28, 72], [72, 72]],
     5: [[28, 28], [72, 28], [50, 50], [28, 72], [72, 72]],
     6: [[28, 22], [72, 22], [28, 50], [72, 50], [28, 78], [72, 78]]
-  };
-
-  const handleStartPlaying = () => {
-    setShowStoryIntro(false);
-    setUserGuess(null);
-    setRevealed(false);
-    setDieFlipped(false);
-    setFeedback(null);
-    setShowHint(false);
-    handleRollDie();
   };
 
   const handleRollDie = () => {
@@ -97,8 +103,9 @@ export default function Sum7DiceGame({ onBack }) {
       setStars(s => s + 2);
 
       const pairKey = `${Math.min(topFace, bottomFace)}+${Math.max(topFace, bottomFace)}`;
+      const updatedPairs = discoveredPairs.includes(pairKey) ? discoveredPairs : [...discoveredPairs, pairKey];
       if (!discoveredPairs.includes(pairKey)) {
-        setDiscoveredPairs(p => [...p, pairKey]);
+        setDiscoveredPairs(updatedPairs);
       }
 
       setFeedback({
@@ -106,11 +113,35 @@ export default function Sum7DiceGame({ onBack }) {
         text: `✨ You nailed it! Top is ${topFace}, so the bottom is ${bottomFace}! Together they make Magic 7!`
       });
 
-      if (discoveredPairs.length + 1 >= 3) {
+      if (updatedPairs.length >= 3) {
         setTimeout(() => {
-          playVictoryFanfare();
-          setShowCelebration(true);
-        }, 1200);
+          setStoryChapter({
+            isOpen: true,
+            title: "Master of the Magic 7!",
+            icon: "🏆",
+            badge: "Story Continues • Chapter 3",
+            story: `INCREDIBLE! You discovered all three secret pairs: 1 & 6, 2 & 5, and 3 & 4! Every single opposite side of a die makes 7! Now you hold the secret wisdom of the magic die!`,
+            buttonText: "Next ➔ Claim Your Trophy!",
+            onProceed: () => {
+              playVictoryFanfare();
+              setShowCelebration(true);
+            }
+          });
+        }, 800);
+      } else if (updatedPairs.length === 1) {
+        setTimeout(() => {
+          setStoryChapter({
+            isOpen: true,
+            title: "The Secret Unfolds!",
+            icon: "✨",
+            badge: "Story Continues • Chapter 2",
+            story: `Aha! You cracked your first secret pair: ${topFace} + ${bottomFace} = 7! But what happens if the die lands on a different number? Throw the die again to discover all the hidden pairs!`,
+            buttonText: "Next ➔ Throw Again!",
+            onProceed: () => {
+              handleRollDie();
+            }
+          });
+        }, 900);
       }
     } else {
       playGentleBoing();
@@ -129,12 +160,19 @@ export default function Sum7DiceGame({ onBack }) {
     setUserGuess(null);
     setFeedback(null);
     setShowHint(false);
-    if (level < 3) {
-      setLevel(l => l + 1);
-    } else {
-      setLevel(1);
-    }
-    handleRollDie();
+    const nextLvl = level < 3 ? level + 1 : 1;
+    setLevel(nextLvl);
+    setStoryChapter({
+      isOpen: true,
+      title: "Dice Detective Challenge!",
+      icon: "🎲",
+      badge: `Level ${nextLvl} • Chapter 1`,
+      story: `Ready for a faster round? Throw the die and deduce the bottom face even quicker!`,
+      buttonText: "Next ➔ Throw the Die!",
+      onProceed: () => {
+        handleRollDie();
+      }
+    });
   };
 
   const handleReplay = () => {
@@ -145,7 +183,17 @@ export default function Sum7DiceGame({ onBack }) {
     setUserGuess(null);
     setFeedback(null);
     setShowHint(false);
-    handleRollDie();
+    setStoryChapter({
+      isOpen: true,
+      title: "The Secret Superpower of Dice!",
+      icon: "🎲",
+      badge: `Level ${level} • Chapter 1`,
+      story: `Opposite faces always balance together to equal the magic number 7! Roll the die and test your skills again!`,
+      buttonText: "Next ➔ Throw the Die!",
+      onProceed: () => {
+        handleRollDie();
+      }
+    });
   };
 
   // Helper to render die SVG face
@@ -180,7 +228,7 @@ export default function Sum7DiceGame({ onBack }) {
       stars={stars}
       spec={spec}
       onBack={onBack}
-      onOpenStory={() => setShowStoryIntro(true)}
+      onOpenStory={() => setStoryChapter(prev => ({ ...prev, isOpen: true }))}
     >
       <div style={{ width: '100%', maxWidth: '850px' }}>
 
@@ -624,15 +672,15 @@ export default function Sum7DiceGame({ onBack }) {
 
       </div>
 
-            {/* Illustrated Game Story Screen before playing */}
+      {/* Episodic Story Modal with Mini Speaker & Next button */}
       <GameStoryModal
-        isOpen={showStoryIntro}
-        onClose={() => setShowStoryIntro(false)}
-        title="The Secret Superpower of Dice!"
-        icon="🎲"
-        badge="Spatial Mystery Story"
-        story="Standard dice carry a secret mystery that mathematicians have known for centuries: opposite faces on a die always balance to the magic number 7! If 1 is on top, 6 is on the bottom. If 2 is on top, 5 is on the bottom. If 3 is on top, 4 is on the bottom. Throw the die and guess the secret number hiding underneath!"
-        buttonText="Next ➔ Throw the Die!"
+        isOpen={storyChapter.isOpen}
+        onClose={handleCloseStoryChapter}
+        title={storyChapter.title}
+        icon={storyChapter.icon}
+        badge={storyChapter.badge}
+        story={storyChapter.story}
+        buttonText={storyChapter.buttonText}
       />
 
       {showCelebration && (

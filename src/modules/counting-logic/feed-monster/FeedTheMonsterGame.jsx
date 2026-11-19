@@ -59,8 +59,22 @@ export default function FeedTheMonsterGame({ onBack }) {
 
   const [targetNumber, setTargetNumber] = useState(() => generateTarget(1));
 
-  // Game Story Modal State (shown before playing, can be skipped or listened to)
-  const [showStory, setShowStory] = useState(true);
+  // Episodic Story Chapters: Story says something -> Activity happens -> Story continues!
+  const [storyChapter, setStoryChapter] = useState({
+    isOpen: true,
+    title: "Kumbakaran's Rumbly Tummy",
+    icon: "😴",
+    badge: "Chapter 1: The Waking Giant",
+    story: "Deep in the enchanted forest, Kumbakaran the gentle monster is waking up from his six-month nap. His tummy rumbles like thunder: GURRRLE! Look inside his belly to see how many cakes he is dreaming of today!",
+    buttonText: "Next ➔ Count Stomach Spaces!",
+    onProceed: () => {}
+  });
+
+  const handleCloseStoryChapter = () => {
+    const callback = storyChapter.onProceed;
+    setStoryChapter(prev => ({ ...prev, isOpen: false }));
+    if (callback) callback();
+  };
 
   // Game Stage: 'hunger' | 'bakery' | 'verdict'
   const [stage, setStage] = useState('hunger');
@@ -104,6 +118,18 @@ export default function FeedTheMonsterGame({ onBack }) {
       setTimeout(() => {
         playSuccessChime();
         setHungerConfirmed(true);
+        // Story continues!
+        setStoryChapter({
+          isOpen: true,
+          title: "Off to the Village Bakery!",
+          icon: "🧁",
+          badge: "Story Continues • Chapter 2",
+          story: `Kumbakaran's tummy needs exactly ${targetNumber} cakes! You jump on your bicycle and zoom down to the village bakery. The baker smiles: "Welcome! Pick any delicious cakes from my shelf to fill your basket!"`,
+          buttonText: "Next ➔ Go to Bakery!",
+          onProceed: () => {
+            handleGoToBakery();
+          }
+        });
       }, 500);
     }
   };
@@ -142,33 +168,66 @@ export default function FeedTheMonsterGame({ onBack }) {
     if (count < targetNumber) {
       playGentleBoing();
       setVerdict('too_few');
+      setStoryChapter({
+        isOpen: true,
+        title: "Kumbakaran is Still Hungry!",
+        icon: "😢",
+        badge: "Story Continues",
+        story: `GURRRLE! Kumbakaran's tummy still rumbles! He looks down and whispers: "My belly still has empty room! I only got ${count} cakes, but I need ${targetNumber}!" Let's go back to the bakery and fetch ${targetNumber - count} more!`,
+        buttonText: "Next ➔ Get More Cakes!",
+        onProceed: () => {
+          handleReturnToBakery();
+        }
+      });
     } else if (count > targetNumber) {
       playMonsterGroan();
       setVerdict('too_many');
+      setStoryChapter({
+        isOpen: true,
+        title: "Too Many Cakes!",
+        icon: "😵",
+        badge: "Story Continues",
+        story: `Uh oh! Kumbakaran holds his bulging belly: "Whoa, that is ${count} cakes! My tummy will pop if I eat all of those! I only need ${targetNumber}!" Let's return to the bakery and take out ${count - targetNumber} extra cakes!`,
+        buttonText: "Next ➔ Remove Extra Cakes!",
+        onProceed: () => {
+          handleReturnToBakery();
+        }
+      });
     } else {
       // Exact match!
       setVerdict('exact');
       playSuccessChime();
       setStars(s => s + 3);
 
-      // Trigger animated one-by-one eating into the stomach and count along: 1, 2, 3...
-      let currentEaten = 0;
-      const eatInterval = setInterval(() => {
-        currentEaten += 1;
-        setEatenCount(currentEaten);
-        playMunch();
-        speak(String(currentEaten), 0.85);
+      // Story continues to Chapter 3: The Monster Feast!
+      setStoryChapter({
+        isOpen: true,
+        title: "The Monster Feast Begins!",
+        icon: "😋",
+        badge: "Story Continues • Chapter 3",
+        story: `Kumbakaran's eyes light up with pure joy! "YUMMMM! Exactly ${targetNumber} fresh cakes, just what my tummy was dreaming of!" Watch him gobble down every single cake one by one!`,
+        buttonText: "Next ➔ Watch Kumbakaran Eat!",
+        onProceed: () => {
+          // Trigger animated one-by-one eating into the stomach and count along: 1, 2, 3...
+          let currentEaten = 0;
+          const eatInterval = setInterval(() => {
+            currentEaten += 1;
+            setEatenCount(currentEaten);
+            playMunch();
+            speak(String(currentEaten), 0.85);
 
-        if (currentEaten >= targetNumber) {
-          clearInterval(eatInterval);
-          setTimeout(() => {
-            playMonsterBurp();
-            setTimeout(() => {
-              setShowCelebration(true);
-            }, 900);
-          }, 600);
+            if (currentEaten >= targetNumber) {
+              clearInterval(eatInterval);
+              setTimeout(() => {
+                playMonsterBurp();
+                setTimeout(() => {
+                  setShowCelebration(true);
+                }, 900);
+              }, 600);
+            }
+          }, 550);
         }
-      }, 550);
+      });
     }
   };
 
@@ -193,6 +252,15 @@ export default function FeedTheMonsterGame({ onBack }) {
     setVerdict(null);
     setEatenCount(0);
     setStage('hunger');
+    setStoryChapter({
+      isOpen: true,
+      title: "Kumbakaran's Hunger Grows!",
+      icon: "😴",
+      badge: `Level ${nextLvl} • Chapter 1`,
+      story: `Kumbakaran took a tiny snooze and woke up ready for another meal! Let's peek into his tummy and count the empty spaces to see his new appetite!`,
+      buttonText: "Next ➔ Count Stomach Spaces!",
+      onProceed: () => {}
+    });
   };
 
   // Replay current level
@@ -206,6 +274,15 @@ export default function FeedTheMonsterGame({ onBack }) {
     setVerdict(null);
     setEatenCount(0);
     setStage('hunger');
+    setStoryChapter({
+      isOpen: true,
+      title: "Kumbakaran's Rumbly Tummy",
+      icon: "😴",
+      badge: `Level ${level} • Chapter 1`,
+      story: `Let's help Kumbakaran again! Count the empty plates inside his belly to see how many cakes he wants!`,
+      buttonText: "Next ➔ Count Stomach Spaces!",
+      onProceed: () => {}
+    });
   };
 
   // Monster visual expressions
@@ -255,7 +332,7 @@ export default function FeedTheMonsterGame({ onBack }) {
       stars={stars}
       spec={spec}
       onBack={onBack}
-      onOpenStory={() => setShowStory(true)}
+      onOpenStory={() => setStoryChapter(prev => ({ ...prev, isOpen: true }))}
     >
       <div style={{ width: '100%', maxWidth: '850px' }}>
 
@@ -955,15 +1032,15 @@ export default function FeedTheMonsterGame({ onBack }) {
 
       </div>
 
-      {/* Illustrated Game Story Screen before playing */}
+      {/* Episodic Story Modal with Mini Speaker & Next Button */}
       <GameStoryModal
-        isOpen={showStory}
-        onClose={() => setShowStory(false)}
-        title="The Tale of Hungry Kumbakaran"
-        icon="👹"
-        badge="Monster Math Story"
-        story="Deep in the enchanted forest lives Kumbakaran, the giant friendly monster who sleeps for months and wakes up with a rumbly, grumbly tummy! Look at the empty plates inside his stomach to count how many cakes he wants. Then visit the village bakery to collect the exact treats to fill his belly!"
-        buttonText="Next ➔ Feed Kumbakaran!"
+        isOpen={storyChapter.isOpen}
+        onClose={handleCloseStoryChapter}
+        title={storyChapter.title}
+        icon={storyChapter.icon}
+        badge={storyChapter.badge}
+        story={storyChapter.story}
+        buttonText={storyChapter.buttonText}
       />
 
       {showCelebration && (

@@ -22,13 +22,28 @@ function speak(text, rate = 0.82, pitch = 1.15) {
 }
 
 export default function VanishingButtonsGame({ onBack }) {
-  // Whether to show the story introduction first
-  const [showStoryIntro, setShowStoryIntro] = useState(true);
-
   const [level, setLevel] = useState(1);
   const [stars, setStars] = useState(0);
 
   const INITIAL_BUTTONS = level === 1 ? 4 : level === 2 ? 5 : 6;
+
+  // Episodic Story Chapters: Story says something -> Activity happens -> Story continues!
+  const [storyChapter, setStoryChapter] = useState({
+    isOpen: true,
+    title: "Gola Monkey's Favorite Shirt",
+    icon: "🐒",
+    badge: "Chapter 1: The Banana Feast Begins",
+    story: "Meet Gola the playful monkey! Gola is proudly wearing his favorite shirt with shiny buttons. Right beside him sits a basket filled with sweet golden bananas! What will happen to his shirt when Gola gobbles down delicious bananas?",
+    buttonText: "Next ➔ Feed Gola Bananas!",
+    onProceed: () => {}
+  });
+
+  const handleCloseStoryChapter = () => {
+    const callback = storyChapter.onProceed;
+    setStoryChapter(prev => ({ ...prev, isOpen: false }));
+    if (callback) callback();
+  };
+
   const [buttonsRemaining, setButtonsRemaining] = useState(INITIAL_BUTTONS);
   const [poppedButtons, setPoppedButtons] = useState([]); // Buttons that have popped onto the floor!
   const [bananasEaten, setBananasEaten] = useState(0);
@@ -41,20 +56,6 @@ export default function VanishingButtonsGame({ onBack }) {
   const [isFeeding, setIsFeeding] = useState(false);
   const [activeFlyingBanana, setActiveFlyingBanana] = useState(false);
   const [recentlyPoppedIdx, setRecentlyPoppedIdx] = useState(null);
-
-  // When story intro opens, give a friendly voice introduction
-  const handleStartPlaying = () => {
-    setShowStoryIntro(false);
-    setButtonsRemaining(INITIAL_BUTTONS);
-    setPoppedButtons([]);
-    setBananasEaten(0);
-    setBellyScale(1);
-    setHistory([]);
-    setFeedback(null);
-    setIsFeeding(false);
-    setActiveFlyingBanana(false);
-    setRecentlyPoppedIdx(null);
-  };
 
   const handleFeedBanana = () => {
     if (buttonsRemaining > 0 && !isFeeding) {
@@ -99,12 +100,40 @@ export default function VanishingButtonsGame({ onBack }) {
               type: 'info',
               text: `💥 POP! Button #${poppedButtonNumber} popped off the shirt onto the floor! ${prev} - 1 = ${nextRemaining} buttons left on shirt.`
             });
+
+            // Episodic Story Continues midway!
+            if (nextRemaining === Math.floor(INITIAL_BUTTONS / 2)) {
+              setTimeout(() => {
+                setStoryChapter({
+                  isOpen: true,
+                  title: "Gola's Swelling Tummy!",
+                  icon: "🤤",
+                  badge: "Story Continues • Chapter 2",
+                  story: `Gola rubs his round tummy happily: "Mmm, bananas are so tasty! But my shirt is getting tighter and tighter!" Look at the shiny buttons rolling across the grass! How many buttons are still holding on? Let's feed him more!`,
+                  buttonText: "Next ➔ Feed More Bananas!",
+                  onProceed: () => {}
+                });
+              }, 600);
+            }
           } else {
             playSuccessChime();
             setFeedback({
               type: 'info',
               text: `💥 POP! All buttons have popped off onto the floor! How many buttons are left on Gola's shirt now?`
             });
+
+            // Episodic Story Continues when 0 buttons left!
+            setTimeout(() => {
+              setStoryChapter({
+                isOpen: true,
+                title: "Where Did the Buttons Go?",
+                icon: "😲",
+                badge: "Story Continues • Chapter 3",
+                story: `GULP! Gola finishes the last banana! With a loud POP, the very last button shoots right off onto the floor! Look closely at Gola's open shirt: there are NO buttons left on it at all! What is the special math number that stands for NONE?`,
+                buttonText: "Next ➔ Pick the Number for None!",
+                onProceed: () => {}
+              });
+            }, 600);
           }
 
           setTimeout(() => {
@@ -148,15 +177,19 @@ export default function VanishingButtonsGame({ onBack }) {
     setBananasEaten(0);
     setBellyScale(1);
 
-    if (level < 3) {
-      const nextLvl = level + 1;
-      setLevel(nextLvl);
-      const nextCount = nextLvl === 2 ? 5 : 6;
-      setButtonsRemaining(nextCount);
-    } else {
-      setLevel(1);
-      setButtonsRemaining(4);
-    }
+    const nextLvl = level < 3 ? level + 1 : 1;
+    setLevel(nextLvl);
+    const nextCount = nextLvl === 1 ? 4 : nextLvl === 2 ? 5 : 6;
+    setButtonsRemaining(nextCount);
+    setStoryChapter({
+      isOpen: true,
+      title: "Gola's New Big Shirt!",
+      icon: "🐒",
+      badge: `Level ${nextLvl} • Chapter 1`,
+      story: `Gola found an even bigger shirt with ${nextCount} shiny buttons! And there is a fresh basket of bananas waiting! Let's see how many bananas it takes to pop them all!`,
+      buttonText: "Next ➔ Feed Bananas!",
+      onProceed: () => {}
+    });
   };
 
   const handleReplay = () => {
@@ -167,6 +200,15 @@ export default function VanishingButtonsGame({ onBack }) {
     setBananasEaten(0);
     setBellyScale(1);
     setButtonsRemaining(INITIAL_BUTTONS);
+    setStoryChapter({
+      isOpen: true,
+      title: "Gola Monkey's Favorite Shirt",
+      icon: "🐒",
+      badge: `Level ${level} • Chapter 1`,
+      story: `Gola buttoned up his shirt again! Ready to pop the buttons off one by one and discover zero?`,
+      buttonText: "Next ➔ Feed Bananas!",
+      onProceed: () => {}
+    });
   };
 
   const remainingBananasInBasket = buttonsRemaining;
@@ -180,7 +222,7 @@ export default function VanishingButtonsGame({ onBack }) {
       stars={stars}
       spec={spec}
       onBack={onBack}
-      onOpenStory={() => setShowStoryIntro(true)}
+      onOpenStory={() => setStoryChapter(prev => ({ ...prev, isOpen: true }))}
     >
       <div style={{ width: '100%', maxWidth: '860px' }}>
 
@@ -741,15 +783,15 @@ export default function VanishingButtonsGame({ onBack }) {
         }
       `}</style>
 
-            {/* Illustrated Game Story Screen before playing */}
+      {/* Episodic Story Modal with Mini Speaker & Next button */}
       <GameStoryModal
-        isOpen={showStoryIntro}
-        onClose={() => setShowStoryIntro(false)}
-        title="Gola Monkey's Favorite Shirt"
-        icon="🐒"
-        badge="Zero Discovery Story"
-        story="Meet Gola the monkey! Gola loves wearing his favorite white shirt with shiny red buttons. But Gola also loves sweet bananas! As you feed him bananas, his tummy swells until POP—buttons pop off the shirt onto the floor! Count down how many buttons remain on his shirt until zero are left!"
-        buttonText="Next ➔ Feed Gola Bananas!"
+        isOpen={storyChapter.isOpen}
+        onClose={handleCloseStoryChapter}
+        title={storyChapter.title}
+        icon={storyChapter.icon}
+        badge={storyChapter.badge}
+        story={storyChapter.story}
+        buttonText={storyChapter.buttonText}
       />
 
       {showCelebration && (

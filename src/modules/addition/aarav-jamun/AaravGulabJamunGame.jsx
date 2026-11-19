@@ -24,7 +24,23 @@ export default function AaravGulabJamunGame({ onBack }) {
   const [level, setLevel] = useState(1);
   const [round, setRound] = useState(0);
   const [stars, setStars] = useState(0);
-  const [showStory, setShowStory] = useState(true);
+
+  // Episodic Story Chapters: Story says something -> Activity happens -> Story continues!
+  const [storyChapter, setStoryChapter] = useState({
+    isOpen: true,
+    title: "Aarav's Sweet Birthday Surprise",
+    icon: "🍬",
+    badge: "Chapter 1: The Birthday Morning",
+    story: "Today is Aarav's birthday! He is sitting at the dining table with a big smile on his face. His Mother arrives first carrying a warm plate of fresh sweets!",
+    buttonText: "Next ➔ Feed Mother's Sweets!",
+    onProceed: () => {}
+  });
+
+  const handleCloseStoryChapter = () => {
+    const callback = storyChapter.onProceed;
+    setStoryChapter(prev => ({ ...prev, isOpen: false }));
+    if (callback) callback();
+  };
 
   const [stepIdx, setStepIdx] = useState(0);
   const [totalEaten, setTotalEaten] = useState(0);
@@ -116,12 +132,37 @@ export default function AaravGulabJamunGame({ onBack }) {
           setStepIdx(nextStep);
           setCurrentSpokenNumber(null);
 
-          if (nextStep === givers.length) {
+          if (nextStep < givers.length) {
+            const nextGiver = givers[nextStep];
+            setTimeout(() => {
+              setStoryChapter({
+                isOpen: true,
+                title: `${nextGiver.name} Arrives!`,
+                icon: nextStep === 1 ? '👨' : nextStep === 2 ? '👧' : '👦',
+                badge: `Story Continues • Chapter ${nextStep + 1}`,
+                story: `Aarav munched all of ${givers[stepIdx].name}'s treats! Just then, ${nextGiver.name} walks in with a fresh plate of ${nextGiver.amount} sweet${nextGiver.amount > 1 ? 's' : ''}! Let's feed Aarav!`,
+                buttonText: `Next ➔ Feed ${nextGiver.name}'s Sweets!`,
+                onProceed: () => {}
+              });
+            }, 600);
+          } else {
             playSuccessChime();
             setFeedbackMsg({
               type: 'info',
               text: "Aarav is super full! Now count up the grand total of all the sweets he ate!"
             });
+
+            setTimeout(() => {
+              setStoryChapter({
+                isOpen: true,
+                title: "Aarav's Sweet Grand Total!",
+                icon: "😋",
+                badge: "Story Continues • The Grand Total",
+                story: `Aarav rubs his happy round belly! "I am so full of delicious sweets!" he giggles. But wait—can you count up the GRAND TOTAL of all the sweets Aarav ate today?`,
+                buttonText: "Next ➔ Count Grand Total!",
+                onProceed: () => {}
+              });
+            }, 600);
           }
         }, 800);
       }
@@ -158,12 +199,18 @@ export default function AaravGulabJamunGame({ onBack }) {
     setCurrentSpokenNumber(null);
     setTotalInput('');
     setFeedbackMsg(null);
-    if (level < 3) {
-      setLevel(l => l + 1);
-      setRound(0);
-    } else {
-      setRound(r => r + 1);
-    }
+    const nextLvl = level < 3 ? level + 1 : 1;
+    setLevel(nextLvl);
+    setRound(r => r + 1);
+    setStoryChapter({
+      isOpen: true,
+      title: "Family Sweet Feast!",
+      icon: "🍬",
+      badge: `Level ${nextLvl} • Chapter 1`,
+      story: `Aarav's family is back with an even bigger batch of sweets! Help feed Aarav and count each treat!`,
+      buttonText: "Next ➔ Feed Mother's Sweets!",
+      onProceed: () => {}
+    });
   };
 
   const handleReplay = () => {
@@ -175,6 +222,15 @@ export default function AaravGulabJamunGame({ onBack }) {
     setIsFeeding(false);
     setTotalInput('');
     setFeedbackMsg(null);
+    setStoryChapter({
+      isOpen: true,
+      title: "Aarav's Sweet Birthday Surprise",
+      icon: "🍬",
+      badge: `Level ${level} • Chapter 1`,
+      story: `Ready to count all of Aarav's birthday sweets again? Mother is ready with the first plate!`,
+      buttonText: "Next ➔ Feed Mother's Sweets!",
+      onProceed: () => {}
+    });
   };
 
   return (
@@ -185,7 +241,7 @@ export default function AaravGulabJamunGame({ onBack }) {
       level={level}
       stars={stars}
       onBack={onBack}
-      onOpenStory={() => setShowStory(true)}
+      onOpenStory={() => setStoryChapter(prev => ({ ...prev, isOpen: true }))}
     >
       <div style={{ width: '100%', maxWidth: '850px' }}>
         {/* Level Selector */}
@@ -549,15 +605,15 @@ export default function AaravGulabJamunGame({ onBack }) {
         </div>
       </div>
 
-      {/* Illustrated Game Story Screen before playing */}
+      {/* Episodic Story Modal with Mini Speaker & Next button */}
       <GameStoryModal
-        isOpen={showStory}
-        onClose={() => setShowStory(false)}
-        title="Aarav's Sweet Birthday Surprise"
-        icon="🍬"
-        badge="Addition Story"
-        story="Today is Aarav's birthday! His loving mother, father, sister, and best friend each bring warm, syrupy gulab jamuns to feed him one by one. Help Aarav count every sweet treat as he munches them down, and find the grand total!"
-        buttonText="Next ➔ Feed Aarav!"
+        isOpen={storyChapter.isOpen}
+        onClose={handleCloseStoryChapter}
+        title={storyChapter.title}
+        icon={storyChapter.icon}
+        badge={storyChapter.badge}
+        story={storyChapter.story}
+        buttonText={storyChapter.buttonText}
       />
 
       {showCelebration && (

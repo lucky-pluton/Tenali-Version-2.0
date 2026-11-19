@@ -29,8 +29,22 @@ function speak(text, rate = 0.82, pitch = 1.15) {
 }
 
 export default function LavaHopGame({ onBack }) {
-  // Whether to show the childhood imagination story first
-  const [showStoryIntro, setShowStoryIntro] = useState(true);
+  // Episodic Story Chapters: Story says something -> Activity happens -> Story continues!
+  const [storyChapter, setStoryChapter] = useState({
+    isOpen: true,
+    title: "The Secret Street Lava Game!",
+    icon: "🌋",
+    badge: "Chapter 1: The Volcano Footpath",
+    story: "Have you ever walked down a street or footpath? Every child knows the legendary game! You imagine that the red textured pavement bricks have turned into boiling VOLCANO LAVA! To keep your shoes from burning, you can only step on the cool white stones! Ready to hop across?",
+    buttonText: "Next ➔ Hop on Stone 1!",
+    onProceed: () => {}
+  });
+
+  const handleCloseStoryChapter = () => {
+    const callback = storyChapter.onProceed;
+    setStoryChapter(prev => ({ ...prev, isOpen: false }));
+    if (callback) callback();
+  };
 
   const [level, setLevel] = useState(1);
   const [stars, setStars] = useState(0);
@@ -149,6 +163,21 @@ export default function LavaHopGame({ onBack }) {
       // Speak ONLY the number aloud: "1", "2", "3"... so child remembers!
       speak(String(currentStepNumber), 0.85);
 
+      // Check if halfway through the road (Episodic story continues!)
+      if (currentStepNumber === Math.floor(currentRoad.targetCount / 2) && currentRoad.targetCount >= 5) {
+        setTimeout(() => {
+          setStoryChapter({
+            isOpen: true,
+            title: "Halfway Across the Volcano!",
+            icon: "🔥",
+            badge: "Story Continues • Chapter 2",
+            story: `Whew! You made it halfway across! Look down: the red tiles are smoking and sizzling, but your feet are completely safe on stone number ${currentStepNumber}! The cool green sidewalk is right ahead! Catch your breath and let's leap across the rest!`,
+            buttonText: "Next ➔ Keep Hopping!",
+            onProceed: () => {}
+          });
+        }, 500);
+      }
+
       // Check if finished
       if (currentStepNumber === currentRoad.targetCount) {
         setTimeout(() => {
@@ -159,10 +188,20 @@ export default function LavaHopGame({ onBack }) {
             text: `🎉 Hooray! You reached the safe sidewalk! All ${currentRoad.targetCount} paver stones counted safely!`
           });
           setStars(s => s + 3);
-          setTimeout(() => {
-            playVictoryFanfare();
-            setShowCelebration(true);
-          }, 1000);
+
+          // Episodic finale
+          setStoryChapter({
+            isOpen: true,
+            title: "Safe on the Sidewalk!",
+            icon: "🏆",
+            badge: "Story Continues • Chapter 3",
+            story: `HOORAY! Both feet land safely on the cool green sidewalk! You leaped across all ${currentRoad.targetCount} white stones without scorching your shoes once, and counted every single step! You are a master street explorer!`,
+            buttonText: "Next ➔ See Your Trophy!",
+            onProceed: () => {
+              playVictoryFanfare();
+              setShowCelebration(true);
+            }
+          });
         }, 500);
       } else {
         setFeedback({
@@ -191,11 +230,17 @@ export default function LavaHopGame({ onBack }) {
     setRevealedNumbers({});
     setReachedFinish(false);
     setFeedback(null);
-    if (level < 3) {
-      setLevel(l => l + 1);
-    } else {
-      setLevel(1);
-    }
+    const nextLvl = level < 3 ? level + 1 : 1;
+    setLevel(nextLvl);
+    setStoryChapter({
+      isOpen: true,
+      title: "The Lava Challenge Expands!",
+      icon: "🌋",
+      badge: `Level ${nextLvl} • Chapter 1`,
+      story: `You reached a wider avenue! There are ${ROAD_LEVELS[nextLvl].targetCount} white stones to cross this street. Watch out for the red volcano tiles and keep counting!`,
+      buttonText: "Next ➔ Start Hopping!",
+      onProceed: () => {}
+    });
   };
 
   const handleReplay = () => {
@@ -204,6 +249,15 @@ export default function LavaHopGame({ onBack }) {
     setRevealedNumbers({});
     setReachedFinish(false);
     setFeedback(null);
+    setStoryChapter({
+      isOpen: true,
+      title: "The Secret Street Lava Game!",
+      icon: "🌋",
+      badge: `Level ${level} • Chapter 1`,
+      story: "Can you cross the street even faster this time? Remember: hop only on the white paver stones to stay safe!",
+      buttonText: "Next ➔ Start Hopping!",
+      onProceed: () => {}
+    });
   };
 
   // Sprite position helpers for the 8 paver tiles in tiles.png
@@ -232,7 +286,7 @@ export default function LavaHopGame({ onBack }) {
       stars={stars}
       spec={spec}
       onBack={onBack}
-      onOpenStory={() => setShowStoryIntro(true)}
+      onOpenStory={() => setStoryChapter(prev => ({ ...prev, isOpen: true }))}
     >
       <div style={{ width: '100%', maxWidth: '920px' }}>
 
@@ -673,15 +727,15 @@ export default function LavaHopGame({ onBack }) {
 
       </div>
 
-            {/* Illustrated Game Story Screen before playing */}
+      {/* Episodic Story Modal with Mini Speaker & Next button */}
       <GameStoryModal
-        isOpen={showStoryIntro}
-        onClose={() => setShowStoryIntro(false)}
-        title="The Secret Street Lava Game!"
-        icon="🌋"
-        badge="Footpath Story"
-        story="Remember walking on tiled footpaths in your childhood? Every child knows the secret game: the red terracotta paver blocks have turned into boiling volcano lava! Only hop on the white paver stones to stay safe. Each time you hop, a secret number appears!"
-        buttonText="Next ➔ Let's Hop!"
+        isOpen={storyChapter.isOpen}
+        onClose={handleCloseStoryChapter}
+        title={storyChapter.title}
+        icon={storyChapter.icon}
+        badge={storyChapter.badge}
+        story={storyChapter.story}
+        buttonText={storyChapter.buttonText}
       />
 
       {showCelebration && (
