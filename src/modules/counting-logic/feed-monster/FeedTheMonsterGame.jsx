@@ -396,7 +396,7 @@ export default function FeedTheMonsterGame({ onBack }) {
                 marginBottom: '14px',
                 letterSpacing: '0.02em'
               }}>
-                Barnaby the Monster
+                Kumbakaran the Monster
               </div>
 
               {/* BIG ROUND MONSTER TUMMY / STOMACH CHAMBER */}
@@ -424,7 +424,7 @@ export default function FeedTheMonsterGame({ onBack }) {
                   marginBottom: '14px'
                 }}>
                   <span>🫧</span>
-                  <span>Inside Barnaby's Tummy</span>
+                  <span>Inside Kumbakaran's Tummy</span>
                   <span>🫧</span>
                 </div>
 
@@ -812,7 +812,7 @@ export default function FeedTheMonsterGame({ onBack }) {
                 color: '#fef08a',
                 marginBottom: '14px'
               }}>
-                Barnaby the Monster
+                Kumbakaran the Monster
               </div>
 
               {/* Stomach filling animation on exact match */}
