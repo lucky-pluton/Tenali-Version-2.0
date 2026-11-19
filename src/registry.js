@@ -6,6 +6,7 @@
 import aaravJamunModule from './modules/addition/aarav-jamun';
 import riyaBraceletModule from './modules/addition/riya-bracelet';
 import sunChariotModule from './modules/addition/sun-chariot';
+import marigoldMagicModule from './modules/addition/marigold-magic';
 
 import vanishingButtonsModule from './modules/subtraction/vanishing-buttons';
 import schoolBusModule from './modules/subtraction/school-bus';
@@ -50,6 +51,15 @@ export const MODULE_REGISTRY = [
     domainId: 'addition',
     levelsCount: 3,
     tags: ['wheel', 'pairs', 'fact families']
+  },
+  {
+    id: 'marigold-magic',
+    name: "Marigold Magic – Decorate the School!",
+    component: marigoldMagicModule.Component,
+    icon: '🌼',
+    domainId: 'addition',
+    levelsCount: 4,
+    tags: ['addition', 'counting', 'marigold', 'flowers', 'independence day', 'garland', 'laddi', 'school']
   },
   {
     id: 'vanishing-buttons',

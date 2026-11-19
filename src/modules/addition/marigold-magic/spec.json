@@ -1,0 +1,54 @@
+{
+  "$schema": "https://tenali.fun/schemas/openspec-v1.json",
+  "specVersion": "1.0.0",
+  "id": "addition.marigold-magic",
+  "name": "Marigold Magic – Decorate the School!",
+  "domain": "Addition & One-to-One Counting",
+  "competencyCode": "FLN-NUM-ADD-02",
+  "competency": "Understanding addition as joining two discrete groups (Count -> Add More -> Count Again)",
+  "targetAge": "Ages 5-8 (Grades 1-2)",
+  "ncertStandard": "Grade 1 Mathematics: Joyful Mathematics Chapter 4 (Addition - How Many Altogether?)",
+  "overview": "An Indian Independence Day school decoration adventure where children count traditional orange marigold garland flowers, attach new sunny yellow flowers, and discover the combined total through one-to-one counting and addition.",
+  "learningOutcomes": [
+    "Count individual discrete objects with accurate 1-to-1 correspondence",
+    "Understand addition conceptually as combining an existing set with a newly added set",
+    "Practice counting-on from an existing quantity to reach the sum",
+    "Connect visual manipulatives (orange and yellow marigold flowers) with addition equations (A + B = Total)",
+    "Recognize mathematical terminology: 'How many in this laddi?', 'Add more', and 'How many altogether?'"
+  ],
+  "levels": [
+    {
+      "level": 1,
+      "name": "Level 1: Little Decorator",
+      "description": "Count 1 to 5 original orange flowers, add 1 or 2 yellow flowers (totals up to 7)",
+      "range": "1 - 7"
+    },
+    {
+      "level": 2,
+      "name": "Level 2: Flower Helper",
+      "description": "Count 3 to 7 orange flowers, add 1 to 4 yellow flowers with addition equations (totals up to 10)",
+      "range": "1 - 10"
+    },
+    {
+      "level": 3,
+      "name": "Level 3: Decoration Champion",
+      "description": "Original flowers 5 to 10, add 2 to 5 yellow flowers (totals up to 15)",
+      "range": "5 - 15"
+    },
+    {
+      "level": 4,
+      "name": "Level 4: Independence Day Expert",
+      "description": "Challenging combinations up to 20 flowers for the grand celebration garland",
+      "range": "1 - 20"
+    }
+  ],
+  "stateMachine": [
+    "story_chapter_1",
+    "count_initial_garland",
+    "story_chapter_2",
+    "add_more_flowers",
+    "count_total_equation",
+    "story_chapter_3",
+    "decorate_and_celebrate"
+  ]
+}
