@@ -1,0 +1,46 @@
+{
+  "$schema": "https://tenali.fun/schemas/openspec-v1.json",
+  "specVersion": "1.0.0",
+  "id": "addition.riya-bracelet",
+  "name": "Make My Bracelet — Number Bonds to 10",
+  "domain": "Number Bonds & Complements of 10",
+  "competencyCode": "FLN-NUM-BONDS-10",
+  "competency": "Mastering number pairs that make 10, finding the missing addend, and spatial grouping",
+  "targetAge": "Ages 5-8 (Grades 1-2)",
+  "ncertStandard": "Grade 1 Mathematics: Joyful Mathematics Chapter 5 (Numbers to 10 & 20)",
+  "overview": "Riya's 10-bead bracelet broke and beads scattered. Children help her buy or find the exact missing number of beads to complete the bracelet ring without leftovers (N + ? = 10).",
+  "learningOutcomes": [
+    "Identify pairs of numbers that add up to 10 (3+7, 4+6, 5+5, etc.)",
+    "Find the unknown addend in an addition equation (a + ? = 10)",
+    "Develop tactile spatial understanding using circular bead string manipulatives",
+    "Extend number bonds to 20 for advanced learners"
+  ],
+  "levels": [
+    {
+      "level": 1,
+      "name": "The Bead Shop",
+      "description": "Select the correct bead jar from the shop to complete 10 beads",
+      "range": "Make 10"
+    },
+    {
+      "level": 2,
+      "name": "Room Hunt Adventure",
+      "description": "Find hidden beads around the house (table, plant, toy box) and calculate missing beads",
+      "range": "Make 10"
+    },
+    {
+      "level": 3,
+      "name": "Master 20-Bead Necklace",
+      "description": "Construct large 20-bead necklaces with two-digit complements",
+      "range": "Make 20"
+    }
+  ],
+  "stateMachine": [
+    "scenario_prompt",
+    "bead_visual_display",
+    "missing_addend_input",
+    "bracelet_string_animation",
+    "feedback",
+    "celebration"
+  ]
+}

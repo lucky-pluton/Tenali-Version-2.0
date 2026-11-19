@@ -1,0 +1,45 @@
+{
+  "$schema": "https://tenali.fun/schemas/openspec-v1.json",
+  "specVersion": "1.0.0",
+  "id": "subtraction.vanishing-buttons",
+  "name": "Vanishing Buttons — Gola Monkey & Zero",
+  "domain": "Subtraction & Concept of Zero",
+  "competencyCode": "FLN-NUM-SUB-ZERO",
+  "competency": "Understanding subtraction as removal/taking away, sequential decrementing, and discovering Zero (0) as 'none'",
+  "targetAge": "Ages 5-8 (Grades 1-2)",
+  "ncertStandard": "Grade 1 Mathematics: Joyful Mathematics Chapter 3 (Vanishing Buttons & Concept of Zero)",
+  "overview": "Gola monkey eats bananas in the garden. As his belly expands, buttons pop off his shirt one by one. Children observe the stepwise decrement (4-1=3, 3-1=2, 2-1=1) and identify 0 as the number representing 'no buttons left'.",
+  "learningOutcomes": [
+    "Conceptualize subtraction as taking away objects from a set",
+    "Discover zero (0) as a legitimate cardinal number representing the empty set ('none')",
+    "Write and interpret subtraction statements (a - 1 = b, a - a = 0)"
+  ],
+  "levels": [
+    {
+      "level": 1,
+      "name": "Story of Gola Monkey",
+      "description": "Classic NCERT 4-button shirt with 1-by-1 button popping",
+      "range": "4 to 0"
+    },
+    {
+      "level": 2,
+      "name": "Banana Garden Party",
+      "description": "6-button shirt with cumulative history tracking",
+      "range": "6 to 0"
+    },
+    {
+      "level": 3,
+      "name": "Subtraction Detective",
+      "description": "Deduce how many buttons popped off when given before and after counts",
+      "range": "5 to 0"
+    }
+  ],
+  "stateMachine": [
+    "shirt_display",
+    "feed_banana_action",
+    "button_pop_animation",
+    "decrement_history_update",
+    "zero_prompt",
+    "celebration"
+  ]
+}

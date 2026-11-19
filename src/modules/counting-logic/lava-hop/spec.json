@@ -1,0 +1,46 @@
+{
+  "$schema": "https://tenali.fun/schemas/openspec-v1.json",
+  "specVersion": "1.0.0",
+  "id": "counting-logic.lava-hop",
+  "name": "Lava Hop Adventure — Stepping Stones",
+  "domain": "Counting, Skip Counting & Number Lines",
+  "competencyCode": "FLN-NUM-COUNT-PATH",
+  "competency": "One-to-one correspondence, cardinality, skip counting by 2s and 5s, path traversal on linear tiles",
+  "targetAge": "Ages 5-8 (Grades 1-2)",
+  "ncertStandard": "Grade 1 & 2 Mathematics: Joyful Mathematics Chapter 2 (Counting & Hopscotch Paths)",
+  "overview": "A physical hopscotch game digitized into an interactive volcano adventure. White stones are safe, while red stones contain bubbling lava. Children count aloud as they jump on safe stones, culminating in answering total cardinality.",
+  "learningOutcomes": [
+    "Develop 1-to-1 correspondence between taps and verbal/mental counting",
+    "Identify safe vs danger patterns (e.g. even numbers as safe stepping stones)",
+    "Master skip counting sequences (by 2s: 2, 4, 6... and by 5s: 5, 10, 15...)",
+    "Strengthen set cardinality by reporting total safe stones hopped"
+  ],
+  "levels": [
+    {
+      "level": 1,
+      "name": "Volcano Trail",
+      "description": "Counting safe blocks in a sequence of 10 mixed stones",
+      "range": "1 - 10"
+    },
+    {
+      "level": 2,
+      "name": "Skip Hop by 2s",
+      "description": "Safe stepping stones placed on even numbers (2, 4, 6, 8, 10, 12)",
+      "range": "Multiples of 2"
+    },
+    {
+      "level": 3,
+      "name": "Volcanic Island Master",
+      "description": "Skip hop across multiples of 5 (5, 10, 15, 20, 25)",
+      "range": "Multiples of 5"
+    }
+  ],
+  "stateMachine": [
+    "path_initialization",
+    "stone_hop_event",
+    "lava_warning_check",
+    "reach_finish_flag",
+    "cardinality_question",
+    "celebration"
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "$schema": "https://tenali.fun/schemas/openspec-v1.json",
+  "specVersion": "1.0.0",
+  "id": "counting-logic.sum7-dice",
+  "name": "Sum 7 Dice Game — The Magic Pair",
+  "domain": "Spatial Reasoning & Complementary Pairs of 7",
+  "competencyCode": "FLN-NUM-SPATIAL-DICE7",
+  "competency": "Understanding 3D polyhedra face opposition, spatial inversion, and the algebraic invariant Top + Bottom = 7 on standard dice",
+  "targetAge": "Ages 5-9 (Grades 1-3)",
+  "ncertStandard": "Grade 1 & 2 Mathematics: Joyful Mathematics Chapter 8 (3D Shapes, Dice and Addition)",
+  "overview": "A physics-based 3D dice rolling game where children discover the universal geometric rule: opposite faces of a standard six-sided die always sum to 7. Children predict hidden bottom faces and uncover all 3 magical pairs: (1,6), (2,5), (3,4).",
+  "learningOutcomes": [
+    "Identify the mathematical invariant of a standard die (opposite faces sum to 7)",
+    "Calculate complements of 7 (7 - top = bottom)",
+    "Develop 3D spatial rotation and perspective mental visualization",
+    "Categorize and complete all 3 fundamental dice pairs"
+  ],
+  "levels": [
+    {
+      "level": 1,
+      "name": "The Magic 7 Discovery",
+      "description": "Interactive 3D die roll with guided bottom face discovery",
+      "range": "Pairs of 7"
+    },
+    {
+      "level": 2,
+      "name": "Fast Opposite Face Solver",
+      "description": "Timed prediction challenge to reinforce mental recall of 7-complements",
+      "range": "Pairs of 7"
+    },
+    {
+      "level": 3,
+      "name": "Mystery Hidden Face Detective",
+      "description": "Multi-dice setups and concealed face puzzles",
+      "range": "Pairs of 7"
+    }
+  ],
+  "stateMachine": [
+    "die_idle",
+    "roll_animation",
+    "top_face_reveal",
+    "bottom_face_guess",
+    "verification_animation",
+    "pair_discovery_tracker",
+    "celebration"
+  ]
+}

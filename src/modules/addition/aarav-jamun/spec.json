@@ -1,0 +1,44 @@
+{
+  "$schema": "https://tenali.fun/schemas/openspec-v1.json",
+  "specVersion": "1.0.0",
+  "id": "addition.aarav-jamun",
+  "name": "Aarav's Gulab Jamun Adventure",
+  "domain": "Addition & Multi-Addend Sums",
+  "competencyCode": "FLN-NUM-ADD-01",
+  "competency": "Understanding addition as cumulative grouping and multi-addend sequential sums",
+  "targetAge": "Ages 5-8 (Grades 1-2)",
+  "ncertStandard": "Grade 1 Mathematics: Joyful Mathematics Chapter 4 (Addition)",
+  "overview": "An interactive story-based addition activity where Aarav is fed sweets by his family on his birthday. Children track incremental additions step-by-step and calculate multi-addend totals.",
+  "learningOutcomes": [
+    "Recognize addition as combining consecutive quantities",
+    "Construct and evaluate multi-addend equations (a + b + c + d = Total)",
+    "Connect concrete visual manipulatives (sweets) with abstract numerical symbols"
+  ],
+  "levels": [
+    {
+      "level": 1,
+      "name": "Aarav's Birthday",
+      "description": "Single-step additions with 1 sweet per family member (sums up to 5)",
+      "range": "1 - 5"
+    },
+    {
+      "level": 2,
+      "name": "Family Feast",
+      "description": "Variable sweet portions per person (sums up to 10)",
+      "range": "1 - 10"
+    },
+    {
+      "level": 3,
+      "name": "Mega Sweet Challenge",
+      "description": "Larger multi-addend quantities and missing addend challenges (sums up to 20)",
+      "range": "1 - 20"
+    }
+  ],
+  "stateMachine": [
+    "story_intro",
+    "feeding_turn",
+    "equation_building",
+    "verification",
+    "celebration"
+  ]
+}

@@ -1,0 +1,197 @@
+/**
+ * TENALI VERSION 2.0 DESIGN SYSTEM & GLOBAL STYLES
+ * Matches official tenali.fun theme, palette, and typography
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Fredoka:wght@400;500;600;700&family=Lexend:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap');
+
+:root {
+  /* FONT FAMILIES */
+  --font-display: 'Source Serif 4', Georgia, serif;
+  --font-body: 'DM Sans', system-ui, -apple-system, sans-serif;
+  --font-kids: 'Fredoka', cursive, sans-serif;
+
+  /* DARK THEME (DEFAULT TENALI PALETTE) */
+  --clr-bg: #1a1614;
+  --clr-card: #2c2622;
+  --clr-surface: #362f2a;
+  --clr-input: #3e3631;
+
+  --clr-text: #ede8e3;
+  --clr-text-soft: #a89e94;
+  --clr-border: rgba(255, 245, 230, 0.16);
+  --clr-border-highlight: rgba(232, 134, 74, 0.5);
+
+  --clr-accent: #e8864a;
+  --clr-accent-hover: #f3975e;
+  --clr-accent-soft: rgba(232, 134, 74, 0.22);
+
+  --clr-correct: #5cb87a;
+  --clr-correct-bg: rgba(92, 184, 122, 0.16);
+  --clr-wrong: #e05a4a;
+  --clr-wrong-bg: rgba(224, 90, 74, 0.16);
+
+  --clr-badge: #4a4340;
+  --clr-placeholder: #6b6058;
+
+  --clr-hover: rgba(255, 245, 230, 0.05);
+  --clr-hover-strong: rgba(255, 245, 230, 0.10);
+
+  --radius: 16px;
+  --radius-sm: 10px;
+  --radius-pill: 9999px;
+
+  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.35), 0 1px 4px rgba(0, 0, 0, 0.25);
+  --shadow-btn: 0 2px 10px rgba(0, 0, 0, 0.22);
+  --shadow-glow: 0 0 20px rgba(232, 134, 74, 0.35);
+
+  --transition: 180ms ease;
+}
+
+[data-theme="light"] {
+  --clr-bg: #f5f0eb;
+  --clr-card: #fffdf9;
+  --clr-surface: #f0ebe5;
+  --clr-input: #ffffff;
+
+  --clr-text: #2c2420;
+  --clr-text-soft: #6b5e54;
+  --clr-border: rgba(60, 45, 30, 0.18);
+  --clr-border-highlight: rgba(224, 122, 58, 0.5);
+
+  --clr-accent: #e07a3a;
+  --clr-accent-hover: #c96729;
+  --clr-accent-soft: rgba(224, 122, 58, 0.18);
+
+  --clr-correct: #3a8a5c;
+  --clr-correct-bg: #eaf5ef;
+  --clr-wrong: #c24b3a;
+  --clr-wrong-bg: #fdf0ee;
+
+  --clr-badge: #e2dbd3;
+  --clr-placeholder: #b5a99a;
+
+  --clr-hover: rgba(60, 40, 20, 0.04);
+  --clr-hover-strong: rgba(60, 40, 20, 0.08);
+
+  --shadow-card: 0 4px 24px rgba(60, 40, 20, 0.08), 0 1px 3px rgba(60, 40, 20, 0.06);
+  --shadow-btn: 0 2px 8px rgba(60, 40, 20, 0.12);
+  --shadow-glow: 0 0 20px rgba(224, 122, 58, 0.25);
+}
+
+/* Accessibility: Dyslexia-friendly font support */
+html[data-a11y-dyslexia="true"],
+html[data-a11y-dyslexia="true"] * {
+  font-family: 'Lexend', 'OpenDyslexic', sans-serif !important;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100vh;
+  background-color: var(--clr-bg);
+  color: var(--clr-text);
+  font-family: var(--font-body);
+  transition: background-color var(--transition), color var(--transition);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Base button */
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-family: inherit;
+  color: inherit;
+  transition: transform var(--transition), background-color var(--transition), opacity var(--transition);
+}
+
+button:active {
+  transform: scale(0.97);
+}
+
+/* Common Tenali utility pills and tags */
+.tenali-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: var(--radius-pill);
+  font-size: 0.85rem;
+  font-weight: 600;
+  background: var(--clr-surface);
+  border: 1px solid var(--clr-border);
+  color: var(--clr-text);
+}
+
+.tenali-btn-primary {
+  background: var(--clr-accent);
+  color: #ffffff;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  padding: 10px 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: var(--shadow-btn);
+}
+
+.tenali-btn-primary:hover {
+  background: var(--clr-accent-hover);
+  box-shadow: var(--shadow-glow);
+}
+
+.tenali-btn-secondary {
+  background: var(--clr-surface);
+  color: var(--clr-text);
+  border: 1px solid var(--clr-border);
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  padding: 10px 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.tenali-btn-secondary:hover {
+  background: var(--clr-hover-strong);
+  border-color: var(--clr-accent);
+}
+
+/* Animations */
+@keyframes popIn {
+  0% { transform: scale(0.85); opacity: 0; }
+  70% { transform: scale(1.05); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes bounceSlow {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 10px var(--clr-accent-soft); }
+  50% { box-shadow: 0 0 25px var(--clr-accent); }
+}
+
+.anim-pop {
+  animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.anim-bounce {
+  animation: bounceSlow 2s ease-in-out infinite;
+}
