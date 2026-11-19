@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import QuizLayout from '../../../components/QuizLayout';
 import CelebrationModal from '../../../components/CelebrationModal';
+import GameStoryModal from '../../../components/GameStoryModal';
 import { playSuccessChime, playGentleBoing } from '../../../core/soundEffects';
 import spec from './spec.json';
 import { Volume2, ChevronRight, RotateCcw } from 'lucide-react';
@@ -26,6 +27,7 @@ const KID_AVATARS = ['🧒', '👧', '👦', '🧑', '👧🏽', '👦🏾', '�
 export default function SchoolBusCountdownGame({ onBack }) {
   const [level, setLevel] = useState(1);
   const [stars, setStars] = useState(0);
+  const [showStory, setShowStory] = useState(true);
 
   // Level 1 follows the exact NCERT textbook poem from Grade 1 (Screenshot 2026-11-19 131202.png)
   const LEVEL_1_STOPS = [
@@ -237,6 +239,7 @@ export default function SchoolBusCountdownGame({ onBack }) {
       stars={stars}
       spec={spec}
       onBack={onBack}
+      onOpenStory={() => setShowStory(true)}
     >
       <div style={{ width: '100%', maxWidth: '820px' }}>
         {/* Top Control Bar: Stop Info & Level Switcher */}
@@ -690,6 +693,17 @@ export default function SchoolBusCountdownGame({ onBack }) {
           )}
         </div>
       </div>
+
+      {/* Illustrated Game Story Screen before playing */}
+      <GameStoryModal
+        isOpen={showStory}
+        onClose={() => setShowStory(false)}
+        title="The Joyful School Bus Ride"
+        icon="🚌"
+        badge="Joyful Math Rhyme"
+        story="Honk honk! The cheerful yellow school bus is rolling down the road with five happy children singing together. At each stop, one child waves goodbye and steps off the bus into their neighborhood. Count down backwards as the bus empties until none are left: zero!"
+        buttonText="Next ➔ Board the Bus!"
+      />
 
       {/* Celebration Modal: Exactly matching the module name "Five Little Children Complete!" */}
       {showCelebration && (

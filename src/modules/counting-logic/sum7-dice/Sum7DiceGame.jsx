@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import QuizLayout from '../../../components/QuizLayout';
 import CelebrationModal from '../../../components/CelebrationModal';
+import GameStoryModal from '../../../components/GameStoryModal';
 import {
   playDiceRoll,
   playSuccessChime,
@@ -179,174 +180,14 @@ export default function Sum7DiceGame({ onBack }) {
       stars={stars}
       spec={spec}
       onBack={onBack}
+      onOpenStory={() => setShowStoryIntro(true)}
     >
       <div style={{ width: '100%', maxWidth: '850px' }}>
 
         {/* ============================================================== */}
-        {/* STORY INTRODUCTION: The Secret Superpower of Dice              */}
+        {/* THE MAGIC DICE GAME ARENA                                      */}
         {/* ============================================================== */}
-        {showStoryIntro ? (
-          <div className="anim-pop" style={{
-            background: 'var(--clr-card)',
-            border: '2px solid var(--clr-border)',
-            borderRadius: 'var(--radius)',
-            padding: '28px 24px',
-            boxShadow: 'var(--shadow-card)',
-            textAlign: 'center'
-          }}>
-            {/* Title Badge */}
-            <div style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '12px',
-              background: 'var(--clr-surface)',
-              border: '1px solid var(--clr-border)',
-              borderRadius: 'var(--radius-pill)',
-              padding: '8px 22px',
-              marginBottom: '20px'
-            }}>
-              <span style={{ fontSize: '2.2rem' }}>🎲</span>
-              <h2 style={{
-                fontFamily: 'var(--font-display)',
-                fontSize: '1.4rem',
-                color: 'var(--clr-text)',
-                margin: 0
-              }}>
-                The Secret Superpower of Dice!
-              </h2>
-            </div>
-
-            {/* Visual Story Cards */}
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))',
-              gap: '16px',
-              textAlign: 'left',
-              marginBottom: '24px'
-            }}>
-              <div style={{
-                background: 'var(--clr-surface)',
-                border: '1px solid var(--clr-border)',
-                borderRadius: '16px',
-                padding: '16px',
-                boxShadow: 'var(--shadow-card)'
-              }}>
-                <div style={{ fontSize: '2rem', marginBottom: '8px' }}>🎲 ✨</div>
-                <h3 style={{ fontSize: '1.05rem', margin: '0 0 6px 0', color: 'var(--clr-text)' }}>
-                  1. The Magic Rule of 7
-                </h3>
-                <p style={{ fontSize: '0.9rem', color: 'var(--clr-text-soft)', margin: 0, lineHeight: 1.5 }}>
-                  Did you know that on every real die in the world, the <strong>TOP</strong> face and the <strong>BOTTOM</strong> face always balance to <strong>7</strong>?
-                </p>
-              </div>
-
-              <div style={{
-                background: 'var(--clr-surface)',
-                border: '1px solid var(--clr-border)',
-                borderRadius: '16px',
-                padding: '16px',
-                boxShadow: 'var(--shadow-card)'
-              }}>
-                <div style={{ fontSize: '2rem', marginBottom: '8px' }}>🔄 ↕️</div>
-                <h3 style={{ fontSize: '1.05rem', margin: '0 0 6px 0', color: 'var(--clr-text)' }}>
-                  2. Opposite Best Friends
-                </h3>
-                <p style={{ fontSize: '0.9rem', color: 'var(--clr-text-soft)', margin: 0, lineHeight: 1.5 }}>
-                  Opposite sides are best friends:
-                  <br />• <strong>1</strong> on top $\to$ <strong>6</strong> on bottom!
-                  <br />• <strong>2</strong> on top $\to$ <strong>5</strong> on bottom!
-                  <br />• <strong>3</strong> on top $\to$ <strong>4</strong> on bottom!
-                </p>
-              </div>
-
-              <div style={{
-                background: 'var(--clr-surface)',
-                border: '1px solid var(--clr-border)',
-                borderRadius: '16px',
-                padding: '16px',
-                boxShadow: 'var(--shadow-card)'
-              }}>
-                <div style={{ fontSize: '2rem', marginBottom: '8px' }}>🎲 🕵️‍♂️</div>
-                <h3 style={{ fontSize: '1.05rem', margin: '0 0 6px 0', color: 'var(--clr-text)' }}>
-                  3. Throw & Guess!
-                </h3>
-                <p style={{ fontSize: '0.9rem', color: 'var(--clr-text-soft)', margin: 0, lineHeight: 1.5 }}>
-                  Throw the die! Look at the top face, and use your detective skills to guess what number is hiding underneath!
-                </p>
-              </div>
-
-              <div style={{
-                background: 'var(--clr-surface)',
-                border: '1px solid var(--clr-border)',
-                borderRadius: '16px',
-                padding: '16px',
-                boxShadow: 'var(--shadow-card)'
-              }}>
-                <div style={{ fontSize: '2rem', marginBottom: '8px' }}>🔍 💡</div>
-                <h3 style={{ fontSize: '1.05rem', margin: '0 0 6px 0', color: 'var(--clr-text)' }}>
-                  4. Peek Mirror Clues
-                </h3>
-                <p style={{ fontSize: '0.9rem', color: 'var(--clr-text-soft)', margin: 0, lineHeight: 1.5 }}>
-                  Need a hint? Tap the <strong>Magic Peek Mirror</strong> to inspect the opposite faces before you make your guess!
-                </p>
-              </div>
-            </div>
-
-            {/* Actions */}
-            <div style={{
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              gap: '14px',
-              flexWrap: 'wrap'
-            }}>
-              <button
-                onClick={handleReadStoryAloud}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  background: 'var(--clr-surface)',
-                  color: 'var(--clr-text)',
-                  border: '1px solid var(--clr-border)',
-                  borderRadius: 'var(--radius-pill)',
-                  padding: '12px 24px',
-                  fontSize: '1rem',
-                  fontWeight: 600,
-                  cursor: 'pointer'
-                }}
-              >
-                <Volume2 size={18} />
-                <span>Hear Story Aloud</span>
-              </button>
-
-              <button
-                onClick={handleStartPlaying}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '10px',
-                  background: 'linear-gradient(135deg, #e8864a, #d97706)',
-                  color: '#ffffff',
-                  border: 'none',
-                  borderRadius: 'var(--radius-pill)',
-                  padding: '14px 34px',
-                  fontSize: '1.15rem',
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  boxShadow: '0 6px 20px rgba(232, 134, 74, 0.4)'
-                }}
-              >
-                <Dices size={22} />
-                <span>Throw the Die & Play! ➡️</span>
-              </button>
-            </div>
-          </div>
-        ) : (
-          /* ============================================================== */
-          /* THE MAGIC DICE GAME ARENA                                      */
-          /* ============================================================== */
-          <div>
+        <div>
             {/* Top Bar */}
             <div style={{
               display: 'flex',
@@ -779,9 +620,20 @@ export default function Sum7DiceGame({ onBack }) {
               </div>
             </div>
           </div>
-        )}
+
 
       </div>
+
+            {/* Illustrated Game Story Screen before playing */}
+      <GameStoryModal
+        isOpen={showStoryIntro}
+        onClose={() => setShowStoryIntro(false)}
+        title="The Secret Superpower of Dice!"
+        icon="🎲"
+        badge="Spatial Mystery Story"
+        story="Standard dice carry a secret mystery that mathematicians have known for centuries: opposite faces on a die always balance to the magic number 7! If 1 is on top, 6 is on the bottom. If 2 is on top, 5 is on the bottom. If 3 is on top, 4 is on the bottom. Throw the die and guess the secret number hiding underneath!"
+        buttonText="Next ➔ Throw the Die!"
+      />
 
       {showCelebration && (
         <CelebrationModal

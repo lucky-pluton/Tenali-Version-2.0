@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import QuizLayout from '../../../components/QuizLayout';
 import CelebrationModal from '../../../components/CelebrationModal';
+import GameStoryModal from '../../../components/GameStoryModal';
 import {
   playCakePick,
   playSuccessChime,
@@ -57,6 +58,9 @@ export default function FeedTheMonsterGame({ onBack }) {
   };
 
   const [targetNumber, setTargetNumber] = useState(() => generateTarget(1));
+
+  // Game Story Modal State (shown before playing, can be skipped or listened to)
+  const [showStory, setShowStory] = useState(true);
 
   // Game Stage: 'hunger' | 'bakery' | 'verdict'
   const [stage, setStage] = useState('hunger');
@@ -251,6 +255,7 @@ export default function FeedTheMonsterGame({ onBack }) {
       stars={stars}
       spec={spec}
       onBack={onBack}
+      onOpenStory={() => setShowStory(true)}
     >
       <div style={{ width: '100%', maxWidth: '850px' }}>
 
@@ -949,6 +954,17 @@ export default function FeedTheMonsterGame({ onBack }) {
         )}
 
       </div>
+
+      {/* Illustrated Game Story Screen before playing */}
+      <GameStoryModal
+        isOpen={showStory}
+        onClose={() => setShowStory(false)}
+        title="The Tale of Hungry Kumbakaran"
+        icon="👹"
+        badge="Monster Math Story"
+        story="Deep in the enchanted forest lives Kumbakaran, the giant friendly monster who sleeps for months and wakes up with a rumbly, grumbly tummy! Look at the empty plates inside his stomach to count how many cakes he wants. Then visit the village bakery to collect the exact treats to fill his belly!"
+        buttonText="Next ➔ Feed Kumbakaran!"
+      />
 
       {showCelebration && (
         <CelebrationModal

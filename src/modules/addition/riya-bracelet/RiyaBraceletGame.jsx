@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import QuizLayout from '../../../components/QuizLayout';
 import CelebrationModal from '../../../components/CelebrationModal';
+import GameStoryModal from '../../../components/GameStoryModal';
 import {
   playBeadClick,
   playSuccessChime,
@@ -81,6 +82,7 @@ export default function RiyaBraceletGame({ onBack }) {
 
   const [currentLevelIdx, setCurrentLevelIdx] = useState(0);
   const [stars, setStars] = useState(0);
+  const [showStory, setShowStory] = useState(true);
   const [selectedAddend, setSelectedAddend] = useState(null);
   const [feedback, setFeedback] = useState(null);
   const [showCelebration, setShowCelebration] = useState(false);
@@ -352,6 +354,7 @@ export default function RiyaBraceletGame({ onBack }) {
       stars={stars}
       spec={spec}
       onBack={onBack}
+      onOpenStory={() => setShowStory(true)}
     >
       <div style={{ width: '100%', maxWidth: '820px' }}>
 
@@ -985,6 +988,17 @@ export default function RiyaBraceletGame({ onBack }) {
         )}
 
       </div>
+
+      {/* Illustrated Game Story Screen before playing */}
+      <GameStoryModal
+        isOpen={showStory}
+        onClose={() => setShowStory(false)}
+        title="Riya and the Ten Magical Beads"
+        icon="📿"
+        badge="Making 10 Story"
+        story="Riya made a lovely bracelet with ten shiny, colorful beads! But suddenly—SNAP! The string broke and beads scattered everywhere. Riya searched the floor and only found a few. Help Riya visit the bead shop to buy just enough beads to make ten again without wasting any!"
+        buttonText="Next ➔ Count Riya's Beads!"
+      />
 
       {showCelebration && (
         <CelebrationModal

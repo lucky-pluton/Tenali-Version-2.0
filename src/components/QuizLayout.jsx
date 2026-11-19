@@ -7,6 +7,7 @@ export default function QuizLayout({
   subtitle,
   category,
   onBack,
+  onOpenStory,
   stars = 0,
   level = 1,
   children
@@ -117,6 +118,30 @@ export default function QuizLayout({
 
         {/* Action Controls & Badges */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          {/* Story Button */}
+          {onOpenStory && (
+            <button
+              onClick={onOpenStory}
+              title="Story Time"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                padding: '6px 14px',
+                borderRadius: 'var(--radius-pill)',
+                background: 'var(--clr-surface)',
+                border: '1px solid var(--clr-accent)',
+                color: 'var(--clr-accent)',
+                fontWeight: 700,
+                fontSize: '0.82rem',
+                cursor: 'pointer'
+              }}
+            >
+              <BookOpen size={15} />
+              <span>Story</span>
+            </button>
+          )}
+
           {/* Level Pill */}
           {level > 0 && (
             <div className="tenali-pill" style={{ color: 'var(--clr-accent)', borderColor: 'var(--clr-border-highlight)' }}>

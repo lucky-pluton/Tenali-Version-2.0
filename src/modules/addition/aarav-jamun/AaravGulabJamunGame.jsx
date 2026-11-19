@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import QuizLayout from '../../../components/QuizLayout';
 import CelebrationModal from '../../../components/CelebrationModal';
+import GameStoryModal from '../../../components/GameStoryModal';
 import { playSuccessChime, playGentleBoing, playMunch } from '../../../core/soundEffects';
 import { Utensils, CheckCircle } from 'lucide-react';
 
@@ -23,6 +24,7 @@ export default function AaravGulabJamunGame({ onBack }) {
   const [level, setLevel] = useState(1);
   const [round, setRound] = useState(0);
   const [stars, setStars] = useState(0);
+  const [showStory, setShowStory] = useState(true);
 
   const [stepIdx, setStepIdx] = useState(0);
   const [totalEaten, setTotalEaten] = useState(0);
@@ -183,6 +185,7 @@ export default function AaravGulabJamunGame({ onBack }) {
       level={level}
       stars={stars}
       onBack={onBack}
+      onOpenStory={() => setShowStory(true)}
     >
       <div style={{ width: '100%', maxWidth: '850px' }}>
         {/* Level Selector */}
@@ -545,6 +548,17 @@ export default function AaravGulabJamunGame({ onBack }) {
           })}
         </div>
       </div>
+
+      {/* Illustrated Game Story Screen before playing */}
+      <GameStoryModal
+        isOpen={showStory}
+        onClose={() => setShowStory(false)}
+        title="Aarav's Sweet Birthday Surprise"
+        icon="🍬"
+        badge="Addition Story"
+        story="Today is Aarav's birthday! His loving mother, father, sister, and best friend each bring warm, syrupy gulab jamuns to feed him one by one. Help Aarav count every sweet treat as he munches them down, and find the grand total!"
+        buttonText="Next ➔ Feed Aarav!"
+      />
 
       {showCelebration && (
         <CelebrationModal

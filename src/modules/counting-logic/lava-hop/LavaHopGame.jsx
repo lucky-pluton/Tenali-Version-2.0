@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import QuizLayout from '../../../components/QuizLayout';
 import CelebrationModal from '../../../components/CelebrationModal';
+import GameStoryModal from '../../../components/GameStoryModal';
 import {
   playHop,
   playSuccessChime,
@@ -231,213 +232,14 @@ export default function LavaHopGame({ onBack }) {
       stars={stars}
       spec={spec}
       onBack={onBack}
+      onOpenStory={() => setShowStoryIntro(true)}
     >
       <div style={{ width: '100%', maxWidth: '920px' }}>
 
         {/* ============================================================== */}
-        {/* STORY INTRODUCTION: The Classic Childhood Game                 */}
+        {/* THE REALISTIC PAVEMENT ROAD ARENA                              */}
         {/* ============================================================== */}
-        {showStoryIntro ? (
-          <div className="anim-pop" style={{
-            background: 'var(--clr-card)',
-            border: '2px solid var(--clr-border)',
-            borderRadius: 'var(--radius)',
-            padding: '28px 24px',
-            boxShadow: 'var(--shadow-card)',
-            textAlign: 'center'
-          }}>
-            {/* Title badge */}
-            <div style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '12px',
-              background: 'var(--clr-surface)',
-              border: '1px solid var(--clr-border)',
-              borderRadius: 'var(--radius-pill)',
-              padding: '8px 22px',
-              marginBottom: '16px'
-            }}>
-              <span style={{ fontSize: '2.2rem' }}>🌋</span>
-              <h2 style={{
-                fontFamily: 'var(--font-display)',
-                fontSize: '1.4rem',
-                color: 'var(--clr-text)',
-                margin: 0
-              }}>
-                The Secret Game Every Child Plays!
-              </h2>
-            </div>
-
-            {/* Real Footpath Paver Tiles Banner */}
-            <div style={{
-              margin: '0 auto 20px auto',
-              maxWidth: '520px',
-              background: 'var(--clr-surface)',
-              borderRadius: '16px',
-              padding: '12px 16px',
-              border: '2px solid var(--clr-border)',
-              boxShadow: 'var(--shadow-card)'
-            }}>
-              <div style={{
-                fontSize: '0.88rem',
-                fontWeight: 700,
-                color: 'var(--clr-text)',
-                marginBottom: '8px',
-                textAlign: 'center'
-              }}>
-                🧱 Real Street Footpath Paver Tiles:
-              </div>
-              <img
-                src={tilesTexture}
-                alt="Footpath Paver Tiles Strip"
-                style={{
-                  width: '100%',
-                  height: '56px',
-                  objectFit: 'cover',
-                  borderRadius: '10px',
-                  border: '2px solid #78716c',
-                  display: 'block'
-                }}
-              />
-              <div style={{
-                display: 'flex',
-                justifyContent: 'space-around',
-                marginTop: '8px',
-                fontSize: '0.85rem',
-                fontWeight: 800
-              }}>
-                <span style={{ color: '#ef4444' }}>🔥 Red Tiles = HOT LAVA!</span>
-                <span style={{ color: '#10b981' }}>⚪ White/Cream Tiles = SAFE!</span>
-              </div>
-            </div>
-
-            {/* Visual Childhood Street Story Cards */}
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))',
-              gap: '16px',
-              textAlign: 'left',
-              marginBottom: '24px'
-            }}>
-              <div style={{
-                background: 'var(--clr-surface)',
-                border: '1px solid var(--clr-border)',
-                borderRadius: '16px',
-                padding: '16px',
-                boxShadow: 'var(--shadow-card)'
-              }}>
-                <div style={{ fontSize: '2rem', marginBottom: '8px' }}>🚶‍♂️ 🛣️</div>
-                <h3 style={{ fontSize: '1.05rem', margin: '0 0 6px 0', color: 'var(--clr-text)' }}>
-                  1. Walking on the Footpath
-                </h3>
-                <p style={{ fontSize: '0.9rem', color: 'var(--clr-text-soft)', margin: 0, lineHeight: 1.5 }}>
-                  Remember when you walked on tiled roads and footpaths with your parents? Every child looks down at these tiles!
-                </p>
-              </div>
-
-              <div style={{
-                background: 'var(--clr-surface)',
-                border: '1px solid var(--clr-border)',
-                borderRadius: '16px',
-                padding: '16px',
-                boxShadow: 'var(--shadow-card)'
-              }}>
-                <div style={{ fontSize: '2rem', marginBottom: '8px' }}>🌋 🔥</div>
-                <h3 style={{ fontSize: '1.05rem', margin: '0 0 6px 0', color: 'var(--clr-text)' }}>
-                  2. "The Red Tiles are Lava!"
-                </h3>
-                <p style={{ fontSize: '0.9rem', color: 'var(--clr-text-soft)', margin: 0, lineHeight: 1.5 }}>
-                  In your imagination, the red waffle tiles become boiling hot volcano lava! If you step on them... SIZZLE! 👟🔥
-                </p>
-              </div>
-
-              <div style={{
-                background: 'var(--clr-surface)',
-                border: '1px solid var(--clr-border)',
-                borderRadius: '16px',
-                padding: '16px',
-                boxShadow: 'var(--shadow-card)'
-              }}>
-                <div style={{ fontSize: '2rem', marginBottom: '8px' }}>⚪ 🛡️</div>
-                <h3 style={{ fontSize: '1.05rem', margin: '0 0 6px 0', color: 'var(--clr-text)' }}>
-                  3. Hop on the White Stones!
-                </h3>
-                <p style={{ fontSize: '0.9rem', color: 'var(--clr-text-soft)', margin: 0, lineHeight: 1.5 }}>
-                  To stay safe, you must <strong>ONLY hop on the white/cream patterned stones</strong> without touching the red ones!
-                </p>
-              </div>
-
-              <div style={{
-                background: 'var(--clr-surface)',
-                border: '1px solid var(--clr-border)',
-                borderRadius: '16px',
-                padding: '16px',
-                boxShadow: 'var(--shadow-card)'
-              }}>
-                <div style={{ fontSize: '2rem', marginBottom: '8px' }}>🔢 🗣️</div>
-                <h3 style={{ fontSize: '1.05rem', margin: '0 0 6px 0', color: 'var(--clr-text)' }}>
-                  4. Numbers Appear & Speak!
-                </h3>
-                <p style={{ fontSize: '0.9rem', color: 'var(--clr-text-soft)', margin: 0, lineHeight: 1.5 }}>
-                  The stones look blank at first. But when you take a hop, their secret numbers pop up and say: <strong>1, 2, 3...!</strong>
-                </p>
-              </div>
-            </div>
-
-            {/* Action Buttons */}
-            <div style={{
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              gap: '14px',
-              flexWrap: 'wrap'
-            }}>
-              <button
-                onClick={handleReadStoryAloud}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  background: 'var(--clr-surface)',
-                  color: 'var(--clr-text)',
-                  border: '1px solid var(--clr-border)',
-                  borderRadius: 'var(--radius-pill)',
-                  padding: '12px 24px',
-                  fontSize: '1rem',
-                  fontWeight: 600,
-                  cursor: 'pointer'
-                }}
-              >
-                <Volume2 size={18} />
-                <span>Hear Story Aloud</span>
-              </button>
-
-              <button
-                onClick={handleStartPlaying}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '10px',
-                  background: 'linear-gradient(135deg, #ef4444, #f97316)',
-                  color: '#ffffff',
-                  border: 'none',
-                  borderRadius: 'var(--radius-pill)',
-                  padding: '14px 34px',
-                  fontSize: '1.15rem',
-                  fontWeight: 800,
-                  cursor: 'pointer',
-                  boxShadow: '0 6px 20px rgba(239, 68, 68, 0.4)'
-                }}
-              >
-                <span>🌋 Start Crossing the Road! ➡️</span>
-              </button>
-            </div>
-          </div>
-        ) : (
-          /* ============================================================== */
-          /* THE REALISTIC PAVEMENT ROAD ARENA                              */
-          /* ============================================================== */
-          <div>
+        <div>
             {/* Level Controls & Stats Header */}
             <div style={{
               display: 'flex',
@@ -867,9 +669,20 @@ export default function LavaHopGame({ onBack }) {
               ))}
             </div>
           </div>
-        )}
+
 
       </div>
+
+            {/* Illustrated Game Story Screen before playing */}
+      <GameStoryModal
+        isOpen={showStoryIntro}
+        onClose={() => setShowStoryIntro(false)}
+        title="The Secret Street Lava Game!"
+        icon="🌋"
+        badge="Footpath Story"
+        story="Remember walking on tiled footpaths in your childhood? Every child knows the secret game: the red terracotta paver blocks have turned into boiling volcano lava! Only hop on the white paver stones to stay safe. Each time you hop, a secret number appears!"
+        buttonText="Next ➔ Let's Hop!"
+      />
 
       {showCelebration && (
         <CelebrationModal

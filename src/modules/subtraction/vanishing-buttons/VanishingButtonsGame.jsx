@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import QuizLayout from '../../../components/QuizLayout';
 import CelebrationModal from '../../../components/CelebrationModal';
+import GameStoryModal from '../../../components/GameStoryModal';
 import { playPop, playSuccessChime, playGentleBoing, playMunch } from '../../../core/soundEffects';
 import { Banana, BookOpen, Volume2, Sparkles } from 'lucide-react';
 import spec from './spec.json';
@@ -179,170 +180,14 @@ export default function VanishingButtonsGame({ onBack }) {
       stars={stars}
       spec={spec}
       onBack={onBack}
+      onOpenStory={() => setShowStoryIntro(true)}
     >
       <div style={{ width: '100%', maxWidth: '860px' }}>
 
         {/* ============================================================== */}
-        {/* STORY INTRODUCTION SCREEN                                      */}
+        {/* INTERACTIVE GAMEPLAY ARENA                                     */}
         {/* ============================================================== */}
-        {showStoryIntro ? (
-          <div className="anim-pop" style={{
-            background: 'var(--clr-card)',
-            border: '2px solid var(--clr-border)',
-            borderRadius: 'var(--radius)',
-            padding: '28px 24px',
-            boxShadow: 'var(--shadow-card)',
-            textAlign: 'center'
-          }}>
-            <div style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '12px',
-              background: 'var(--clr-surface)',
-              border: '1px solid var(--clr-border)',
-              borderRadius: 'var(--radius-pill)',
-              padding: '8px 22px',
-              marginBottom: '20px'
-            }}>
-              <span style={{ fontSize: '2.2rem' }}>🐒</span>
-              <h2 style={{
-                fontFamily: 'var(--font-display)',
-                fontSize: '1.4rem',
-                color: 'var(--clr-text)',
-                margin: 0
-              }}>
-                The Story of Gola Monkey!
-              </h2>
-            </div>
-
-            {/* Story Cards */}
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))',
-              gap: '16px',
-              textAlign: 'left',
-              marginBottom: '24px'
-            }}>
-              <div style={{
-                background: 'var(--clr-surface)',
-                border: '1px solid var(--clr-border)',
-                borderRadius: '16px',
-                padding: '16px',
-                boxShadow: 'var(--shadow-card)'
-              }}>
-                <div style={{ fontSize: '2rem', marginBottom: '8px' }}>🧺 🍌</div>
-                <h3 style={{ fontSize: '1.05rem', margin: '0 0 6px 0', color: 'var(--clr-text)' }}>
-                  1. The Banana Basket
-                </h3>
-                <p style={{ fontSize: '0.9rem', color: 'var(--clr-text-soft)', margin: 0, lineHeight: 1.5 }}>
-                  Gola has a basket full of sweet bananas! When you tap the basket, one banana flies straight into his hands!
-                </p>
-              </div>
-
-              <div style={{
-                background: 'var(--clr-surface)',
-                border: '1px solid var(--clr-border)',
-                borderRadius: '16px',
-                padding: '16px',
-                boxShadow: 'var(--shadow-card)'
-              }}>
-                <div style={{ fontSize: '2rem', marginBottom: '8px' }}>👕 🔴</div>
-                <h3 style={{ fontSize: '1.05rem', margin: '0 0 6px 0', color: 'var(--clr-text)' }}>
-                  2. Gola's Stitched Shirt
-                </h3>
-                <p style={{ fontSize: '0.9rem', color: 'var(--clr-text-soft)', margin: 0, lineHeight: 1.5 }}>
-                  Gola is wearing his favorite shirt with shiny red buttons stitched right down the front.
-                </p>
-              </div>
-
-              <div style={{
-                background: 'var(--clr-surface)',
-                border: '1px solid var(--clr-border)',
-                borderRadius: '16px',
-                padding: '16px',
-                boxShadow: 'var(--shadow-card)'
-              }}>
-                <div style={{ fontSize: '2rem', marginBottom: '8px' }}>💥 🟫</div>
-                <h3 style={{ fontSize: '1.05rem', margin: '0 0 6px 0', color: 'var(--clr-text)' }}>
-                  3. POP onto the Floor!
-                </h3>
-                <p style={{ fontSize: '0.9rem', color: 'var(--clr-text-soft)', margin: 0, lineHeight: 1.5 }}>
-                  When Gola eats, his belly swells up! <strong>POP!</strong> The button pops off his shirt and lands on the floor!
-                </p>
-              </div>
-
-              <div style={{
-                background: 'var(--clr-surface)',
-                border: '1px solid var(--clr-border)',
-                borderRadius: '16px',
-                padding: '16px',
-                boxShadow: 'var(--shadow-card)'
-              }}>
-                <div style={{ fontSize: '2rem', marginBottom: '8px' }}>0️⃣ ✨</div>
-                <h3 style={{ fontSize: '1.05rem', margin: '0 0 6px 0', color: 'var(--clr-text)' }}>
-                  4. Finding ZERO
-                </h3>
-                <p style={{ fontSize: '0.9rem', color: 'var(--clr-text-soft)', margin: 0, lineHeight: 1.5 }}>
-                  All the buttons pop onto the floor. How many buttons are left on his shirt? Exactly <strong>ZERO (0)</strong>!
-                </p>
-              </div>
-            </div>
-
-            {/* Actions */}
-            <div style={{
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              gap: '14px',
-              flexWrap: 'wrap'
-            }}>
-              <button
-                onClick={handleReadStoryAloud}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  background: 'var(--clr-surface)',
-                  color: 'var(--clr-text)',
-                  border: '1px solid var(--clr-border)',
-                  borderRadius: 'var(--radius-pill)',
-                  padding: '12px 24px',
-                  fontSize: '1rem',
-                  fontWeight: 600,
-                  cursor: 'pointer'
-                }}
-              >
-                <Volume2 size={18} />
-                <span>Hear Story Aloud</span>
-              </button>
-
-              <button
-                onClick={handleStartPlaying}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '10px',
-                  background: 'linear-gradient(135deg, #f59e0b, #d97706)',
-                  color: '#ffffff',
-                  border: 'none',
-                  borderRadius: 'var(--radius-pill)',
-                  padding: '14px 34px',
-                  fontSize: '1.15rem',
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  boxShadow: '0 6px 20px rgba(245, 158, 11, 0.4)'
-                }}
-              >
-                <Banana size={22} />
-                <span>Let's Feed Gola & Play! ➡️</span>
-              </button>
-            </div>
-          </div>
-        ) : (
-          /* ============================================================== */
-          /* INTERACTIVE GAMEPLAY ARENA                                     */
-          /* ============================================================== */
-          <div>
+        <div>
             {/* Top Level Bar */}
             <div style={{
               display: 'flex',
@@ -874,7 +719,7 @@ export default function VanishingButtonsGame({ onBack }) {
               </div>
             )}
           </div>
-        )}
+
 
       </div>
 
@@ -895,6 +740,17 @@ export default function VanishingButtonsGame({ onBack }) {
           }
         }
       `}</style>
+
+            {/* Illustrated Game Story Screen before playing */}
+      <GameStoryModal
+        isOpen={showStoryIntro}
+        onClose={() => setShowStoryIntro(false)}
+        title="Gola Monkey's Favorite Shirt"
+        icon="🐒"
+        badge="Zero Discovery Story"
+        story="Meet Gola the monkey! Gola loves wearing his favorite white shirt with shiny red buttons. But Gola also loves sweet bananas! As you feed him bananas, his tummy swells until POP—buttons pop off the shirt onto the floor! Count down how many buttons remain on his shirt until zero are left!"
+        buttonText="Next ➔ Feed Gola Bananas!"
+      />
 
       {showCelebration && (
         <CelebrationModal

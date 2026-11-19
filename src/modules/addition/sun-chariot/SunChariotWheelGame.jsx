@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import QuizLayout from '../../../components/QuizLayout';
 import CelebrationModal from '../../../components/CelebrationModal';
+import GameStoryModal from '../../../components/GameStoryModal';
 import { playSuccessChime, playGentleBoing, playPop } from '../../../core/soundEffects';
 import spec from './spec.json';
 
@@ -25,6 +26,7 @@ export default function SunChariotWheelGame({ onBack }) {
   const [wheelIdx, setWheelIdx] = useState(0);
   const [feedback, setFeedback] = useState(null);
   const [showCelebration, setShowCelebration] = useState(false);
+  const [showStory, setShowStory] = useState(true);
 
   // Targets are 6, 8, and 9 (Target 7 is reserved for the Sum 7 Dice Game)
   const WHEEL_DATA = [
@@ -256,6 +258,7 @@ export default function SunChariotWheelGame({ onBack }) {
       stars={stars}
       spec={spec}
       onBack={onBack}
+      onOpenStory={() => setShowStory(true)}
     >
       <div style={{ width: '100%', maxWidth: '850px' }}>
         {/* Header Wheel Selector */}
@@ -400,6 +403,17 @@ export default function SunChariotWheelGame({ onBack }) {
           )}
         </div>
       </div>
+
+      {/* Illustrated Game Story Screen before playing */}
+      <GameStoryModal
+        isOpen={showStory}
+        onClose={() => setShowStory(false)}
+        title="The Great Sun Chariot Wheels"
+        icon="🎡"
+        badge="Sun Chariot Story"
+        story="At the famous Konark Sun Temple in India, colossal stone chariot wheels capture the path of the sun! Each wheel has balance spokes where pairs of numbers add up to the central sun hub. Pick the missing numbers to balance every spoke on the wheel!"
+        buttonText="Next ➔ Roll the Chariot!"
+      />
 
       {showCelebration && (
         <CelebrationModal
