@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Moon, Sun, Volume2, VolumeX, Sparkles, BookOpen, Code } from 'lucide-react';
-import { toggleSound, isSoundEnabled } from '../lib/soundEffects';
-import OpenSpecModal from './OpenSpecModal';
+import { ArrowLeft, Moon, Sun, Volume2, VolumeX, Sparkles, BookOpen } from 'lucide-react';
+import { toggleSound, isSoundEnabled } from '../core/soundEffects';
 
 export default function QuizLayout({
   title,
@@ -10,13 +9,11 @@ export default function QuizLayout({
   onBack,
   stars = 0,
   level = 1,
-  spec,
   children
 }) {
   const [theme, setTheme] = useState(() => localStorage.getItem('tenali-theme') || 'dark');
   const [soundOn, setSoundOn] = useState(() => isSoundEnabled());
   const [dyslexia, setDyslexia] = useState(() => localStorage.getItem('tenali-dyslexia') === 'true');
-  const [showSpecModal, setShowSpecModal] = useState(false);
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
@@ -75,7 +72,7 @@ export default function QuizLayout({
               }}
             >
               <ArrowLeft size={18} />
-              <span>Menu</span>
+              <span>Back</span>
             </button>
           )}
 
@@ -120,29 +117,6 @@ export default function QuizLayout({
 
         {/* Action Controls & Badges */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          {/* Open Spec Button */}
-          {spec && (
-            <button
-              onClick={() => setShowSpecModal(true)}
-              title="View Formal OpenSpec"
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '5px',
-                padding: '5px 11px',
-                borderRadius: 'var(--radius-pill)',
-                background: 'var(--clr-surface)',
-                border: '1px solid var(--clr-accent)',
-                color: 'var(--clr-accent)',
-                fontSize: '0.8rem',
-                fontWeight: 700
-              }}
-            >
-              <Code size={14} />
-              <span>OpenSpec</span>
-            </button>
-          )}
-
           {/* Level Pill */}
           {level > 0 && (
             <div className="tenali-pill" style={{ color: 'var(--clr-accent)', borderColor: 'var(--clr-border-highlight)' }}>
@@ -225,11 +199,6 @@ export default function QuizLayout({
       }}>
         {children}
       </main>
-
-      {/* OpenSpec Modal */}
-      {showSpecModal && spec && (
-        <OpenSpecModal spec={spec} onClose={() => setShowSpecModal(false)} />
-      )}
     </div>
   );
 }

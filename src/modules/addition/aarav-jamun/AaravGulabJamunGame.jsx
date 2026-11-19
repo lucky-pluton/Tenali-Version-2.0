@@ -1,9 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import QuizLayout from '../../../components/QuizLayout';
 import CelebrationModal from '../../../components/CelebrationModal';
 import { playSuccessChime, playGentleBoing, playMunch } from '../../../core/soundEffects';
 import { Utensils, CheckCircle } from 'lucide-react';
-import spec from './spec.json';
+
+// Speech synthesis helper for speaking numbers clearly and slowly
+function speakNumber(num) {
+  if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+    try {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(String(num));
+      utterance.rate = 0.82; // Gentle, child-friendly slow pace
+      utterance.pitch = 1.15; // Friendly warm pitch
+      window.speechSynthesis.speak(utterance);
+    } catch (e) {
+      // ignore
+    }
+  }
+}
 
 export default function AaravGulabJamunGame({ onBack }) {
   const [level, setLevel] = useState(1);
@@ -11,43 +25,48 @@ export default function AaravGulabJamunGame({ onBack }) {
   const [stars, setStars] = useState(0);
 
   const [stepIdx, setStepIdx] = useState(0);
-  const [userInputs, setUserInputs] = useState(['', '', '', '']);
+  const [totalEaten, setTotalEaten] = useState(0);
+  const [currentSpokenNumber, setCurrentSpokenNumber] = useState(null);
+  const [isFeeding, setIsFeeding] = useState(false);
+
   const [totalInput, setTotalInput] = useState('');
   const [chewing, setChewing] = useState(false);
   const [showCelebration, setShowCelebration] = useState(false);
   const [feedbackMsg, setFeedbackMsg] = useState(null);
+
+  const feedingTimerRef = useRef(null);
 
   const LEVEL_CONFIGS = {
     1: [
       {
         title: "Aarav's Birthday!",
         giver: [
-          { name: "Mother", amount: 1, role: "First, his mother fed him one gulab jamun." },
-          { name: "Father", amount: 1, role: "Then, his father fed him one gulab jamun." },
-          { name: "Sister", amount: 1, role: "Next, his sister fed him one gulab jamun." },
-          { name: "Friend", amount: 1, role: "Finally, his friend fed him one gulab jamun." }
+          { name: "Mother", amount: 1, role: "First, his mother feeds him 1 sweet." },
+          { name: "Father", amount: 1, role: "Then, his father feeds him 1 sweet." },
+          { name: "Sister", amount: 1, role: "Next, his sister feeds him 1 sweet." },
+          { name: "Friend", amount: 1, role: "Finally, his friend feeds him 1 sweet." }
         ]
       }
     ],
     2: [
       {
-        title: "Aarav's Sweet Feast",
+        title: "Family Sweet Feast",
         giver: [
-          { name: "Mother", amount: 2, role: "Mother fed him 2 gulab jamuns!" },
-          { name: "Father", amount: 3, role: "Father served him 3 delicious jamuns." },
-          { name: "Sister", amount: 1, role: "His sister sneaked in 1 more treat." },
-          { name: "Friend", amount: 2, role: "His friend shared 2 sweet treats." }
+          { name: "Mother", amount: 2, role: "Mother feeds him 2 delicious sweets." },
+          { name: "Father", amount: 3, role: "Father feeds him 3 more sweets." },
+          { name: "Sister", amount: 2, role: "Sister feeds him 2 more sweets." },
+          { name: "Friend", amount: 1, role: "Friend offers him 1 sweet." }
         ]
       }
     ],
     3: [
       {
-        title: "Mega Sweet Challenge!",
+        title: "Mega Sweet Party!",
         giver: [
-          { name: "Mother", amount: 4, role: "Mother feeds Aarav 4 warm sweets!" },
-          { name: "Father", amount: 3, role: "Father brings 3 more sweets." },
-          { name: "Sister", amount: 3, role: "Sister adds 3 juicy jamuns." },
-          { name: "Friend", amount: 2, role: "Friend offers 2 golden treats." }
+          { name: "Mother", amount: 3, role: "Mother feeds Aarav 3 warm sweets." },
+          { name: "Father", amount: 4, role: "Father lovingly feeds 4 sweets." },
+          { name: "Sister", amount: 3, role: "Sister adds 3 more sweets." },
+          { name: "Friend", amount: 2, role: "Friend shares 2 final sweets." }
         ]
       }
     ]
@@ -57,33 +76,56 @@ export default function AaravGulabJamunGame({ onBack }) {
   const currentScenario = currentLevelRounds[round % currentLevelRounds.length];
   const givers = currentScenario.giver;
 
-  const totalEatenSoFar = givers
-    .slice(0, stepIdx)
-    .reduce((acc, curr) => acc + curr.amount, 0);
-
   const grandTotal = givers.reduce((acc, curr) => acc + curr.amount, 0);
 
-  const handleFeed = () => {
-    if (stepIdx < givers.length) {
+  // Slow, interactive one-by-one sweet feeding with voice counting
+  const handleFeedOneByOne = () => {
+    if (isFeeding || stepIdx >= givers.length) return;
+
+    setIsFeeding(true);
+    setFeedbackMsg(null);
+    const amountToFeed = givers[stepIdx].amount;
+    let fedThisTurn = 0;
+    let runningCount = totalEaten;
+
+    const feedSingleSweet = () => {
+      fedThisTurn += 1;
+      runningCount += 1;
+
+      // Update total eaten, trigger chewing animation, speak the number!
+      setTotalEaten(runningCount);
+      setCurrentSpokenNumber(runningCount);
       playMunch();
       setChewing(true);
-      setTimeout(() => setChewing(false), 600);
+      speakNumber(runningCount);
 
-      const next = stepIdx + 1;
-      setStepIdx(next);
+      setTimeout(() => {
+        setChewing(false);
+      }, 400);
 
-      const updatedInputs = [...userInputs];
-      updatedInputs[stepIdx] = String(givers[stepIdx].amount);
-      setUserInputs(updatedInputs);
+      if (fedThisTurn < amountToFeed) {
+        // Feed next sweet slowly after 1100ms so child can count along easily
+        feedingTimerRef.current = setTimeout(feedSingleSweet, 1100);
+      } else {
+        // Done with this person's treats
+        feedingTimerRef.current = setTimeout(() => {
+          setIsFeeding(false);
+          const nextStep = stepIdx + 1;
+          setStepIdx(nextStep);
+          setCurrentSpokenNumber(null);
 
-      if (next === givers.length) {
-        playSuccessChime();
-        setFeedbackMsg({
-          type: 'info',
-          text: "Aarav says: 'Hmm... I am so full! Now calculate the grand total!'"
-        });
+          if (nextStep === givers.length) {
+            playSuccessChime();
+            setFeedbackMsg({
+              type: 'info',
+              text: "Aarav is super full! Now count up the grand total of all the sweets he ate!"
+            });
+          }
+        }, 800);
       }
-    }
+    };
+
+    feedSingleSweet();
   };
 
   const handleCheckTotal = () => {
@@ -102,7 +144,7 @@ export default function AaravGulabJamunGame({ onBack }) {
       playGentleBoing();
       setFeedbackMsg({
         type: 'error',
-        text: `Not quite! Count all the gulab jamuns Aarav ate: ${givers.map(g => g.amount).join(' + ')}`
+        text: `Not quite! Count all the gulab jamuns on the plate. He ate ${grandTotal} in total.`
       });
     }
   };
@@ -110,7 +152,8 @@ export default function AaravGulabJamunGame({ onBack }) {
   const handleNextLevel = () => {
     setShowCelebration(false);
     setStepIdx(0);
-    setUserInputs(['', '', '', '']);
+    setTotalEaten(0);
+    setCurrentSpokenNumber(null);
     setTotalInput('');
     setFeedbackMsg(null);
     if (level < 3) {
@@ -123,24 +166,26 @@ export default function AaravGulabJamunGame({ onBack }) {
 
   const handleReplay = () => {
     setShowCelebration(false);
+    if (feedingTimerRef.current) clearTimeout(feedingTimerRef.current);
     setStepIdx(0);
-    setUserInputs(['', '', '', '']);
+    setTotalEaten(0);
+    setCurrentSpokenNumber(null);
+    setIsFeeding(false);
     setTotalInput('');
     setFeedbackMsg(null);
   };
 
   return (
     <QuizLayout
-      title="Aarav's Gulab Jamun Adventure"
-      subtitle="Help feed Aarav delicious sweets and count up the total!"
+      title="Aarav's Gulab Jamuns"
+      subtitle="Feed Aarav sweets one by one, listen to the count, and find the total!"
       category="Addition"
       level={level}
       stars={stars}
-      spec={spec}
       onBack={onBack}
     >
       <div style={{ width: '100%', maxWidth: '850px' }}>
-        {/* Level Banner */}
+        {/* Level Selector */}
         <div style={{
           display: 'flex',
           justifyContent: 'space-between',
@@ -148,7 +193,7 @@ export default function AaravGulabJamunGame({ onBack }) {
           background: 'var(--clr-card)',
           border: '1px solid var(--clr-border)',
           borderRadius: 'var(--radius)',
-          padding: '14px 20px',
+          padding: '12px 18px',
           marginBottom: '20px'
         }}>
           <div>
@@ -161,7 +206,7 @@ export default function AaravGulabJamunGame({ onBack }) {
               {currentScenario.title}
             </h2>
             <p style={{ margin: '2px 0 0 0', fontSize: '0.85rem', color: 'var(--clr-text-soft)' }}>
-              Step {Math.min(stepIdx + 1, 4)} of 4 • Cumulative Addition
+              Step {Math.min(stepIdx + 1, 4)} of 4 • Feeding sweets slowly
             </p>
           </div>
 
@@ -208,6 +253,7 @@ export default function AaravGulabJamunGame({ onBack }) {
             gap: '20px',
             marginBottom: '20px'
           }}>
+            {/* Aarav Avatar */}
             <div style={{
               display: 'flex',
               flexDirection: 'column',
@@ -215,8 +261,8 @@ export default function AaravGulabJamunGame({ onBack }) {
               position: 'relative'
             }}>
               <div style={{
-                fontSize: '6rem',
-                transform: chewing ? 'scale(1.15) rotate(3deg)' : 'scale(1)',
+                fontSize: '6.5rem',
+                transform: chewing ? 'scale(1.18) rotate(3deg)' : 'scale(1)',
                 transition: 'transform 0.2s',
                 filter: 'drop-shadow(0 8px 12px rgba(0,0,0,0.3))'
               }}>
@@ -224,54 +270,64 @@ export default function AaravGulabJamunGame({ onBack }) {
               </div>
               <div style={{
                 fontFamily: 'var(--font-kids)',
-                fontSize: '1.2rem',
-                fontWeight: 600,
+                fontSize: '1.25rem',
+                fontWeight: 700,
                 color: 'var(--clr-text)',
                 marginTop: '6px'
               }}>
                 Aarav {stepIdx === 4 ? '(So Full!)' : ''}
               </div>
-              {chewing && (
-                <span className="anim-pop" style={{
+
+              {/* Big Spoken Number Floating Bubble */}
+              {currentSpokenNumber !== null && (
+                <div className="anim-pop" style={{
                   position: 'absolute',
-                  top: '-10px',
-                  right: '-10px',
-                  background: '#f59e0b',
-                  color: '#fff',
-                  padding: '4px 10px',
-                  borderRadius: '12px',
-                  fontWeight: 700,
-                  fontSize: '0.85rem'
+                  top: '-16px',
+                  right: '-16px',
+                  background: 'var(--clr-accent)',
+                  color: '#ffffff',
+                  width: '50px',
+                  height: '50px',
+                  borderRadius: '50%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '1.6rem',
+                  fontWeight: 800,
+                  fontFamily: 'var(--font-kids)',
+                  boxShadow: '0 4px 16px rgba(232, 134, 74, 0.5)'
                 }}>
-                  Yum!
-                </span>
+                  {currentSpokenNumber}
+                </div>
               )}
             </div>
 
+            {/* Sweets Plate */}
             <div style={{
               background: 'var(--clr-surface)',
               border: '2px dashed var(--clr-border)',
               borderRadius: 'var(--radius)',
               padding: '16px 24px',
-              minWidth: '240px',
+              minWidth: '260px',
+              maxWidth: '380px',
               textAlign: 'center'
             }}>
-              <div style={{ fontSize: '0.85rem', color: 'var(--clr-text-soft)', marginBottom: '8px' }}>
-                Gulab Jamuns Eaten: <strong>{totalEatenSoFar}</strong>
+              <div style={{ fontSize: '0.9rem', color: 'var(--clr-text-soft)', marginBottom: '10px' }}>
+                Gulab Jamuns on Plate: <strong style={{ color: 'var(--clr-accent)', fontSize: '1.2rem' }}>{totalEaten}</strong>
               </div>
               <div style={{
                 display: 'flex',
                 flexWrap: 'wrap',
                 justifyContent: 'center',
                 gap: '8px',
-                minHeight: '44px'
+                minHeight: '52px'
               }}>
-                {Array.from({ length: totalEatenSoFar }).map((_, i) => (
+                {Array.from({ length: totalEaten }).map((_, i) => (
                   <span
                     key={i}
                     className="anim-pop"
                     style={{
-                      fontSize: '1.8rem',
+                      fontSize: '1.9rem',
                       display: 'inline-block',
                       filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.4))'
                     }}
@@ -279,48 +335,56 @@ export default function AaravGulabJamunGame({ onBack }) {
                     🟤
                   </span>
                 ))}
-                {totalEatenSoFar === 0 && (
-                  <span style={{ fontSize: '0.9rem', color: 'var(--clr-text-soft)', fontStyle: 'italic' }}>
-                    Ready for the first treat!
+                {totalEaten === 0 && (
+                  <span style={{ fontSize: '0.9rem', color: 'var(--clr-text-soft)', fontStyle: 'italic', alignSelf: 'center' }}>
+                    Ready for delicious sweets!
                   </span>
                 )}
               </div>
             </div>
           </div>
 
+          {/* Current Story Speech */}
           <div style={{
             background: 'var(--clr-surface)',
             border: '1px solid var(--clr-border)',
             borderRadius: 'var(--radius-sm)',
             padding: '14px 18px',
             marginBottom: '20px',
-            fontSize: '1.05rem',
+            fontSize: '1.1rem',
             color: 'var(--clr-text)'
           }}>
             {stepIdx < givers.length ? (
               <span>
-                <strong>{givers[stepIdx].name}:</strong> "{givers[stepIdx].role}" (+{givers[stepIdx].amount} sweet{givers[stepIdx].amount > 1 ? 's' : ''})
+                <strong>{givers[stepIdx].name}:</strong> "{givers[stepIdx].role}" (Feeding {givers[stepIdx].amount} sweet{givers[stepIdx].amount > 1 ? 's' : ''} slowly)
               </span>
             ) : (
               <span>
-                🎉 <strong>Aarav:</strong> "I had a wonderful birthday! Everyone fed me delicious treats. How many did I eat in total?"
+                🎉 <strong>Aarav:</strong> "I had a wonderful birthday! How many sweets did I eat in total?"
               </span>
             )}
           </div>
 
+          {/* Action Button: Feed or Calculate */}
           {stepIdx < givers.length ? (
             <button
-              onClick={handleFeed}
+              onClick={handleFeedOneByOne}
+              disabled={isFeeding}
               className="tenali-btn-primary"
               style={{
-                fontSize: '1.1rem',
-                padding: '12px 28px',
+                fontSize: '1.15rem',
+                padding: '14px 32px',
                 borderRadius: 'var(--radius-pill)',
-                margin: '0 auto'
+                margin: '0 auto',
+                opacity: isFeeding ? 0.7 : 1
               }}
             >
               <Utensils size={20} />
-              <span>Feed {givers[stepIdx].amount} Sweet{givers[stepIdx].amount > 1 ? 's' : ''} to Aarav!</span>
+              <span>
+                {isFeeding
+                  ? `Feeding sweet ${currentSpokenNumber || ''}...`
+                  : `Feed ${givers[stepIdx].amount} Sweet${givers[stepIdx].amount > 1 ? 's' : ''}!`}
+              </span>
             </button>
           ) : (
             <div style={{
@@ -330,8 +394,8 @@ export default function AaravGulabJamunGame({ onBack }) {
               gap: '16px'
             }}>
               <div style={{
-                fontSize: '1.25rem',
-                fontWeight: 600,
+                fontSize: '1.3rem',
+                fontWeight: 700,
                 color: 'var(--clr-text)',
                 fontFamily: 'var(--font-kids)',
                 display: 'flex',
@@ -361,9 +425,9 @@ export default function AaravGulabJamunGame({ onBack }) {
                   placeholder="?"
                   autoFocus
                   style={{
-                    width: '70px',
-                    height: '48px',
-                    fontSize: '1.4rem',
+                    width: '74px',
+                    height: '50px',
+                    fontSize: '1.5rem',
                     textAlign: 'center',
                     borderRadius: 'var(--radius-sm)',
                     border: '2px solid var(--clr-accent)',
@@ -377,19 +441,20 @@ export default function AaravGulabJamunGame({ onBack }) {
                 />
               </div>
 
+              {/* Number Buttons for easy touch entry */}
               <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', justifyContent: 'center' }}>
-                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 15].map(n => (
+                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(n => (
                   <button
                     key={n}
                     onClick={() => setTotalInput(String(n))}
                     style={{
-                      width: '40px',
-                      height: '40px',
+                      width: '44px',
+                      height: '44px',
                       borderRadius: '8px',
                       background: 'var(--clr-surface)',
                       border: '1px solid var(--clr-border)',
-                      fontSize: '1rem',
-                      fontWeight: 600,
+                      fontSize: '1.1rem',
+                      fontWeight: 700,
                       color: 'var(--clr-text)'
                     }}
                   >
@@ -418,8 +483,8 @@ export default function AaravGulabJamunGame({ onBack }) {
               marginTop: '16px',
               padding: '10px 16px',
               borderRadius: '8px',
-              fontSize: '0.95rem',
-              fontWeight: 500,
+              fontSize: '1rem',
+              fontWeight: 600,
               background: feedbackMsg.type === 'success' ? 'var(--clr-correct-bg)' : feedbackMsg.type === 'error' ? 'var(--clr-wrong-bg)' : 'var(--clr-accent-soft)',
               color: feedbackMsg.type === 'success' ? 'var(--clr-correct)' : feedbackMsg.type === 'error' ? 'var(--clr-wrong)' : 'var(--clr-accent)',
               border: `1px solid ${feedbackMsg.type === 'success' ? 'var(--clr-correct)' : feedbackMsg.type === 'error' ? 'var(--clr-wrong)' : 'var(--clr-accent)'}`
@@ -429,7 +494,7 @@ export default function AaravGulabJamunGame({ onBack }) {
           )}
         </div>
 
-        {/* 4 Comic Panels */}
+        {/* 4 Story Comic Strip Cards */}
         <div style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
@@ -458,10 +523,10 @@ export default function AaravGulabJamunGame({ onBack }) {
                 <div style={{ fontSize: '1.8rem', marginBottom: '6px' }}>
                   {idx === 0 ? '👩' : idx === 1 ? '👨' : idx === 2 ? '👧' : '👦'}
                 </div>
-                <div style={{ fontWeight: 600, color: 'var(--clr-text)', fontSize: '0.95rem' }}>
+                <div style={{ fontWeight: 600, color: 'var(--clr-text)', fontSize: '1rem' }}>
                   {g.name}
                 </div>
-                <div style={{ fontSize: '0.8rem', color: 'var(--clr-text-soft)', marginTop: '4px' }}>
+                <div style={{ fontSize: '0.85rem', color: 'var(--clr-text-soft)', marginTop: '4px' }}>
                   {isCompleted ? (
                     <span style={{ color: 'var(--clr-correct)', fontWeight: 600 }}>
                       Fed {g.amount} sweet{g.amount > 1 ? 's' : ''} ✓
@@ -481,7 +546,7 @@ export default function AaravGulabJamunGame({ onBack }) {
       {showCelebration && (
         <CelebrationModal
           title="Sweet Math Champion!"
-          subtitle={`Aarav ate all ${grandTotal} sweets! You nailed the multi-addend sum!`}
+          subtitle={`Aarav ate all ${grandTotal} sweets! You counted every single one!`}
           stars={3}
           onNextLevel={handleNextLevel}
           onReplay={handleReplay}

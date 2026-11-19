@@ -11,18 +11,15 @@ import {
   VolumeX,
   BookOpen,
   Gamepad2,
-  Play,
-  Code
+  Play
 } from 'lucide-react';
 import { toggleSound, isSoundEnabled } from './core/soundEffects';
 import { MODULE_REGISTRY } from './registry';
-import OpenSpecModal from './components/OpenSpecModal';
 
 export default function App() {
   const [activeGame, setActiveGame] = useState(null);
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
-  const [inspectingSpec, setInspectingSpec] = useState(null);
 
   const [theme, setTheme] = useState(() => localStorage.getItem('tenali-theme') || 'dark');
   const [soundOn, setSoundOn] = useState(() => isSoundEnabled());
@@ -51,7 +48,7 @@ export default function App() {
     setDyslexia(prev => !prev);
   };
 
-  // If a game is active, render its component
+  // If a game is selected, render it
   if (activeGame) {
     const GameComp = activeGame.component;
     return <GameComp onBack={() => setActiveGame(null)} />;
@@ -63,8 +60,6 @@ export default function App() {
       categoryFilter === 'all' || g.domainId === categoryFilter;
     const matchesQuery =
       g.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      g.overview.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      g.competencyCode.toLowerCase().includes(searchQuery.toLowerCase()) ||
       g.tags.some(t => t.toLowerCase().includes(searchQuery.toLowerCase()));
     return matchesCategory && matchesQuery;
   });
@@ -73,7 +68,7 @@ export default function App() {
     <div style={{ minHeight: '100vh', background: 'var(--clr-bg)', color: 'var(--clr-text)' }}>
       {/* Header */}
       <header style={{
-        padding: '16px 28px',
+        padding: '14px 24px',
         borderBottom: '1px solid var(--clr-border)',
         background: 'var(--clr-card)',
         display: 'flex',
@@ -94,36 +89,23 @@ export default function App() {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: '1.4rem'
+            fontSize: '1.5rem'
           }}>
             🧒
           </div>
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <h1 style={{
-                fontFamily: 'var(--font-display)',
-                fontSize: '1.45rem',
-                fontWeight: 700,
-                margin: 0,
-                letterSpacing: '-0.02em',
-                color: 'var(--clr-text)'
-              }}>
-                Tenali <span style={{ color: 'var(--clr-accent)' }}>2.0</span>
-              </h1>
-              <span style={{
-                fontSize: '0.7rem',
-                fontWeight: 700,
-                padding: '2px 8px',
-                borderRadius: 'var(--radius-pill)',
-                background: 'rgba(56, 189, 248, 0.15)',
-                color: '#38bdf8',
-                border: '1px solid rgba(56, 189, 248, 0.4)'
-              }}>
-                OpenSpec v1.0
-              </span>
-            </div>
+            <h1 style={{
+              fontFamily: 'var(--font-display)',
+              fontSize: '1.4rem',
+              fontWeight: 700,
+              margin: 0,
+              letterSpacing: '-0.02em',
+              color: 'var(--clr-text)'
+            }}>
+              Tenali <span style={{ color: 'var(--clr-accent)' }}>Kids</span>
+            </h1>
             <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--clr-text-soft)' }}>
-              Segregated Modules • Foundational Math & Logic Adventures
+              Fun Math Adventures
             </p>
           </div>
         </div>
@@ -184,41 +166,24 @@ export default function App() {
       </header>
 
       {/* Main Hub Body */}
-      <main style={{ maxWidth: '1100px', margin: '0 auto', padding: '32px 20px' }}>
-        {/* Hero Section */}
-        <div style={{ textAlign: 'center', marginBottom: '36px' }}>
-          <div style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '8px',
-            padding: '6px 16px',
-            borderRadius: 'var(--radius-pill)',
-            background: 'var(--clr-accent-soft)',
-            color: 'var(--clr-accent)',
-            fontSize: '0.85rem',
-            fontWeight: 700,
-            marginBottom: '12px'
-          }}>
-            <Sparkles size={16} />
-            <span>Interactive FLN Children's Mathematics Games</span>
-          </div>
-
+      <main style={{ maxWidth: '1050px', margin: '0 auto', padding: '28px 20px' }}>
+        {/* Simple & Inviting Hero Section */}
+        <div style={{ textAlign: 'center', marginBottom: '28px' }}>
           <h2 style={{
             fontFamily: 'var(--font-display)',
-            fontSize: 'clamp(1.8rem, 4vw, 2.6rem)',
+            fontSize: 'clamp(1.8rem, 3.5vw, 2.3rem)',
             fontWeight: 700,
-            margin: '0 0 10px 0',
+            margin: '0 0 6px 0',
             color: 'var(--clr-text)'
           }}>
-            Learn Through Stories, Manipulatives & Play
+            Choose a Game & Play! 🌟
           </h2>
           <p style={{
-            fontSize: '1.05rem',
+            fontSize: '1rem',
             color: 'var(--clr-text-soft)',
-            maxWidth: '680px',
-            margin: '0 auto'
+            margin: 0
           }}>
-            Every module is strictly segregated into its own domain folder with full <strong>OpenSpec v1.0</strong> specifications, NCERT learning objectives, and multi-level progressions.
+            Tap any game below to start playing!
           </p>
         </div>
 
@@ -228,8 +193,8 @@ export default function App() {
           justifyContent: 'space-between',
           alignItems: 'center',
           flexWrap: 'wrap',
-          gap: '16px',
-          marginBottom: '28px'
+          gap: '14px',
+          marginBottom: '24px'
         }}>
           {/* Category Tabs */}
           <div style={{
@@ -243,10 +208,10 @@ export default function App() {
             maxWidth: '100%'
           }}>
             {[
-              { id: 'all', label: 'All Modules', icon: <Gamepad2 size={16} /> },
+              { id: 'all', label: 'All Games', icon: <Gamepad2 size={16} /> },
+              { id: 'counting-logic', label: 'Counting', icon: <Dices size={16} /> },
               { id: 'addition', label: 'Addition', icon: <PlusCircle size={16} /> },
-              { id: 'subtraction', label: 'Subtraction & Zero', icon: <MinusCircle size={16} /> },
-              { id: 'counting-logic', label: 'Counting & Logic', icon: <Dices size={16} /> }
+              { id: 'subtraction', label: 'Subtraction', icon: <MinusCircle size={16} /> }
             ].map(tab => (
               <button
                 key={tab.id}
@@ -271,8 +236,8 @@ export default function App() {
             ))}
           </div>
 
-          {/* Search Input */}
-          <div style={{ position: 'relative', minWidth: '240px' }}>
+          {/* Search Box */}
+          <div style={{ position: 'relative', minWidth: '220px' }}>
             <Search
               size={18}
               style={{
@@ -285,12 +250,12 @@ export default function App() {
             />
             <input
               type="text"
-              placeholder="Search by name, tag or FLN code..."
+              placeholder="Search games..."
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
               style={{
                 width: '100%',
-                padding: '9px 12px 9px 38px',
+                padding: '8px 12px 8px 36px',
                 borderRadius: 'var(--radius-pill)',
                 background: 'var(--clr-surface)',
                 border: '1px solid var(--clr-border)',
@@ -302,144 +267,97 @@ export default function App() {
           </div>
         </div>
 
-        {/* Modules Grid */}
+        {/* Clean, Child-Friendly Games Grid */}
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
-          gap: '22px'
+          gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
+          gap: '20px'
         }}>
           {filteredGames.map(game => (
             <div
               key={game.id}
+              onClick={() => setActiveGame(game)}
               style={{
                 background: 'var(--clr-card)',
-                border: '1px solid var(--clr-border)',
-                borderRadius: 'var(--radius)',
-                padding: '24px',
+                border: '2px solid var(--clr-border)',
+                borderRadius: '20px',
+                padding: '24px 18px',
                 boxShadow: 'var(--shadow-card)',
                 display: 'flex',
                 flexDirection: 'column',
-                justifyContent: 'space-between',
+                alignItems: 'center',
+                textAlign: 'center',
+                cursor: 'pointer',
                 transition: 'transform 0.2s, border-color 0.2s, box-shadow 0.2s'
               }}
+              onMouseEnter={e => {
+                e.currentTarget.style.transform = 'translateY(-5px) scale(1.02)';
+                e.currentTarget.style.borderColor = 'var(--clr-accent)';
+                e.currentTarget.style.boxShadow = 'var(--shadow-glow)';
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.transform = 'translateY(0) scale(1)';
+                e.currentTarget.style.borderColor = 'var(--clr-border)';
+                e.currentTarget.style.boxShadow = 'var(--shadow-card)';
+              }}
             >
-              <div>
-                {/* Top Row: Icon, Tag & OpenSpec Inspector */}
-                <div style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  marginBottom: '14px'
-                }}>
-                  <div style={{
-                    width: '52px',
-                    height: '52px',
-                    borderRadius: '16px',
-                    background: 'var(--clr-surface)',
-                    border: '1px solid var(--clr-border)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '1.8rem',
-                    boxShadow: 'var(--shadow-btn)'
-                  }}>
-                    {game.icon}
-                  </div>
-
-                  <div style={{ display: 'flex', gap: '6px' }}>
-                    <button
-                      onClick={() => setInspectingSpec(game)}
-                      title="Inspect OpenSpec Document"
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '4px',
-                        padding: '3px 8px',
-                        borderRadius: 'var(--radius-pill)',
-                        background: 'rgba(56, 189, 248, 0.12)',
-                        color: '#38bdf8',
-                        border: '1px solid rgba(56, 189, 248, 0.3)',
-                        fontSize: '0.72rem',
-                        fontWeight: 700
-                      }}
-                    >
-                      <Code size={12} />
-                      <span>OpenSpec</span>
-                    </button>
-
-                    <span style={{
-                      fontSize: '0.72rem',
-                      fontWeight: 700,
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.04em',
-                      padding: '3px 10px',
-                      borderRadius: 'var(--radius-pill)',
-                      background: 'var(--clr-accent-soft)',
-                      color: 'var(--clr-accent)'
-                    }}>
-                      {game.competencyCode}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Title & Description */}
-                <h3 style={{
-                  fontFamily: 'var(--font-display)',
-                  fontSize: '1.25rem',
-                  fontWeight: 700,
-                  color: 'var(--clr-text)',
-                  margin: '0 0 8px 0',
-                  lineHeight: 1.3
-                }}>
-                  {game.name}
-                </h3>
-                <p style={{
-                  fontSize: '0.88rem',
-                  color: 'var(--clr-text-soft)',
-                  lineHeight: 1.5,
-                  margin: '0 0 16px 0'
-                }}>
-                  {game.overview}
-                </p>
-              </div>
-
-              {/* Bottom Row: Levels & Play Button */}
+              {/* Big Cheerful Icon */}
               <div style={{
+                width: '74px',
+                height: '74px',
+                borderRadius: '24px',
+                background: 'var(--clr-surface)',
+                border: '2px solid var(--clr-border)',
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'space-between',
-                paddingTop: '16px',
-                borderTop: '1px solid var(--clr-border)'
+                justifyContent: 'center',
+                fontSize: '2.8rem',
+                marginBottom: '14px',
+                boxShadow: 'var(--shadow-btn)'
               }}>
-                <span style={{ fontSize: '0.82rem', color: 'var(--clr-text-soft)', fontWeight: 600 }}>
-                  ⭐ {game.levels.length} Levels Available
-                </span>
-
-                <button
-                  onClick={() => setActiveGame(game)}
-                  className="tenali-btn-primary"
-                  style={{
-                    padding: '8px 18px',
-                    fontSize: '0.88rem',
-                    borderRadius: 'var(--radius-pill)'
-                  }}
-                >
-                  <Play size={14} fill="#ffffff" />
-                  <span>Play Module</span>
-                </button>
+                {game.icon}
               </div>
+
+              {/* Basic Game Name Only (No long text walls!) */}
+              <h3 style={{
+                fontFamily: 'var(--font-display)',
+                fontSize: '1.2rem',
+                fontWeight: 700,
+                color: 'var(--clr-text)',
+                margin: '0 0 10px 0',
+                lineHeight: 1.3
+              }}>
+                {game.name}
+              </h3>
+
+              {/* Levels Badge */}
+              <div style={{
+                fontSize: '0.8rem',
+                fontWeight: 600,
+                color: 'var(--clr-text-soft)',
+                marginBottom: '16px'
+              }}>
+                ⭐ {game.levelsCount} Levels
+              </div>
+
+              {/* Big Friendly Play Button */}
+              <button
+                className="tenali-btn-primary"
+                style={{
+                  width: '100%',
+                  padding: '10px',
+                  fontSize: '0.95rem',
+                  borderRadius: 'var(--radius-pill)',
+                  marginTop: 'auto'
+                }}
+              >
+                <Play size={16} fill="#ffffff" />
+                <span>Play</span>
+              </button>
             </div>
           ))}
         </div>
       </main>
-
-      {/* OpenSpec Inspector Modal */}
-      {inspectingSpec && (
-        <OpenSpecModal
-          spec={inspectingSpec}
-          onClose={() => setInspectingSpec(null)}
-        />
-      )}
     </div>
   );
 }

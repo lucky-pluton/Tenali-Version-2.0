@@ -1,11 +1,8 @@
 /**
- * TENALI 2.0 OPEN SPEC MODULE REGISTRY
- * Aggregates all segregated domain modules and validates them against OpenSpec v1.0
+ * MODULE REGISTRY
+ * Aggregates all game modules with clean, friendly titles
  */
 
-import { validateOpenSpec } from './core/specSchema';
-
-// Module imports from segregated folders
 import aaravJamunModule from './modules/addition/aarav-jamun';
 import riyaBraceletModule from './modules/addition/riya-bracelet';
 import sunChariotModule from './modules/addition/sun-chariot';
@@ -15,60 +12,79 @@ import schoolBusModule from './modules/subtraction/school-bus';
 
 import lavaHopModule from './modules/counting-logic/lava-hop';
 import sum7DiceModule from './modules/counting-logic/sum7-dice';
+import feedMonsterModule from './modules/counting-logic/feed-monster';
 
 export const MODULE_REGISTRY = [
   {
-    ...aaravJamunModule.spec,
+    id: 'feed-monster',
+    name: "Feed the Monster!",
+    component: feedMonsterModule.Component,
+    icon: '👹',
+    domainId: 'counting-logic',
+    levelsCount: 5,
+    tags: ['monster', 'cakes', 'bakery', 'counting', 'one-to-one']
+  },
+  {
+    id: 'aarav-jamun',
+    name: "Aarav's Gulab Jamuns",
     component: aaravJamunModule.Component,
     icon: '🍬',
     domainId: 'addition',
-    tags: ['addition', 'story', 'food', 'multi-addend']
+    levelsCount: 3,
+    tags: ['addition', 'story', 'food', 'sweets']
   },
   {
-    ...riyaBraceletModule.spec,
+    id: 'riya-bracelet',
+    name: "Make My Bracelet",
     component: riyaBraceletModule.Component,
     icon: '📿',
     domainId: 'addition',
-    tags: ['number bonds', 'making 10', 'beads', 'missing addend']
+    levelsCount: 3,
+    tags: ['number bonds', 'making 10', 'beads']
   },
   {
-    ...sunChariotModule.spec,
+    id: 'sun-chariot',
+    name: "Sun Chariot Wheel",
     component: sunChariotModule.Component,
     icon: '🎡',
     domainId: 'addition',
-    tags: ['wheels', 'pairs', 'fact families', 'chariot']
+    levelsCount: 3,
+    tags: ['wheel', 'pairs', 'fact families']
   },
   {
-    ...vanishingButtonsModule.spec,
+    id: 'vanishing-buttons',
+    name: "Vanishing Buttons",
     component: vanishingButtonsModule.Component,
     icon: '🐒',
     domainId: 'subtraction',
-    tags: ['subtraction', 'zero', 'story', 'monkey', 'buttons']
+    levelsCount: 3,
+    tags: ['subtraction', 'zero', 'monkey', 'buttons']
   },
   {
-    ...schoolBusModule.spec,
+    id: 'school-bus',
+    name: "Five Little Children",
     component: schoolBusModule.Component,
     icon: '🚌',
     domainId: 'subtraction',
-    tags: ['subtraction', 'rhymes', 'countdown', 'bus']
+    levelsCount: 2,
+    tags: ['subtraction', 'bus', 'countdown']
   },
   {
-    ...lavaHopModule.spec,
+    id: 'lava-hop',
+    name: "Lava Hop",
     component: lavaHopModule.Component,
     icon: '🌋',
     domainId: 'counting-logic',
-    tags: ['counting', 'skip counting', 'lava', 'number line']
+    levelsCount: 3,
+    tags: ['counting', 'lava', 'hopscotch']
   },
   {
-    ...sum7DiceModule.spec,
+    id: 'sum7-dice',
+    name: "Sum 7 Dice",
     component: sum7DiceModule.Component,
     icon: '🎲',
     domainId: 'counting-logic',
-    tags: ['dice', 'spatial reasoning', 'sum 7', 'logic']
+    levelsCount: 3,
+    tags: ['dice', 'sum 7', 'logic']
   }
 ];
-
-// Perform OpenSpec validation
-MODULE_REGISTRY.forEach(m => {
-  validateOpenSpec(m);
-});
