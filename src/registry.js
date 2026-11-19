@@ -35,12 +35,12 @@ export const MODULE_REGISTRY = [
   },
   {
     id: 'riya-bracelet',
-    name: "Make My Bracelet",
+    name: "Riya's Bracelet",
     component: riyaBraceletModule.Component,
     icon: '📿',
     domainId: 'addition',
-    levelsCount: 3,
-    tags: ['number bonds', 'making 10', 'beads']
+    levelsCount: 4,
+    tags: ['number bonds', 'making 10', 'beads', 'riya']
   },
   {
     id: 'sun-chariot',

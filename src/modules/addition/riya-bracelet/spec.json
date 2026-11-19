@@ -2,45 +2,52 @@
   "$schema": "https://tenali.fun/schemas/openspec-v1.json",
   "specVersion": "1.0.0",
   "id": "addition.riya-bracelet",
-  "name": "Make My Bracelet — Number Bonds to 10",
-  "domain": "Number Bonds & Complements of 10",
+  "name": "Riya's Bracelet",
+  "domain": "Addition & Number Bonds to 10",
   "competencyCode": "FLN-NUM-BONDS-10",
-  "competency": "Mastering number pairs that make 10, finding the missing addend, and spatial grouping",
+  "competency": "Interactive storytelling, tactile 1-to-10 counting, number bonds to 10, and waste-prevention conservation logic",
   "targetAge": "Ages 5-8 (Grades 1-2)",
-  "ncertStandard": "Grade 1 Mathematics: Joyful Mathematics Chapter 5 (Numbers to 10 & 20)",
-  "overview": "Riya's 10-bead bracelet broke and beads scattered. Children help her buy or find the exact missing number of beads to complete the bracelet ring without leftovers (N + ? = 10).",
+  "ncertStandard": "Grade 1 Mathematics: Joyful Mathematics Chapter 5 (Numbers to 10)",
+  "overview": "Riya has a 10-bead bracelet. Children count the 10 beads together, trigger the exciting 'crazy thing' snap where beads scatter, help Riya who recovered only 3 beads, and visit the bead shop where the shopkeeper advises not to buy more than needed to avoid waste across four levels (3, 5, 2, 8).",
   "learningOutcomes": [
-    "Identify pairs of numbers that add up to 10 (3+7, 4+6, 5+5, etc.)",
-    "Find the unknown addend in an addition equation (a + ? = 10)",
-    "Develop tactile spatial understanding using circular bead string manipulatives",
-    "Extend number bonds to 20 for advanced learners"
+    "Count items from 1 to 10 with 1-to-1 correspondence and audio reinforcement",
+    "Identify complements of 10 (3+7, 5+5, 2+8, 8+2)",
+    "Understand quantity conservation and waste prevention (not buying more than 10)",
+    "Solve missing addend problems (have + ? = 10)"
   ],
   "levels": [
     {
       "level": 1,
-      "name": "The Bead Shop",
-      "description": "Select the correct bead jar from the shop to complete 10 beads",
-      "range": "Make 10"
+      "name": "Found 3 Beads",
+      "description": "Riya found only 3 beads. Needs 7 more beads to make 10.",
+      "range": "3 + 7 = 10"
     },
     {
       "level": 2,
-      "name": "Room Hunt Adventure",
-      "description": "Find hidden beads around the house (table, plant, toy box) and calculate missing beads",
-      "range": "Make 10"
+      "name": "Found 5 Beads",
+      "description": "Riya found 5 beads in the garden. Needs 5 more beads to make 10.",
+      "range": "5 + 5 = 10"
     },
     {
       "level": 3,
-      "name": "Master 20-Bead Necklace",
-      "description": "Construct large 20-bead necklaces with two-digit complements",
-      "range": "Make 20"
+      "name": "Found 2 Beads",
+      "description": "Riya found only 2 beads. Needs 8 more beads to make 10.",
+      "range": "2 + 8 = 10"
+    },
+    {
+      "level": 4,
+      "name": "Found 8 Beads",
+      "description": "Riya found 8 beads. Needs 2 more beads to make 10.",
+      "range": "8 + 2 = 10"
     }
   ],
   "stateMachine": [
-    "scenario_prompt",
-    "bead_visual_display",
-    "missing_addend_input",
-    "bracelet_string_animation",
-    "feedback",
+    "intro_count",
+    "crazy_prompt",
+    "crazy_break",
+    "search_found",
+    "shopkeeper_intro",
+    "playing_levels",
     "celebration"
   ]
 }

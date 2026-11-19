@@ -209,3 +209,182 @@ export function playMunch() {
   osc.start();
   osc.stop(ctx.currentTime + 0.15);
 }
+
+// Funny cartoon stomach growl
+export function playStomachGrowl() {
+  if (!soundEnabled) return;
+  const ctx = getAudioContext();
+  if (!ctx) return;
+
+  const osc = ctx.createOscillator();
+  const lfo = ctx.createOscillator();
+  const lfoGain = ctx.createGain();
+  const masterGain = ctx.createGain();
+
+  osc.type = 'triangle';
+  osc.frequency.setValueAtTime(85, ctx.currentTime);
+  osc.frequency.linearRampToValueAtTime(65, ctx.currentTime + 0.6);
+
+  lfo.type = 'sine';
+  lfo.frequency.setValueAtTime(14, ctx.currentTime);
+  lfoGain.gain.setValueAtTime(35, ctx.currentTime);
+
+  lfo.connect(lfoGain);
+  lfoGain.connect(osc.frequency);
+
+  masterGain.gain.setValueAtTime(0.01, ctx.currentTime);
+  masterGain.gain.linearRampToValueAtTime(0.22, ctx.currentTime + 0.15);
+  masterGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.65);
+
+  osc.connect(masterGain);
+  masterGain.connect(ctx.destination);
+
+  lfo.start();
+  osc.start();
+  lfo.stop(ctx.currentTime + 0.65);
+  osc.stop(ctx.currentTime + 0.65);
+}
+
+// Cheerful bakery shop entry bell
+export function playBakeryBell() {
+  if (!soundEnabled) return;
+  const ctx = getAudioContext();
+  if (!ctx) return;
+
+  const freqs = [1567.98, 2093.00];
+  freqs.forEach((freq, idx) => {
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(freq, ctx.currentTime + idx * 0.06);
+
+    gain.gain.setValueAtTime(0.18, ctx.currentTime + idx * 0.06);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + idx * 0.06 + 0.35);
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+
+    osc.start(ctx.currentTime + idx * 0.06);
+    osc.stop(ctx.currentTime + idx * 0.06 + 0.35);
+  });
+}
+
+// Cake pick / select sweet chime
+export function playCakePick() {
+  if (!soundEnabled) return;
+  const ctx = getAudioContext();
+  if (!ctx) return;
+
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+
+  osc.type = 'triangle';
+  osc.frequency.setValueAtTime(750, ctx.currentTime);
+  osc.frequency.exponentialRampToValueAtTime(1200, ctx.currentTime + 0.09);
+
+  gain.gain.setValueAtTime(0.2, ctx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.12);
+
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+
+  osc.start();
+  osc.stop(ctx.currentTime + 0.12);
+}
+
+// Funny cartoon burp / satisfied sound
+export function playMonsterBurp() {
+  if (!soundEnabled) return;
+  const ctx = getAudioContext();
+  if (!ctx) return;
+
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+
+  osc.type = 'sawtooth';
+  osc.frequency.setValueAtTime(110, ctx.currentTime);
+  osc.frequency.linearRampToValueAtTime(70, ctx.currentTime + 0.25);
+  osc.frequency.linearRampToValueAtTime(130, ctx.currentTime + 0.35);
+
+  gain.gain.setValueAtTime(0.25, ctx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+
+  osc.start();
+  osc.stop(ctx.currentTime + 0.4);
+}
+
+// Funny overstuffed groan
+export function playMonsterGroan() {
+  if (!soundEnabled) return;
+  const ctx = getAudioContext();
+  if (!ctx) return;
+
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+
+  osc.type = 'triangle';
+  osc.frequency.setValueAtTime(140, ctx.currentTime);
+  osc.frequency.linearRampToValueAtTime(90, ctx.currentTime + 0.4);
+
+  gain.gain.setValueAtTime(0.22, ctx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.45);
+
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+
+  osc.start();
+  osc.stop(ctx.currentTime + 0.45);
+}
+
+// Snapping string sound for bracelet snap
+export function playBraceletSnap() {
+  if (!soundEnabled) return;
+  const ctx = getAudioContext();
+  if (!ctx) return;
+
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+
+  osc.type = 'sawtooth';
+  osc.frequency.setValueAtTime(800, ctx.currentTime);
+  osc.frequency.exponentialRampToValueAtTime(120, ctx.currentTime + 0.18);
+
+  gain.gain.setValueAtTime(0.35, ctx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2);
+
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+
+  osc.start();
+  osc.stop(ctx.currentTime + 0.2);
+}
+
+// Clattering scattering beads sound
+export function playScatter() {
+  if (!soundEnabled) return;
+  const ctx = getAudioContext();
+  if (!ctx) return;
+
+  for (let i = 0; i < 7; i++) {
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    osc.type = 'sine';
+    const freq = 500 + Math.random() * 600;
+    osc.frequency.setValueAtTime(freq, ctx.currentTime + i * 0.05);
+    osc.frequency.exponentialRampToValueAtTime(freq * 1.5, ctx.currentTime + i * 0.05 + 0.06);
+
+    gain.gain.setValueAtTime(0.18, ctx.currentTime + i * 0.05);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.05 + 0.07);
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+
+    osc.start(ctx.currentTime + i * 0.05);
+    osc.stop(ctx.currentTime + i * 0.05 + 0.07);
+  }
+}
