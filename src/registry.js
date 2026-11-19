@@ -80,11 +80,11 @@ export const MODULE_REGISTRY = [
   },
   {
     id: 'sum7-dice',
-    name: "Sum 7 Dice",
+    name: "Magic Seven Discovery",
     component: sum7DiceModule.Component,
     icon: '🎲',
     domainId: 'counting-logic',
     levelsCount: 3,
-    tags: ['dice', 'sum 7', 'logic']
+    tags: ['dice', 'magic 7', 'mystery', 'logic']
   }
 ];
