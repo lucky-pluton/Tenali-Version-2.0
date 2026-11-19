@@ -74,12 +74,11 @@ export default function FeedTheMonsterGame({ onBack }) {
   const [eatenCount, setEatenCount] = useState(0);
   const [showCelebration, setShowCelebration] = useState(false);
 
-  // Initial stomach growl and voice prompt on hunger stage load
+  // Initial stomach growl on hunger stage load (no long speech - count on click)
   useEffect(() => {
     if (stage === 'hunger') {
       const timer = setTimeout(() => {
         playStomachGrowl();
-        speak("I'm super hungry! Look inside my tummy and click the empty spaces to count how many cakes I want!");
       }, 400);
       return () => clearTimeout(timer);
     }
@@ -94,14 +93,13 @@ export default function FeedTheMonsterGame({ onBack }) {
     const newCounted = [...countedSlots, slotIdx];
     setCountedSlots(newCounted);
 
-    // Speak the sequential number aloud: "1", "2", "3"!
+    // ONLY count the sequential number aloud: "1", "2", "3"!
     speak(String(nextCount), 0.85);
 
     if (newCounted.length === targetNumber) {
       setTimeout(() => {
         playSuccessChime();
         setHungerConfirmed(true);
-        speak(`Awesome! You counted ${targetNumber} empty spaces! The monster wants exactly ${targetNumber} cakes!`);
       }, 500);
     }
   };
@@ -110,29 +108,24 @@ export default function FeedTheMonsterGame({ onBack }) {
   const handleGoToBakery = () => {
     playBakeryBell();
     setStage('bakery');
-    speak("Welcome to the bakery! Pick the cakes for the monster!");
   };
 
-  // Stage 2: Add cake to basket and speak the count 1, 2, 3...
+  // Stage 2: Add cake to basket and speak ONLY the count: 1, 2, 3...
   const handleAddCake = (cakeType) => {
     playCakePick();
     const nextBasketCount = basket.length + 1;
     setBasket(prev => [...prev, { ...cakeType, uid: Date.now() + Math.random(), cakeIndex: nextBasketCount }]);
 
-    // Speak aloud when picking cakes: 1, 2, 3...
+    // Speak ONLY the count when picking cakes: 1, 2, 3...
     speak(String(nextBasketCount), 0.85);
   };
 
-  // Stage 2: Remove specific cake from basket
+  // Stage 2: Remove specific cake from basket - speaks remaining count
   const handleRemoveCake = (uid) => {
     playCakePick();
     setBasket(prev => {
       const updated = prev.filter(c => c.uid !== uid);
-      if (updated.length > 0) {
-        speak(`${updated.length} cakes left in basket.`);
-      } else {
-        speak("Basket is empty.");
-      }
+      speak(String(updated.length), 0.85);
       return updated;
     });
   };
@@ -145,25 +138,22 @@ export default function FeedTheMonsterGame({ onBack }) {
     if (count < targetNumber) {
       playGentleBoing();
       setVerdict('too_few');
-      speak(`Heyyy! I'm still hungry! I wanted ${targetNumber} cakes, but you brought only ${count}!`);
     } else if (count > targetNumber) {
       playMonsterGroan();
       setVerdict('too_many');
-      speak(`WHOA! That's too many cakes! My stomach will burst! I only wanted ${targetNumber}, but you brought ${count}!`);
     } else {
       // Exact match!
       setVerdict('exact');
       playSuccessChime();
       setStars(s => s + 3);
 
-      speak(`YUMMMM! Perfect! You brought exactly ${targetNumber} cakes!`);
-
-      // Trigger animated one-by-one eating into the stomach
+      // Trigger animated one-by-one eating into the stomach and count along: 1, 2, 3...
       let currentEaten = 0;
       const eatInterval = setInterval(() => {
         currentEaten += 1;
         setEatenCount(currentEaten);
         playMunch();
+        speak(String(currentEaten), 0.85);
 
         if (currentEaten >= targetNumber) {
           clearInterval(eatInterval);
@@ -174,7 +164,7 @@ export default function FeedTheMonsterGame({ onBack }) {
             }, 900);
           }, 600);
         }
-      }, 450);
+      }, 550);
     }
   };
 
@@ -184,7 +174,6 @@ export default function FeedTheMonsterGame({ onBack }) {
     setStage('bakery');
     setVerdict(null);
     setEatenCount(0);
-    speak("Let's fix the cakes in the basket!");
   };
 
   // Move to next level

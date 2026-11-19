@@ -88,19 +88,10 @@ export default function RiyaBraceletGame({ onBack }) {
   const currentLevel = LEVELS[currentLevelIdx];
   const requiredBeads = currentLevel.target - currentLevel.have;
 
-  // Speak initial intro upon entering intro_count
-  useEffect(() => {
-    if (stage === 'intro_count') {
-      const timer = setTimeout(() => {
-        speak("Riya has a bracelet. Click the beads to count with me: one, two, three, all the way to ten!");
-      }, 400);
-      return () => clearTimeout(timer);
-    }
-  }, [stage]);
-
   // Handle clicking on beads during the intro count (1 to 10)
   const handleIntroBeadClick = (beadNum) => {
     playBeadClick();
+    // Speak ONLY the bead number so child learns the counting sequence!
     speak(beadNum, 0.85);
 
     setCountedBeads(prev => {
@@ -109,7 +100,6 @@ export default function RiyaBraceletGame({ onBack }) {
       if (next.length === 10) {
         setTimeout(() => {
           playSuccessChime();
-          speak("Awesome! There are 10 beads in Riya's bracelet!");
           setStage('crazy_prompt');
         }, 600);
       }
@@ -123,7 +113,6 @@ export default function RiyaBraceletGame({ onBack }) {
     playBraceletSnap();
     setTimeout(() => {
       playScatter();
-      speak("Oh no! The bracelet broke and all the beads scattered!");
     }, 250);
 
     setTimeout(() => {
@@ -134,13 +123,11 @@ export default function RiyaBraceletGame({ onBack }) {
 
   // Move from break to search
   const handleGoToSearch = () => {
-    speak("Riya searched everywhere, but she found only 3 beads!");
     setStage('search_found');
   };
 
   // Move from search to shopkeeper
   const handleGoToShop = () => {
-    speak("Welcome to my bead shop! Don't buy more beads, otherwise you will waste it!");
     setStage('shopkeeper_intro');
   };
 
@@ -150,17 +137,17 @@ export default function RiyaBraceletGame({ onBack }) {
     setSelectedAddend(null);
     setFeedback(null);
     setStage('playing_levels');
-    speak(LEVELS[0].story);
   };
 
   // Handle answer selection in the shop levels
   const handleSelectOption = (num) => {
     setSelectedAddend(num);
     playBeadClick();
+    // Speak ONLY the clicked count so child remembers!
+    speak(String(num), 0.85);
 
     if (num === requiredBeads) {
       playSuccessChime();
-      speak(`Spot on! ${currentLevel.have} plus ${num} equals 10! Exactly 10 beads, no waste!`);
       setFeedback({
         type: 'success',
         text: `✨ Spot on! ${currentLevel.have} + ${num} = 10! The bracelet is complete and no beads were wasted!`
@@ -173,23 +160,20 @@ export default function RiyaBraceletGame({ onBack }) {
           setCurrentLevelIdx(nextIdx);
           setSelectedAddend(null);
           setFeedback(null);
-          speak(LEVELS[nextIdx].story);
         } else {
           playVictoryFanfare();
           setShowCelebration(true);
         }
-      }, 1800);
+      }, 1600);
     } else {
       playGentleBoing();
       const sum = currentLevel.have + num;
       if (num > requiredBeads) {
-        speak("Don't buy more beads, otherwise you will waste it! Try a smaller jar.");
         setFeedback({
           type: 'error',
           text: `⚠️ Shopkeeper says: "Don't buy more beads, otherwise you will waste it!" ${currentLevel.have} + ${num} = ${sum} (more than 10). Try a smaller jar!`
         });
       } else {
-        speak(`Not quite enough. ${currentLevel.have} plus ${num} is only ${sum}. We need 10 beads in total.`);
         setFeedback({
           type: 'error',
           text: `🤔 ${currentLevel.have} + ${num} = ${sum} beads. Not quite enough to make 10! Pick a bigger jar.`
@@ -450,7 +434,7 @@ export default function RiyaBraceletGame({ onBack }) {
                 Beads counted: {countedBeads.length} / 10
               </span>
               <button
-                onClick={() => speak("Click each bead from 1 to 10 to count with me!")}
+                onClick={() => speak(String(countedBeads.length), 0.85)}
                 style={{
                   padding: '6px 14px',
                   borderRadius: 'var(--radius-pill)',
@@ -843,7 +827,6 @@ export default function RiyaBraceletGame({ onBack }) {
                       setCurrentLevelIdx(idx);
                       setSelectedAddend(null);
                       setFeedback(null);
-                      speak(lvl.story);
                     }}
                     style={{
                       padding: '6px 12px',

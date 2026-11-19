@@ -180,19 +180,11 @@ export default function SchoolBusCountdownGame({ onBack }) {
 
   const cur = currentStops[stopIdx];
 
-  // Recite rhyme verse when stop loads
-  useEffect(() => {
-    const spokenIntro = cur.poemLines.join('. ') + '. How many children are still on the bus?';
-    speak(spokenIntro, 0.85);
-  }, [stopIdx, level]);
-
-  const readRhymeAloud = () => {
-    const spokenIntro = cur.poemLines.join('. ') + '. How many children are still on the bus?';
-    speak(spokenIntro, 0.82);
-  };
-
   const handleSelectAnswer = (ans) => {
     setUserAnswer(ans);
+    // Directly count the selected number aloud so child remembers!
+    speak(String(ans), 0.85);
+
     if (ans === cur.targetRemaining) {
       playSuccessChime();
       setDisembarking(true);
@@ -202,10 +194,6 @@ export default function SchoolBusCountdownGame({ onBack }) {
         text: `🎉 Correct! ${cur.initialCount} - ${cur.leaving} = ${cur.targetRemaining}! ${cur.rhymeTail}`
       });
 
-      // Voice recitation of math equation & rhyme punchline
-      const successVoice = `${cur.initialCount} minus ${cur.leaving} equals ${cur.targetRemaining}! ${cur.spokenTail}`;
-      speak(successVoice, 0.82);
-
       setTimeout(() => {
         setDisembarking(false);
         if (stopIdx + 1 < currentStops.length) {
@@ -214,16 +202,14 @@ export default function SchoolBusCountdownGame({ onBack }) {
           setFeedback(null);
         } else {
           setShowCelebration(true);
-          speak(`Five Little Children Complete! All children reached home safely! Now, there are none!`, 0.82);
         }
-      }, 2400);
+      }, 1800);
     } else {
       playGentleBoing();
       setFeedback({
         type: 'error',
         text: `Count again! There were ${cur.initialCount} children, and ${cur.leaving} stepped out.`
       });
-      speak(`Try again! Count the children remaining on the bus.`, 0.85);
     }
   };
 
@@ -285,27 +271,6 @@ export default function SchoolBusCountdownGame({ onBack }) {
           </div>
 
           <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-            <button
-              onClick={readRhymeAloud}
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '6px',
-                padding: '6px 14px',
-                borderRadius: 'var(--radius-pill)',
-                fontSize: '0.82rem',
-                fontWeight: 600,
-                background: 'var(--clr-surface)',
-                color: 'var(--clr-accent)',
-                border: '1px solid var(--clr-accent)',
-                cursor: 'pointer'
-              }}
-              title="Hear Poem"
-            >
-              <Volume2 size={16} />
-              <span>Read Rhyme</span>
-            </button>
-
             <button
               onClick={() => { setLevel(1); handleReplay(); }}
               style={{
@@ -453,17 +418,19 @@ export default function SchoolBusCountdownGame({ onBack }) {
                     return (
                       <div
                         key={i}
+                        onClick={() => speak(String(i + 1), 0.85)}
                         style={{
                           fontSize: '1.9rem',
                           background: isExiting && disembarking ? 'rgba(255, 237, 213, 0.4)' : '#e0f2fe',
                           border: '2px solid #38bdf8',
                           borderRadius: '8px',
                           padding: '3px 6px',
+                          cursor: 'pointer',
                           transform: isExiting && disembarking ? 'translateY(18px) scale(0.7)' : 'scale(1)',
                           opacity: isExiting && disembarking ? 0.3 : 1,
                           transition: 'all 0.5s ease'
                         }}
-                        title={`Child ${i + 1}`}
+                        title={`Child ${i + 1} - click to count`}
                       >
                         {avatar}
                       </div>

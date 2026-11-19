@@ -42,19 +42,6 @@ export default function VanishingButtonsGame({ onBack }) {
   const [recentlyPoppedIdx, setRecentlyPoppedIdx] = useState(null);
 
   // When story intro opens, give a friendly voice introduction
-  useEffect(() => {
-    if (showStoryIntro) {
-      const timer = setTimeout(() => {
-        speak("Meet Gola the monkey! Gola has a basket full of sweet bananas and wears a shirt with shiny red buttons. Watch what happens when you feed him: his tummy swells, and POP! A button pops right off his shirt onto the floor!");
-      }, 400);
-      return () => clearTimeout(timer);
-    }
-  }, [showStoryIntro]);
-
-  const handleReadStoryAloud = () => {
-    speak("Meet Gola the monkey! Gola has a basket full of sweet bananas and wears a shirt with shiny red buttons. Watch what happens when you feed him: his tummy swells, and POP! A button pops right off his shirt onto the floor!");
-  };
-
   const handleStartPlaying = () => {
     setShowStoryIntro(false);
     setButtonsRemaining(INITIAL_BUTTONS);
@@ -66,7 +53,6 @@ export default function VanishingButtonsGame({ onBack }) {
     setIsFeeding(false);
     setActiveFlyingBanana(false);
     setRecentlyPoppedIdx(null);
-    speak(`Here is Gola and his banana basket! Tap the banana to feed him!`);
   };
 
   const handleFeedBanana = () => {
@@ -104,15 +90,16 @@ export default function VanishingButtonsGame({ onBack }) {
             }
           ]);
 
+          // Speak ONLY the remaining count: "3", "2", "1", "0"!
+          speak(String(nextRemaining), 0.85);
+
           if (nextRemaining > 0) {
-            speak(`POP! A button popped off the shirt onto the floor! ${prev} minus 1 equals ${nextRemaining}. ${nextRemaining} buttons left on the shirt.`);
             setFeedback({
               type: 'info',
               text: `💥 POP! Button #${poppedButtonNumber} popped off the shirt onto the floor! ${prev} - 1 = ${nextRemaining} buttons left on shirt.`
             });
           } else {
             playSuccessChime();
-            speak(`POP! The last button popped off onto the floor! Look at Gola's shirt — how many buttons are left on it now?`);
             setFeedback({
               type: 'info',
               text: `💥 POP! All buttons have popped off onto the floor! How many buttons are left on Gola's shirt now?`
@@ -129,10 +116,12 @@ export default function VanishingButtonsGame({ onBack }) {
   };
 
   const handleCheckZero = (val) => {
+    // Speak ONLY the clicked number so child remembers!
+    speak(String(val), 0.85);
+
     const parsed = parseInt(val, 10);
     if (parsed === 0) {
       playSuccessChime();
-      speak("Brilliant! Exactly ZERO buttons are left on the shirt! All buttons popped onto the floor. Zero means none!");
       setStars(s => s + 3);
       setFeedback({
         type: 'success',
@@ -143,7 +132,6 @@ export default function VanishingButtonsGame({ onBack }) {
       }, 1200);
     } else {
       playGentleBoing();
-      speak(`Look closely at Gola's shirt. There are no buttons left on it. What number represents none? Try zero!`);
       setFeedback({
         type: 'error',
         text: `Look closely at Gola's shirt — there are NO buttons left on it. What number represents 'none'? Try 0!`
@@ -164,11 +152,9 @@ export default function VanishingButtonsGame({ onBack }) {
       setLevel(nextLvl);
       const nextCount = nextLvl === 2 ? 5 : 6;
       setButtonsRemaining(nextCount);
-      speak(`Level ${nextLvl}! This time Gola has ${nextCount} buttons on his shirt!`);
     } else {
       setLevel(1);
       setButtonsRemaining(4);
-      speak(`Back to Level 1 with 4 buttons!`);
     }
   };
 
@@ -180,7 +166,6 @@ export default function VanishingButtonsGame({ onBack }) {
     setBananasEaten(0);
     setBellyScale(1);
     setButtonsRemaining(INITIAL_BUTTONS);
-    speak(`Let's play again! Gola has ${INITIAL_BUTTONS} buttons.`);
   };
 
   const remainingBananasInBasket = buttonsRemaining;

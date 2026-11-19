@@ -325,12 +325,15 @@ export default function AaravGulabJamunGame({ onBack }) {
                 {Array.from({ length: totalEaten }).map((_, i) => (
                   <span
                     key={i}
+                    onClick={() => speakNumber(i + 1)}
                     className="anim-pop"
                     style={{
                       fontSize: '1.9rem',
                       display: 'inline-block',
+                      cursor: 'pointer',
                       filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.4))'
                     }}
+                    title={`Sweet ${i + 1} - click to count`}
                   >
                     🟤
                   </span>
@@ -446,7 +449,7 @@ export default function AaravGulabJamunGame({ onBack }) {
                 {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(n => (
                   <button
                     key={n}
-                    onClick={() => setTotalInput(String(n))}
+                    onClick={() => { setTotalInput(String(n)); speakNumber(n); }}
                     style={{
                       width: '44px',
                       height: '44px',

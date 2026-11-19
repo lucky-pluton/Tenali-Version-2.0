@@ -54,20 +54,6 @@ export default function Sum7DiceGame({ onBack }) {
     6: [[28, 22], [72, 22], [28, 50], [72, 50], [28, 78], [72, 78]]
   };
 
-  // When story intro opens, give a friendly voice introduction
-  useEffect(() => {
-    if (showStoryIntro) {
-      const timer = setTimeout(() => {
-        speak("Did you know that standard dice have a secret superpower? Whenever you throw a die, the number on the top face and the hidden number on the bottom face always equal 7! Let's throw the die and guess the bottom face!");
-      }, 400);
-      return () => clearTimeout(timer);
-    }
-  }, [showStoryIntro]);
-
-  const handleReadStoryAloud = () => {
-    speak("Did you know that standard dice have a secret superpower? Whenever you throw a die, the number on the top face and the hidden number on the bottom face always equal 7! If top is 1, bottom is 6! If top is 2, bottom is 5! If top is 3, bottom is 4!");
-  };
-
   const handleStartPlaying = () => {
     setShowStoryIntro(false);
     setUserGuess(null);
@@ -91,13 +77,17 @@ export default function Sum7DiceGame({ onBack }) {
       const newTop = Math.floor(Math.random() * 6) + 1;
       setTopFace(newTop);
       setRolling(false);
-      speak(`The die landed with ${newTop} on top! What number is hiding on the bottom face?`);
+      // Speak the number on top face so child hears the count
+      speak(String(newTop), 0.85);
     }, 650);
   };
 
   const handleGuessBottom = (guess) => {
     if (rolling || revealed) return;
     setUserGuess(guess);
+
+    // Speak ONLY the clicked guess number so child remembers!
+    speak(String(guess), 0.85);
 
     if (guess === bottomFace) {
       playSuccessChime();
@@ -110,7 +100,6 @@ export default function Sum7DiceGame({ onBack }) {
         setDiscoveredPairs(p => [...p, pairKey]);
       }
 
-      speak(`Awesome! ${topFace} is on top, so ${bottomFace} is hiding on the bottom! Together they make Magic 7!`);
       setFeedback({
         type: 'success',
         text: `✨ You nailed it! Top is ${topFace}, so the bottom is ${bottomFace}! Together they make Magic 7!`
@@ -124,7 +113,6 @@ export default function Sum7DiceGame({ onBack }) {
       }
     } else {
       playGentleBoing();
-      speak(`Not quite! Remember, top and bottom always make 7. If top is ${topFace}, what must be at the bottom?`);
       setFeedback({
         type: 'error',
         text: `🤔 Not quite! Top is ${topFace}. What number balances with ${topFace} to make 7? Try another number or peek at the hint!`
@@ -142,10 +130,8 @@ export default function Sum7DiceGame({ onBack }) {
     setShowHint(false);
     if (level < 3) {
       setLevel(l => l + 1);
-      speak(`Level ${level + 1}! Let's roll!`);
     } else {
       setLevel(1);
-      speak("Back to Level 1 Dice Detective!");
     }
     handleRollDie();
   };
@@ -611,7 +597,6 @@ export default function Sum7DiceGame({ onBack }) {
                       onClick={() => {
                         setShowHint(!showHint);
                         playPop();
-                        speak(`Hint: 1 balances with 6, 2 balances with 5, and 3 balances with 4! If top is ${topFace}, what balances to make 7?`);
                       }}
                       style={{
                         display: 'inline-flex',

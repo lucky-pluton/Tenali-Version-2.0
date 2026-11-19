@@ -75,11 +75,13 @@ export default function SunChariotWheelGame({ onBack }) {
 
   const handleSelectNumber = (num) => {
     playPop();
+    // Speak ONLY the selected number so child remembers!
+    speak(String(num), 0.85);
+
     const curSpoke = spokesState[activeSpokeIdx];
 
     if (num === curSpoke.correct) {
       playSuccessChime();
-      speak(`${curSpoke.known} plus ${num} equals ${currentWheel.target}!`);
       const updated = [...spokesState];
       updated[activeSpokeIdx] = { ...curSpoke, userFilled: num };
       setSpokesState(updated);
@@ -98,7 +100,6 @@ export default function SunChariotWheelGame({ onBack }) {
         if (anyUnfilled !== -1) {
           setActiveSpokeIdx(anyUnfilled);
         } else {
-          speak(`Hooray! You completed all spokes of the Chariot Wheel of ${currentWheel.target}!`);
           setTimeout(() => {
             setShowCelebration(true);
           }, 800);
@@ -106,7 +107,6 @@ export default function SunChariotWheelGame({ onBack }) {
       }
     } else {
       playGentleBoing();
-      speak(`Oops! ${curSpoke.known} plus ${num} is ${curSpoke.known + num}, but the sun hub needs ${currentWheel.target}. Try again!`);
       setFeedback({
         type: 'error',
         text: `Oops! ${curSpoke.known} + ${num} = ${curSpoke.known + num}, but the chariot hub needs ${currentWheel.target}!`
@@ -122,7 +122,6 @@ export default function SunChariotWheelGame({ onBack }) {
     setSpokesState(WHEEL_DATA[nextIdx].spokes);
     setActiveSpokeIdx(0);
     setLevel(nextIdx + 1);
-    speak(`Welcome to the ${WHEEL_DATA[nextIdx].name}!`);
   };
 
   const handleReplay = () => {
@@ -130,7 +129,6 @@ export default function SunChariotWheelGame({ onBack }) {
     setFeedback(null);
     setSpokesState(currentWheel.spokes);
     setActiveSpokeIdx(0);
-    speak(`Let's roll the ${currentWheel.name} again!`);
   };
 
   const renderWheel = () => {
@@ -198,7 +196,10 @@ export default function SunChariotWheelGame({ onBack }) {
                   transition: 'all 0.3s',
                   filter: isActive ? 'drop-shadow(0 0 8px rgba(232, 134, 74, 0.6))' : 'none'
                 }}
-                onClick={() => setActiveSpokeIdx(idx)}
+                onClick={() => {
+                  setActiveSpokeIdx(idx);
+                  speak(String(spoke.known), 0.85);
+                }}
               />
 
               <text
@@ -208,6 +209,7 @@ export default function SunChariotWheelGame({ onBack }) {
                 fontSize="13"
                 fontWeight="800"
                 fill={isFilled ? "var(--clr-correct)" : isActive ? "var(--clr-accent)" : "var(--clr-text)"}
+                style={{ pointerEvents: 'none' }}
               >
                 {spoke.known}+{isFilled ? spoke.userFilled : '?'}
               </text>
@@ -221,7 +223,11 @@ export default function SunChariotWheelGame({ onBack }) {
           cy={centerY}
           r="46"
           fill="var(--clr-accent)"
-          style={{ filter: 'drop-shadow(0 0 16px rgba(232, 134, 74, 0.5))' }}
+          onClick={() => speak(String(currentWheel.target), 0.85)}
+          style={{
+            cursor: 'pointer',
+            filter: 'drop-shadow(0 0 16px rgba(232, 134, 74, 0.5))'
+          }}
         />
         <text
           x={centerX}
@@ -231,6 +237,7 @@ export default function SunChariotWheelGame({ onBack }) {
           fontWeight="800"
           fontFamily="var(--font-kids)"
           fill="#ffffff"
+          style={{ pointerEvents: 'none' }}
         >
           {currentWheel.target}
         </text>
@@ -288,7 +295,6 @@ export default function SunChariotWheelGame({ onBack }) {
                   setActiveSpokeIdx(0);
                   setLevel(idx + 1);
                   setFeedback(null);
-                  speak(`Switched to Hub ${w.target}`);
                 }}
                 style={{
                   padding: '6px 14px',

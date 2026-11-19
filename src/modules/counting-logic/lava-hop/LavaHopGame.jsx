@@ -102,27 +102,12 @@ export default function LavaHopGame({ onBack }) {
   const [showCelebration, setShowCelebration] = useState(false);
   const [sizzleEffect, setSizzleEffect] = useState(null);
 
-  // Play spoken intro when story intro is opened
-  useEffect(() => {
-    if (showStoryIntro) {
-      const timer = setTimeout(() => {
-        speak("Look at this tiled footpath! Have you ever walked on these red and white paver tiles? The red tiles are scorching hot volcano lava! You must only hop on the clean white stones to stay safe!");
-      }, 400);
-      return () => clearTimeout(timer);
-    }
-  }, [showStoryIntro]);
-
-  const handleReadStoryAloud = () => {
-    speak("Look at this tiled footpath! Have you ever walked on these red and white paver tiles? The red tiles are scorching hot volcano lava! You must only hop on the clean white stones to stay safe! As you hop, the secret numbers appear: one, two, three!");
-  };
-
   const handleStartPlaying = () => {
     setShowStoryIntro(false);
     setCurrentTileIdx(-1);
     setRevealedNumbers({});
     setReachedFinish(false);
     setFeedback(null);
-    speak(`You are on the start sidewalk. Hop on the first white paver stone to reveal number 1!`);
   };
 
   // Safe stones sequence
@@ -141,7 +126,6 @@ export default function LavaHopGame({ onBack }) {
       playGentleBoing();
       setSizzleEffect(tileIndex);
       setTimeout(() => setSizzleEffect(null), 600);
-      speak("Ouch! Sizzling hot red tile! Only hop on the clean white stones!");
       setFeedback({
         type: 'error',
         text: "🔥 SIZZLE! That's a red volcano tile! Your shoes will burn! Only hop on the white paver stones!"
@@ -161,7 +145,7 @@ export default function LavaHopGame({ onBack }) {
       }));
       setCurrentTileIdx(tileIndex);
 
-      // Speak number aloud: "1", "2", "3"...
+      // Speak ONLY the number aloud: "1", "2", "3"... so child remembers!
       speak(String(currentStepNumber), 0.85);
 
       // Check if finished
@@ -169,7 +153,6 @@ export default function LavaHopGame({ onBack }) {
         setTimeout(() => {
           playSuccessChime();
           setReachedFinish(true);
-          speak(`Hooray! You safely hopped across all ${currentRoad.targetCount} stones to the sidewalk!`);
           setFeedback({
             type: 'success',
             text: `🎉 Hooray! You reached the safe sidewalk! All ${currentRoad.targetCount} paver stones counted safely!`
@@ -187,14 +170,13 @@ export default function LavaHopGame({ onBack }) {
         });
       }
     } else if (revealedNumbers[tileIndex] !== undefined) {
-      // Already hopped on this stone before
+      // Already hopped on this stone before - speak its number
       playHop();
       setCurrentTileIdx(tileIndex);
       speak(String(revealedNumbers[tileIndex]), 0.85);
     } else {
       // Hopped out of order (skipped a stone)
       playGentleBoing();
-      speak("Hop on the next white stone in order!");
       setFeedback({
         type: 'error',
         text: "👣 Don't jump too far ahead! Hop on the next white stone right in front of you."
@@ -209,12 +191,9 @@ export default function LavaHopGame({ onBack }) {
     setReachedFinish(false);
     setFeedback(null);
     if (level < 3) {
-      const nextLvl = level + 1;
-      setLevel(nextLvl);
-      speak(`Level ${nextLvl}! Welcome to ${ROAD_LEVELS[nextLvl].name}!`);
+      setLevel(l => l + 1);
     } else {
       setLevel(1);
-      speak("Back to Level 1 footpath crossing!");
     }
   };
 
@@ -224,7 +203,6 @@ export default function LavaHopGame({ onBack }) {
     setRevealedNumbers({});
     setReachedFinish(false);
     setFeedback(null);
-    speak("Let's cross the volcano street again!");
   };
 
   // Sprite position helpers for the 8 paver tiles in tiles.png
@@ -625,7 +603,6 @@ export default function LavaHopGame({ onBack }) {
                   <div
                     onClick={() => {
                       setCurrentTileIdx(-1);
-                      speak("Ready on the start sidewalk! Hop on the first white paver stone!");
                     }}
                     style={{
                       width: '70px',
@@ -791,11 +768,6 @@ export default function LavaHopGame({ onBack }) {
 
                   {/* FINISH PLATFORM */}
                   <div
-                    onClick={() => {
-                      if (reachedFinish) {
-                        speak("Safe and sound on the sidewalk!");
-                      }
-                    }}
                     style={{
                       width: '70px',
                       height: '74px',
