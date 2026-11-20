@@ -9,3 +9,4 @@ const feedMonsterModule: GameModule = {
 
 export default feedMonsterModule;
 export { FeedTheMonsterGame, spec };
+export { default as KumbhakarnaFace } from './KumbhakarnaFace';

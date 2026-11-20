@@ -14,6 +14,7 @@ import {
 } from '../../../core/soundEffects';
 import { ShoppingBasket, ArrowRight, ArrowLeft } from 'lucide-react';
 import { GameProps } from '../../../types';
+import KumbhakarnaFace, { KumbhakarnaMood } from './KumbhakarnaFace';
 
 interface FeastVariety {
   id: string;
@@ -140,11 +141,11 @@ function PuriSabziPlate() {
             <stop offset="100%" stopColor="#475569" />
           </linearGradient>
 
-          {/* Hands/Paws Gradient */}
+          {/* Hands/Paws Gradient matching Kumbhakarna's skin tone */}
           <linearGradient id="handGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#a78bfa" />
-            <stop offset="60%" stopColor="#8b5cf6" />
-            <stop offset="100%" stopColor="#6d28d9" />
+            <stop offset="0%" stopColor="#8764a8" />
+            <stop offset="60%" stopColor="#78589e" />
+            <stop offset="100%" stopColor="#674688" />
           </linearGradient>
         </defs>
 
@@ -156,32 +157,32 @@ function PuriSabziPlate() {
           <path
             d="M 16 100 Q 4 122 20 142 Q 38 150 52 138 L 48 114 Z"
             fill="url(#handGrad)"
-            stroke="#5b21b6"
+            stroke="#2c1a3b"
             strokeWidth="3.5"
             strokeLinejoin="round"
           />
           <path
             d="M 28 112 Q 40 106 48 114 Q 44 124 32 122 Z"
-            fill="#a78bfa"
-            stroke="#5b21b6"
+            fill="#8764a8"
+            stroke="#2c1a3b"
             strokeWidth="2.5"
           />
           <path
             d="M 26 124 Q 42 120 46 130 Q 38 138 28 134 Z"
-            fill="#8b5cf6"
-            stroke="#5b21b6"
+            fill="#78589e"
+            stroke="#2c1a3b"
             strokeWidth="2.5"
           />
           <path
             d="M 28 136 Q 42 133 44 143 Q 34 150 26 144 Z"
-            fill="#7c3aed"
-            stroke="#5b21b6"
+            fill="#674688"
+            stroke="#2c1a3b"
             strokeWidth="2.5"
           />
           <path
             d="M 32 100 Q 46 96 48 106 Q 42 114 30 110 Z"
-            fill="#c4b5fd"
-            stroke="#5b21b6"
+            fill="#9b79bc"
+            stroke="#2c1a3b"
             strokeWidth="2.5"
           />
         </g>
@@ -191,32 +192,32 @@ function PuriSabziPlate() {
           <path
             d="M 384 100 Q 396 122 380 142 Q 362 150 348 138 L 352 114 Z"
             fill="url(#handGrad)"
-            stroke="#5b21b6"
+            stroke="#2c1a3b"
             strokeWidth="3.5"
             strokeLinejoin="round"
           />
           <path
             d="M 372 112 Q 360 106 352 114 Q 356 124 368 122 Z"
-            fill="#a78bfa"
-            stroke="#5b21b6"
+            fill="#8764a8"
+            stroke="#2c1a3b"
             strokeWidth="2.5"
           />
           <path
             d="M 374 124 Q 358 120 354 130 Q 362 138 372 134 Z"
-            fill="#8b5cf6"
-            stroke="#5b21b6"
+            fill="#78589e"
+            stroke="#2c1a3b"
             strokeWidth="2.5"
           />
           <path
             d="M 372 136 Q 358 133 356 143 Q 366 150 374 144 Z"
-            fill="#7c3aed"
-            stroke="#5b21b6"
+            fill="#674688"
+            stroke="#2c1a3b"
             strokeWidth="2.5"
           />
           <path
             d="M 368 100 Q 354 96 352 106 Q 358 114 370 110 Z"
-            fill="#c4b5fd"
-            stroke="#5b21b6"
+            fill="#9b79bc"
+            stroke="#2c1a3b"
             strokeWidth="2.5"
           />
         </g>
@@ -762,8 +763,8 @@ export default function FeedTheMonsterGame({ onBack }: GameProps) {
         title: "The Monster Feast Begins!",
         icon: "😋",
         badge: "Story Continues • Chapter 3",
-        story: `Kumbakaran's eyes light up with pure joy! "YUMMMM! Exactly ${targetNumber} delicious servings, just what my tummy was dreaming of!" Look at this giant plate of Puri Sabzi with golden puffed puris and hot potato sabzi! Watch him feast and gobble it down!`,
-        buttonText: "Next ➔ Watch Kumbakaran Feast!",
+        story: `Kumbhakarna's eyes light up with pure joy! "YUMMMM! Exactly ${targetNumber} delicious servings, just what my tummy was dreaming of!" Look at this giant plate of Puri Sabzi with golden puffed puris and hot potato sabzi! Watch him feast and gobble it down!`,
+        buttonText: "Next ➔ Watch Kumbhakarna Feast!",
         onProceed: () => {
           // Trigger animated one-by-one eating into the stomach and count along: 1, 2, 3...
           let currentEaten = 0;
@@ -811,10 +812,10 @@ export default function FeedTheMonsterGame({ onBack }: GameProps) {
     setStage('hunger');
     setStoryChapter({
       isOpen: true,
-      title: "Kumbakaran's Hunger Grows!",
+      title: "Kumbhakarna's Hunger Grows!",
       icon: "😴",
       badge: `Level ${nextLvl} • Chapter 1`,
-      story: `Kumbakaran took a tiny snooze and woke up ready for another meal! Let's peek into his tummy and count the empty spaces to see his new appetite!`,
+      story: `Kumbhakarna took a tiny snooze and woke up ready for another meal! Let's peek into his tummy and count the empty spaces to see his new appetite!`,
       buttonText: "Next ➔ Count Stomach Spaces!",
       onProceed: () => {}
     });
@@ -843,11 +844,16 @@ export default function FeedTheMonsterGame({ onBack }: GameProps) {
   };
 
   // Monster visual expressions
-  const getMonsterVisual = () => {
+  const getMonsterVisual = (): {
+    mood: KumbhakarnaMood;
+    bellyGlow: string;
+    expression: string;
+    burpText: string | null;
+  } => {
     if (stage === 'verdict') {
       if (verdict === 'too_few') {
         return {
-          face: '😢',
+          mood: 'too_few',
           bellyGlow: '#f87171',
           expression: "Heyyy! I'm still hungry!",
           burpText: null
@@ -855,7 +861,7 @@ export default function FeedTheMonsterGame({ onBack }: GameProps) {
       }
       if (verdict === 'too_many') {
         return {
-          face: '😵‍💫',
+          mood: 'too_many',
           bellyGlow: '#fb923c',
           expression: "WHOA! That's too much food!",
           burpText: null
@@ -863,7 +869,7 @@ export default function FeedTheMonsterGame({ onBack }: GameProps) {
       }
       if (verdict === 'exact') {
         return {
-          face: eatenCount >= targetNumber ? '😋' : '🤤',
+          mood: eatenCount >= targetNumber ? 'exact' : eatenCount > 0 ? 'eating' : 'ready',
           bellyGlow: '#4ade80',
           expression: "YUMMMM! Exactly the right number!",
           burpText: eatenCount >= targetNumber ? 'BURRRRP! ✨' : null
@@ -871,7 +877,7 @@ export default function FeedTheMonsterGame({ onBack }: GameProps) {
       }
     }
     return {
-      face: hungerConfirmed ? '😃' : '🤤',
+      mood: hungerConfirmed ? 'ready' : countedSlots.length > 0 ? 'counting' : 'hungry',
       bellyGlow: '#fef08a',
       expression: hungerConfirmed ? "Yay! Let's get the feast!" : "My tummy is growling for Puri Sabzi!",
       burpText: null
@@ -981,49 +987,29 @@ export default function FeedTheMonsterGame({ onBack }: GameProps) {
 
             {/* REALISTIC CARTOON MONSTER WITH PROMINENT ROUND STOMACH */}
             <div style={{
-              background: 'linear-gradient(180deg, #8b5cf6 0%, #6d28d9 100%)',
-              border: '4px solid #5b21b6',
+              background: 'linear-gradient(180deg, #2b1842 0%, #1a0f2b 100%)',
+              border: '4px solid #55337e',
               borderRadius: '50px 50px 60px 60px',
               padding: '24px 20px 30px 20px',
               maxWidth: '460px',
               margin: '0 auto 22px auto',
-              boxShadow: '0 16px 36px rgba(109, 40, 217, 0.45)',
+              boxShadow: '0 16px 36px rgba(26, 15, 43, 0.55)',
               color: '#ffffff',
               position: 'relative'
             }}>
-              {/* Monster Ears / Horns */}
-              <div style={{
-                position: 'absolute',
-                top: '-20px',
-                left: '40px',
-                fontSize: '2.5rem',
-                transform: 'rotate(-20deg)'
-              }}>
-                🦄
-              </div>
-              <div style={{
-                position: 'absolute',
-                top: '-20px',
-                right: '40px',
-                fontSize: '2.5rem',
-                transform: 'rotate(20deg)'
-              }}>
-                🦄
-              </div>
-
-              {/* Monster Head & Eyes */}
-              <div style={{ fontSize: '4.8rem', lineHeight: 1, marginBottom: '4px' }}>
-                {monsterVisual.face}
+              {/* Kumbhakarna Face (Modelled directly from reference image) */}
+              <div style={{ margin: '0 auto 6px auto', display: 'flex', justifyContent: 'center' }}>
+                <KumbhakarnaFace mood={monsterVisual.mood} size={230} />
               </div>
               <div style={{
                 fontFamily: 'var(--font-kids)',
-                fontSize: '1.3rem',
+                fontSize: '1.35rem',
                 fontWeight: 800,
                 color: '#fef08a',
                 marginBottom: '14px',
                 letterSpacing: '0.02em'
               }}>
-                Kumbakaran the Monster
+                Kumbhakarna the Sleeping Giant
               </div>
 
               {/* BIG ROUND MONSTER TUMMY / STOMACH CHAMBER */}
@@ -1051,7 +1037,7 @@ export default function FeedTheMonsterGame({ onBack }: GameProps) {
                   marginBottom: '14px'
                 }}>
                   <span>🫧</span>
-                  <span>Inside Kumbakaran's Tummy</span>
+                  <span>Inside Kumbhakarna's Tummy</span>
                   <span>🫧</span>
                 </div>
 
@@ -1420,27 +1406,28 @@ export default function FeedTheMonsterGame({ onBack }: GameProps) {
           }}>
             {/* Monster Reaction Character */}
             <div style={{
-              background: 'linear-gradient(180deg, #8b5cf6 0%, #6d28d9 100%)',
-              border: '4px solid #5b21b6',
+              background: 'linear-gradient(180deg, #2b1842 0%, #1a0f2b 100%)',
+              border: '4px solid #55337e',
               borderRadius: '50px 50px 60px 60px',
               padding: '24px 20px 30px 20px',
               maxWidth: '460px',
               margin: '0 auto 24px auto',
-              boxShadow: '0 16px 36px rgba(109, 40, 217, 0.45)',
+              boxShadow: '0 16px 36px rgba(26, 15, 43, 0.55)',
               color: '#ffffff',
               position: 'relative'
             }}>
-              <div style={{ fontSize: '4.8rem', lineHeight: 1, marginBottom: '4px' }}>
-                {monsterVisual.face}
+              {/* Kumbhakarna Face (Modelled directly from reference image) */}
+              <div style={{ margin: '0 auto 6px auto', display: 'flex', justifyContent: 'center' }}>
+                <KumbhakarnaFace mood={monsterVisual.mood} size={230} />
               </div>
               <div style={{
                 fontFamily: 'var(--font-kids)',
-                fontSize: '1.3rem',
+                fontSize: '1.35rem',
                 fontWeight: 800,
                 color: '#fef08a',
                 marginBottom: '14px'
               }}>
-                Kumbhakarna the Monster
+                Kumbhakarna the Sleeping Giant
               </div>
 
               {/* Large Traditional Indian Plate of Puri Sabzi held naturally in his hands */}
