@@ -60,6 +60,541 @@ const CAKE_VARIETIES: CakeVariety[] = [
   { id: 'cookie', emoji: '🍪', name: 'Choco Cookie' }
 ];
 
+/**
+ * Large Traditional Indian Plate of Puri Sabzi
+ * Displays an oversized Indian thali with several golden, puffed-up puris
+ * and a traditional katori bowl of aromatic Indian potato sabzi (aloo sabzi).
+ * Held naturally by Kumbhakarna's hands on both sides in eating posture.
+ */
+function PuriSabziPlate() {
+  return (
+    <div style={{
+      position: 'relative',
+      margin: '6px auto 14px auto',
+      width: '100%',
+      maxWidth: '390px',
+      filter: 'drop-shadow(0 10px 22px rgba(0,0,0,0.4))'
+    }}>
+      <svg
+        viewBox="0 0 400 230"
+        width="100%"
+        height="auto"
+        style={{ display: 'block', overflow: 'visible' }}
+        role="img"
+        aria-label="Large traditional Indian plate of Puri Sabzi with golden puffed puris and potato curry"
+      >
+        <defs>
+          {/* Metallic Thali Gradients */}
+          <linearGradient id="thaliRimGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#f8fafc" />
+            <stop offset="25%" stopColor="#cbd5e1" />
+            <stop offset="50%" stopColor="#ffffff" />
+            <stop offset="75%" stopColor="#94a3b8" />
+            <stop offset="100%" stopColor="#e2e8f0" />
+          </linearGradient>
+
+          <linearGradient id="thaliInnerGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="#e2e8f0" />
+            <stop offset="45%" stopColor="#f8fafc" />
+            <stop offset="100%" stopColor="#cbd5e1" />
+          </linearGradient>
+
+          {/* Golden Puffed Puri Gradients */}
+          <radialGradient id="puriGrad1" cx="38%" cy="32%" r="65%">
+            <stop offset="0%" stopColor="#fef08a" />
+            <stop offset="25%" stopColor="#fde047" />
+            <stop offset="55%" stopColor="#f59e0b" />
+            <stop offset="85%" stopColor="#d97706" />
+            <stop offset="100%" stopColor="#b45309" />
+          </radialGradient>
+
+          <radialGradient id="puriGrad2" cx="35%" cy="30%" r="68%">
+            <stop offset="0%" stopColor="#fffbeb" />
+            <stop offset="20%" stopColor="#fef08a" />
+            <stop offset="50%" stopColor="#fbbf24" />
+            <stop offset="80%" stopColor="#d97706" />
+            <stop offset="100%" stopColor="#92400e" />
+          </radialGradient>
+
+          <radialGradient id="puriGrad3" cx="40%" cy="35%" r="62%">
+            <stop offset="0%" stopColor="#fef9c3" />
+            <stop offset="30%" stopColor="#facc15" />
+            <stop offset="65%" stopColor="#f59e0b" />
+            <stop offset="90%" stopColor="#b45309" />
+            <stop offset="100%" stopColor="#78350f" />
+          </radialGradient>
+
+          {/* Potato Sabzi Gravy Gradient */}
+          <radialGradient id="sabziGravyGrad" cx="45%" cy="40%" r="60%">
+            <stop offset="0%" stopColor="#fb923c" />
+            <stop offset="35%" stopColor="#ea580c" />
+            <stop offset="70%" stopColor="#c2410c" />
+            <stop offset="100%" stopColor="#7c2d12" />
+          </radialGradient>
+
+          {/* Katori (Bowl) Metallic Gradient */}
+          <linearGradient id="katoriGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#f1f5f9" />
+            <stop offset="40%" stopColor="#cbd5e1" />
+            <stop offset="70%" stopColor="#64748b" />
+            <stop offset="100%" stopColor="#475569" />
+          </linearGradient>
+
+          {/* Hands/Paws Gradient */}
+          <linearGradient id="handGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#a78bfa" />
+            <stop offset="60%" stopColor="#8b5cf6" />
+            <stop offset="100%" stopColor="#6d28d9" />
+          </linearGradient>
+        </defs>
+
+        {/* ============================================================== */}
+        {/* KUMBHAKARNA'S HANDS HOLDING THE OVERSIZED THALI                */}
+        {/* ============================================================== */}
+        {/* Left Arm & Hand gripping the left rim */}
+        <g id="kumbhakarna-left-hand">
+          <path
+            d="M 16 100 Q 4 122 20 142 Q 38 150 52 138 L 48 114 Z"
+            fill="url(#handGrad)"
+            stroke="#5b21b6"
+            strokeWidth="3.5"
+            strokeLinejoin="round"
+          />
+          <path
+            d="M 28 112 Q 40 106 48 114 Q 44 124 32 122 Z"
+            fill="#a78bfa"
+            stroke="#5b21b6"
+            strokeWidth="2.5"
+          />
+          <path
+            d="M 26 124 Q 42 120 46 130 Q 38 138 28 134 Z"
+            fill="#8b5cf6"
+            stroke="#5b21b6"
+            strokeWidth="2.5"
+          />
+          <path
+            d="M 28 136 Q 42 133 44 143 Q 34 150 26 144 Z"
+            fill="#7c3aed"
+            stroke="#5b21b6"
+            strokeWidth="2.5"
+          />
+          <path
+            d="M 32 100 Q 46 96 48 106 Q 42 114 30 110 Z"
+            fill="#c4b5fd"
+            stroke="#5b21b6"
+            strokeWidth="2.5"
+          />
+        </g>
+
+        {/* Right Arm & Hand gripping the right rim */}
+        <g id="kumbhakarna-right-hand">
+          <path
+            d="M 384 100 Q 396 122 380 142 Q 362 150 348 138 L 352 114 Z"
+            fill="url(#handGrad)"
+            stroke="#5b21b6"
+            strokeWidth="3.5"
+            strokeLinejoin="round"
+          />
+          <path
+            d="M 372 112 Q 360 106 352 114 Q 356 124 368 122 Z"
+            fill="#a78bfa"
+            stroke="#5b21b6"
+            strokeWidth="2.5"
+          />
+          <path
+            d="M 374 124 Q 358 120 354 130 Q 362 138 372 134 Z"
+            fill="#8b5cf6"
+            stroke="#5b21b6"
+            strokeWidth="2.5"
+          />
+          <path
+            d="M 372 136 Q 358 133 356 143 Q 366 150 374 144 Z"
+            fill="#7c3aed"
+            stroke="#5b21b6"
+            strokeWidth="2.5"
+          />
+          <path
+            d="M 368 100 Q 354 96 352 106 Q 358 114 370 110 Z"
+            fill="#c4b5fd"
+            stroke="#5b21b6"
+            strokeWidth="2.5"
+          />
+        </g>
+
+        {/* ============================================================== */}
+        {/* TRADITIONAL INDIAN STEEL THALI (OVERSIZED SERVING)            */}
+        {/* ============================================================== */}
+        {/* Thali Outer Rim */}
+        <ellipse
+          cx="200"
+          cy="126"
+          rx="168"
+          ry="84"
+          fill="url(#thaliRimGrad)"
+          stroke="#475569"
+          strokeWidth="4"
+        />
+        {/* Thali Rim Bevel / Ridge */}
+        <ellipse
+          cx="200"
+          cy="125"
+          rx="158"
+          ry="76"
+          fill="none"
+          stroke="#94a3b8"
+          strokeWidth="2"
+        />
+        {/* Thali Interior Base */}
+        <ellipse
+          cx="200"
+          cy="126"
+          rx="152"
+          ry="72"
+          fill="url(#thaliInnerGrad)"
+          stroke="#cbd5e1"
+          strokeWidth="1.5"
+        />
+        {/* Polished Rim Highlight Arc */}
+        <path
+          d="M 60 120 Q 200 60 340 120"
+          fill="none"
+          stroke="#ffffff"
+          strokeWidth="3.5"
+          strokeLinecap="round"
+          opacity="0.8"
+        />
+
+        {/* ============================================================== */}
+        {/* AROMATIC STEAM RISING FROM HOT FOOD                           */}
+        {/* ============================================================== */}
+        <g opacity="0.65">
+          <path
+            d="M 130 58 Q 122 42 134 30 Q 146 18 138 6"
+            fill="none"
+            stroke="#ffffff"
+            strokeWidth="3"
+            strokeLinecap="round"
+          />
+          <path
+            d="M 175 52 Q 185 38 174 24 Q 163 12 172 2"
+            fill="none"
+            stroke="#ffffff"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+          />
+          <path
+            d="M 285 55 Q 295 40 285 28 Q 275 16 284 4"
+            fill="none"
+            stroke="#ffffff"
+            strokeWidth="3"
+            strokeLinecap="round"
+          />
+        </g>
+
+        {/* ============================================================== */}
+        {/* SEVERAL GOLDEN, PUFFED-UP PURIS                                */}
+        {/* ============================================================== */}
+        {/* Puri 1: Back-Left Puffed Puri */}
+        <g id="puri-1">
+          <ellipse
+            cx="115"
+            cy="100"
+            rx="56"
+            ry="40"
+            fill="url(#puriGrad1)"
+            stroke="#92400e"
+            strokeWidth="3"
+            transform="rotate(-8 115 100)"
+          />
+          <ellipse
+            cx="108"
+            cy="92"
+            rx="36"
+            ry="22"
+            fill="#fef08a"
+            opacity="0.65"
+            transform="rotate(-8 108 92)"
+          />
+          <ellipse
+            cx="102"
+            cy="88"
+            rx="16"
+            ry="8"
+            fill="#ffffff"
+            opacity="0.75"
+            transform="rotate(-8 102 88)"
+          />
+          <circle cx="95" cy="102" r="2.5" fill="#92400e" opacity="0.7" />
+          <circle cx="122" cy="94" r="2" fill="#b45309" opacity="0.8" />
+          <circle cx="132" cy="108" r="3" fill="#78350f" opacity="0.6" />
+          <circle cx="82" cy="95" r="2" fill="#b45309" opacity="0.6" />
+        </g>
+
+        {/* Puri 2: Center-Back Puffed Puri */}
+        <g id="puri-2">
+          <ellipse
+            cx="185"
+            cy="92"
+            rx="58"
+            ry="42"
+            fill="url(#puriGrad2)"
+            stroke="#92400e"
+            strokeWidth="3"
+            transform="rotate(6 185 92)"
+          />
+          <ellipse
+            cx="178"
+            cy="84"
+            rx="38"
+            ry="24"
+            fill="#fffbeb"
+            opacity="0.65"
+            transform="rotate(6 178 84)"
+          />
+          <ellipse
+            cx="172"
+            cy="80"
+            rx="18"
+            ry="9"
+            fill="#ffffff"
+            opacity="0.8"
+            transform="rotate(6 172 80)"
+          />
+          <circle cx="165" cy="96" r="2.5" fill="#78350f" opacity="0.7" />
+          <circle cx="196" cy="88" r="3" fill="#92400e" opacity="0.7" />
+          <circle cx="210" cy="98" r="2" fill="#b45309" opacity="0.6" />
+          <circle cx="152" cy="86" r="2" fill="#92400e" opacity="0.6" />
+        </g>
+
+        {/* Puri 3: Front-Left Golden Hero Puri (Oversized & Puffed Up!) */}
+        <g id="puri-3">
+          <ellipse
+            cx="105"
+            cy="138"
+            rx="62"
+            ry="45"
+            fill="url(#puriGrad3)"
+            stroke="#78350f"
+            strokeWidth="3.5"
+            transform="rotate(-4 105 138)"
+          />
+          <path
+            d="M 52 142 Q 105 182 158 142"
+            fill="none"
+            stroke="#92400e"
+            strokeWidth="2.5"
+            opacity="0.5"
+          />
+          <ellipse
+            cx="98"
+            cy="128"
+            rx="42"
+            ry="26"
+            fill="#fef08a"
+            opacity="0.75"
+            transform="rotate(-4 98 128)"
+          />
+          <ellipse
+            cx="92"
+            cy="122"
+            rx="20"
+            ry="10"
+            fill="#ffffff"
+            opacity="0.85"
+            transform="rotate(-4 92 122)"
+          />
+          <circle cx="80" cy="132" r="3" fill="#78350f" opacity="0.75" />
+          <circle cx="118" cy="130" r="2.5" fill="#92400e" opacity="0.8" />
+          <circle cx="135" cy="142" r="3.5" fill="#78350f" opacity="0.7" />
+          <circle cx="95" cy="148" r="2" fill="#b45309" opacity="0.7" />
+          <circle cx="68" cy="140" r="2.5" fill="#92400e" opacity="0.6" />
+        </g>
+
+        {/* Puri 4: Front-Center Golden Puffed Puri (Generously Overlapping) */}
+        <g id="puri-4">
+          <ellipse
+            cx="178"
+            cy="142"
+            rx="64"
+            ry="46"
+            fill="url(#puriGrad1)"
+            stroke="#78350f"
+            strokeWidth="3.5"
+            transform="rotate(4 178 142)"
+          />
+          <ellipse
+            cx="170"
+            cy="132"
+            rx="44"
+            ry="27"
+            fill="#fffbeb"
+            opacity="0.7"
+            transform="rotate(4 170 132)"
+          />
+          <ellipse
+            cx="164"
+            cy="126"
+            rx="22"
+            ry="11"
+            fill="#ffffff"
+            opacity="0.9"
+            transform="rotate(4 164 126)"
+          />
+          <circle cx="152" cy="138" r="3" fill="#92400e" opacity="0.8" />
+          <circle cx="192" cy="134" r="2.5" fill="#78350f" opacity="0.75" />
+          <circle cx="212" cy="146" r="3.5" fill="#92400e" opacity="0.7" />
+          <circle cx="168" cy="154" r="2" fill="#b45309" opacity="0.7" />
+          <circle cx="138" cy="148" r="2.5" fill="#78350f" opacity="0.65" />
+        </g>
+
+        {/* ============================================================== */}
+        {/* TRADITIONAL BOWL (KATORI) OF INDIAN POTATO SABZI (ALOO SABZI)  */}
+        {/* ============================================================== */}
+        <g id="katori-potato-sabzi">
+          {/* Metal Katori Outer Body */}
+          <ellipse
+            cx="285"
+            cy="124"
+            rx="54"
+            ry="38"
+            fill="url(#katoriGrad)"
+            stroke="#334155"
+            strokeWidth="3.5"
+          />
+          {/* Katori Inner Rim */}
+          <ellipse
+            cx="285"
+            cy="120"
+            rx="50"
+            ry="33"
+            fill="#f8fafc"
+            stroke="#64748b"
+            strokeWidth="2"
+          />
+          {/* Rich Spiced Golden-Red Potato Curry Gravy */}
+          <ellipse
+            cx="285"
+            cy="121"
+            rx="46"
+            ry="29"
+            fill="url(#sabziGravyGrad)"
+            stroke="#9a3412"
+            strokeWidth="1.5"
+          />
+          {/* Gravy Shimmer / Oil Gloss */}
+          <ellipse
+            cx="272"
+            cy="114"
+            rx="16"
+            ry="7"
+            fill="rgba(255,255,255,0.45)"
+            transform="rotate(-10 272 114)"
+          />
+
+          {/* Golden Spiced Potato Cubes (Aloo) */}
+          <g>
+            <polygon
+              points="260,112 278,106 288,118 268,124"
+              fill="#fde047"
+              stroke="#b45309"
+              strokeWidth="2"
+            />
+            <polygon
+              points="268,124 288,118 284,126 264,128"
+              fill="#ea580c"
+              opacity="0.8"
+            />
+          </g>
+
+          <g>
+            <polygon
+              points="282,104 300,102 306,114 288,116"
+              fill="#facc15"
+              stroke="#b45309"
+              strokeWidth="2"
+            />
+            <polygon
+              points="288,116 306,114 302,122 284,122"
+              fill="#c2410c"
+              opacity="0.75"
+            />
+          </g>
+
+          <g>
+            <polygon
+              points="272,122 292,120 295,132 276,134"
+              fill="#fde047"
+              stroke="#b45309"
+              strokeWidth="1.8"
+            />
+            <polygon
+              points="276,134 295,132 290,138 272,138"
+              fill="#ea580c"
+              opacity="0.8"
+            />
+          </g>
+
+          <g>
+            <polygon
+              points="250,116 264,112 268,122 254,126"
+              fill="#facc15"
+              stroke="#b45309"
+              strokeWidth="1.8"
+            />
+          </g>
+
+          <g>
+            <polygon
+              points="298,114 314,110 318,120 302,124"
+              fill="#eab308"
+              stroke="#92400e"
+              strokeWidth="1.8"
+            />
+          </g>
+
+          {/* Cumin Seeds / Tadka Masala Dots */}
+          <ellipse cx="276" cy="110" rx="2.5" ry="1.2" fill="#451a03" transform="rotate(25 276 110)" />
+          <ellipse cx="295" cy="112" rx="2.5" ry="1.2" fill="#451a03" transform="rotate(-35 295 112)" />
+          <ellipse cx="266" cy="120" rx="2" ry="1" fill="#451a03" transform="rotate(40 266 120)" />
+          <ellipse cx="286" cy="128" rx="2.2" ry="1.1" fill="#451a03" transform="rotate(15 286 128)" />
+
+          {/* Fresh Green Coriander Garnish (Dhaniya Leaves) */}
+          <g transform="translate(278, 112)">
+            <path
+              d="M 0 0 C -4 -5 -10 -2 -6 3 C -2 8 4 6 0 0 Z"
+              fill="#22c55e"
+              stroke="#15803d"
+              strokeWidth="1.2"
+            />
+            <path
+              d="M 0 0 C 4 -6 10 -4 7 2 C 4 6 -1 5 0 0 Z"
+              fill="#16a34a"
+              stroke="#14532d"
+              strokeWidth="1.2"
+            />
+            <circle cx="0" cy="1" r="1.5" fill="#4ade80" />
+          </g>
+
+          <g transform="translate(290, 118)">
+            <path
+              d="M 0 0 C -3 -4 -7 -1 -4 3 C -1 5 3 4 0 0 Z"
+              fill="#16a34a"
+              stroke="#14532d"
+              strokeWidth="1"
+            />
+            <path
+              d="M 0 0 C 3 -4 7 -2 5 2 C 2 5 -1 4 0 0 Z"
+              fill="#22c55e"
+              stroke="#15803d"
+              strokeWidth="1"
+            />
+          </g>
+        </g>
+      </svg>
+    </div>
+  );
+}
+
 export default function FeedTheMonsterGame({ onBack }: GameProps) {
   const [level, setLevel] = useState<number>(1);
   const [stars, setStars] = useState<number>(0);
@@ -227,8 +762,8 @@ export default function FeedTheMonsterGame({ onBack }: GameProps) {
         title: "The Monster Feast Begins!",
         icon: "😋",
         badge: "Story Continues • Chapter 3",
-        story: `Kumbakaran's eyes light up with pure joy! "YUMMMM! Exactly ${targetNumber} fresh cakes, just what my tummy was dreaming of!" Watch him gobble down every single cake one by one!`,
-        buttonText: "Next ➔ Watch Kumbakaran Eat!",
+        story: `Kumbakaran's eyes light up with pure joy! "YUMMMM! Exactly ${targetNumber} delicious servings, just what my tummy was dreaming of!" Look at this giant plate of Puri Sabzi with golden puffed puris and hot potato sabzi! Watch him feast and gobble it down!`,
+        buttonText: "Next ➔ Watch Kumbakaran Feast!",
         onProceed: () => {
           // Trigger animated one-by-one eating into the stomach and count along: 1, 2, 3...
           let currentEaten = 0;
@@ -905,8 +1440,15 @@ export default function FeedTheMonsterGame({ onBack }: GameProps) {
                 color: '#fef08a',
                 marginBottom: '14px'
               }}>
-                Kumbakaran the Monster
+                Kumbhakarna the Monster
               </div>
+
+              {/* Large Traditional Indian Plate of Puri Sabzi held naturally in his hands */}
+              {verdict === 'exact' && (
+                <div className="anim-pop" style={{ margin: '4px auto 14px auto' }}>
+                  <PuriSabziPlate />
+                </div>
+              )}
 
               {/* Stomach filling animation on exact match */}
               <div style={{
@@ -943,7 +1485,7 @@ export default function FeedTheMonsterGame({ onBack }: GameProps) {
                           transition: 'all 0.3s'
                         }}
                       >
-                        {isEaten ? '🍰' : '🍽️'}
+                        {isEaten ? '🫓' : '🍽️'}
                       </div>
                     );
                   })}
@@ -1047,7 +1589,7 @@ export default function FeedTheMonsterGame({ onBack }: GameProps) {
                   🎉 YUMMMM! Perfect!
                 </h3>
                 <p style={{ fontSize: '1.1rem', color: 'var(--clr-text)', margin: '0 0 8px 0' }}>
-                  You brought exactly <strong>{targetNumber}</strong> cakes! The monster's stomach is happy and full!
+                  You brought exactly <strong>{targetNumber}</strong> treats! Kumbhakarna enjoys his giant plate of golden Puri Sabzi! His stomach is happy and full!
                 </p>
               </div>
             )}
@@ -1070,7 +1612,7 @@ export default function FeedTheMonsterGame({ onBack }: GameProps) {
       {showCelebration && (
         <CelebrationModal
           title="Monster Feeder Champion!"
-          subtitle={`You successfully matched the monster's hunger with exactly ${targetNumber} cakes!`}
+          subtitle={`You successfully matched Kumbhakarna's hunger with a giant feast of Puri Sabzi!`}
           stars={3}
           onNextLevel={handleNextLevel}
           onReplay={handleReplay}
