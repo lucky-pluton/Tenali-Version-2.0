@@ -15,13 +15,13 @@ import {
 import { ShoppingBasket, ArrowRight, ArrowLeft } from 'lucide-react';
 import { GameProps } from '../../../types';
 
-interface CakeVariety {
+interface FeastVariety {
   id: string;
   emoji: string;
   name: string;
 }
 
-interface BasketItem extends CakeVariety {
+interface BasketItem extends FeastVariety {
   uid: number;
   cakeIndex: number;
 }
@@ -51,13 +51,13 @@ function speak(text: string | number, rate: number = 0.82, pitch: number = 1.15)
   }
 }
 
-const CAKE_VARIETIES: CakeVariety[] = [
-  { id: 'cupcake', emoji: '🧁', name: 'Berry Cupcake' },
-  { id: 'slice', emoji: '🍰', name: 'Strawberry Shortcake' },
-  { id: 'cake', emoji: '🎂', name: 'Birthday Cake' },
-  { id: 'donut', emoji: '🍩', name: 'Glazed Donut' },
-  { id: 'pancake', emoji: '🥞', name: 'Honey Pancakes' },
-  { id: 'cookie', emoji: '🍪', name: 'Choco Cookie' }
+const FEAST_VARIETIES: FeastVariety[] = [
+  { id: 'golden-puri', emoji: '🫓', name: 'Golden Puffed Puri' },
+  { id: 'aloo-sabzi', emoji: '🍲', name: 'Aloo Sabzi Bowl' },
+  { id: 'masala-puri', emoji: '🫓', name: 'Crispy Masala Puri' },
+  { id: 'chana-sabzi', emoji: '🥘', name: 'Chana Masala Bowl' },
+  { id: 'bhatura', emoji: '🫓', name: 'Fluffy Bhatura' },
+  { id: 'paneer-sabzi', emoji: '🥣', name: 'Paneer Sabzi Bowl' }
 ];
 
 /**
@@ -618,10 +618,10 @@ export default function FeedTheMonsterGame({ onBack }: GameProps) {
   // Episodic Story Chapters: Story says something -> Activity happens -> Story continues!
   const [storyChapter, setStoryChapter] = useState<StoryChapterState>({
     isOpen: true,
-    title: "Kumbakaran's Rumbly Tummy",
+    title: "Kumbhakarna's Rumbly Tummy",
     icon: "😴",
     badge: "Chapter 1: The Waking Giant",
-    story: "Deep in the enchanted forest, Kumbakaran the gentle monster is waking up from his six-month nap. His tummy rumbles like thunder: GURRRLE! Look inside his belly to see how many cakes he is dreaming of today!",
+    story: "Deep in the enchanted forest, Kumbhakarna the gentle giant is waking up from his six-month nap. His tummy rumbles like thunder: GURRRLE! Look inside his belly to see how many Puri Sabzi items he is dreaming of today!",
     buttonText: "Next ➔ Count Stomach Spaces!",
     onProceed: () => {}
   });
@@ -639,7 +639,7 @@ export default function FeedTheMonsterGame({ onBack }: GameProps) {
   const [countedSlots, setCountedSlots] = useState<number[]>([]);
   const [hungerConfirmed, setHungerConfirmed] = useState<boolean>(false);
 
-  // Stage 2: Bakery collection basket (array of cake objects)
+  // Stage 2: Kitchen collection basket (array of feast objects)
   // CRITICAL: Does NOT display the target count (e.g. no "0 / 3" or target spoiler!)
   const [basket, setBasket] = useState<BasketItem[]>([]);
 
@@ -678,11 +678,11 @@ export default function FeedTheMonsterGame({ onBack }: GameProps) {
         // Story continues!
         setStoryChapter({
           isOpen: true,
-          title: "Off to the Village Bakery!",
-          icon: "🧁",
+          title: "Off to the Royal Feast Kitchen!",
+          icon: "🍲",
           badge: "Story Continues • Chapter 2",
-          story: `Kumbakaran's tummy needs exactly ${targetNumber} cakes! You jump on your bicycle and zoom down to the village bakery. The baker smiles: "Welcome! Pick any delicious cakes from my shelf to fill your basket!"`,
-          buttonText: "Next ➔ Go to Bakery!",
+          story: `Kumbhakarna's tummy needs exactly ${targetNumber} Puri Sabzi items! You jump on your bicycle and zoom down to the Royal Kitchen. The chef smiles: "Namaste! Pick golden puris and steaming sabzi bowls from my counter to fill your basket!"`,
+          buttonText: "Next ➔ Go to Royal Kitchen!",
           onProceed: () => {
             handleGoToBakery();
           }
@@ -691,23 +691,23 @@ export default function FeedTheMonsterGame({ onBack }: GameProps) {
     }
   };
 
-  // Transition from Stage 1 to Stage 2 (Bakery)
+  // Transition from Stage 1 to Stage 2 (Kitchen)
   const handleGoToBakery = () => {
     playBakeryBell();
     setStage('bakery');
   };
 
-  // Stage 2: Add cake to basket and speak ONLY the count: 1, 2, 3...
-  const handleAddCake = (cakeType: CakeVariety) => {
+  // Stage 2: Add item to basket and speak ONLY the count: 1, 2, 3...
+  const handleAddCake = (item: FeastVariety) => {
     playCakePick();
     const nextBasketCount = basket.length + 1;
-    setBasket(prev => [...prev, { ...cakeType, uid: Date.now() + Math.random(), cakeIndex: nextBasketCount }]);
+    setBasket(prev => [...prev, { ...item, uid: Date.now() + Math.random(), cakeIndex: nextBasketCount }]);
 
-    // Speak ONLY the count when picking cakes: 1, 2, 3...
+    // Speak ONLY the count when picking items: 1, 2, 3...
     speak(String(nextBasketCount), 0.85);
   };
 
-  // Stage 2: Remove specific cake from basket - speaks remaining count
+  // Stage 2: Remove specific item from basket - speaks remaining count
   const handleRemoveCake = (uid: number) => {
     playCakePick();
     setBasket(prev => {
@@ -717,7 +717,7 @@ export default function FeedTheMonsterGame({ onBack }: GameProps) {
     });
   };
 
-  // Stage 2: Deliver cakes to monster
+  // Stage 2: Deliver feast to monster
   const handleDeliverCakes = () => {
     const count = basket.length;
     setStage('verdict');
@@ -727,11 +727,11 @@ export default function FeedTheMonsterGame({ onBack }: GameProps) {
       setVerdict('too_few');
       setStoryChapter({
         isOpen: true,
-        title: "Kumbakaran is Still Hungry!",
+        title: "Kumbhakarna is Still Hungry!",
         icon: "😢",
         badge: "Story Continues",
-        story: `GURRRLE! Kumbakaran's tummy still rumbles! He looks down and whispers: "My belly still has empty room! I only got ${count} cakes, but I need ${targetNumber}!" Let's go back to the bakery and fetch ${targetNumber - count} more!`,
-        buttonText: "Next ➔ Get More Cakes!",
+        story: `GURRRLE! Kumbhakarna's tummy still rumbles! He looks down and whispers: "My belly still has empty room! I only got ${count} items, but I need ${targetNumber}!" Let's go back to the kitchen and fetch ${targetNumber - count} more!`,
+        buttonText: "Next ➔ Get More Food!",
         onProceed: () => {
           handleReturnToBakery();
         }
@@ -741,11 +741,11 @@ export default function FeedTheMonsterGame({ onBack }: GameProps) {
       setVerdict('too_many');
       setStoryChapter({
         isOpen: true,
-        title: "Too Many Cakes!",
+        title: "Too Much Food!",
         icon: "😵",
         badge: "Story Continues",
-        story: `Uh oh! Kumbakaran holds his bulging belly: "Whoa, that is ${count} cakes! My tummy will pop if I eat all of those! I only need ${targetNumber}!" Let's return to the bakery and take out ${count - targetNumber} extra cakes!`,
-        buttonText: "Next ➔ Remove Extra Cakes!",
+        story: `Uh oh! Kumbhakarna holds his bulging belly: "Whoa, that is ${count} items! My tummy will pop if I eat all of those! I only need ${targetNumber}!" Let's return to the kitchen and take out ${count - targetNumber} extra items!`,
+        buttonText: "Next ➔ Remove Extra Food!",
         onProceed: () => {
           handleReturnToBakery();
         }
@@ -833,10 +833,10 @@ export default function FeedTheMonsterGame({ onBack }: GameProps) {
     setStage('hunger');
     setStoryChapter({
       isOpen: true,
-      title: "Kumbakaran's Rumbly Tummy",
+      title: "Kumbhakarna's Rumbly Tummy",
       icon: "😴",
       badge: `Level ${level} • Chapter 1`,
-      story: `Let's help Kumbakaran again! Count the empty plates inside his belly to see how many cakes he wants!`,
+      story: `Let's help Kumbhakarna again! Count the empty plates inside his belly to see how many Puri Sabzi items he wants!`,
       buttonText: "Next ➔ Count Stomach Spaces!",
       onProceed: () => {}
     });
@@ -857,7 +857,7 @@ export default function FeedTheMonsterGame({ onBack }: GameProps) {
         return {
           face: '😵‍💫',
           bellyGlow: '#fb923c',
-          expression: "WHOA! That's too many cakes!",
+          expression: "WHOA! That's too much food!",
           burpText: null
         };
       }
@@ -873,7 +873,7 @@ export default function FeedTheMonsterGame({ onBack }: GameProps) {
     return {
       face: hungerConfirmed ? '😃' : '🤤',
       bellyGlow: '#fef08a',
-      expression: hungerConfirmed ? "Yay! Let's get the cakes!" : "My tummy is growling for cakes!",
+      expression: hungerConfirmed ? "Yay! Let's get the feast!" : "My tummy is growling for Puri Sabzi!",
       burpText: null
     };
   };
@@ -882,8 +882,8 @@ export default function FeedTheMonsterGame({ onBack }: GameProps) {
 
   return (
     <QuizLayout
-      title="Feed the Monster!"
-      subtitle="Count the empty spaces in the monster's tummy, visit the bakery, and bring the exact cakes!"
+      title="Feed Kumbhakarna!"
+      subtitle="Count the empty spaces in Kumbhakarna's tummy, visit the royal kitchen, and bring the exact Puri Sabzi feast!"
       category="Counting & One-to-One Match"
       level={level}
       stars={stars}
@@ -976,7 +976,7 @@ export default function FeedTheMonsterGame({ onBack }: GameProps) {
               marginBottom: '20px',
               boxShadow: 'var(--shadow-btn)'
             }}>
-              💬 <em>"I'm SUPER hungry! Click each empty space inside my tummy to count how many cakes I want!"</em>
+              💬 <em>"I'm SUPER hungry! Click each empty space inside my tummy to count how many Puri Sabzi items I want!"</em>
             </div>
 
             {/* REALISTIC CARTOON MONSTER WITH PROMINENT ROUND STOMACH */}
@@ -1150,7 +1150,7 @@ export default function FeedTheMonsterGame({ onBack }: GameProps) {
                   color: 'var(--clr-correct)',
                   marginBottom: '16px'
                 }}>
-                  ✨ The monster wants {targetNumber} cakes! Remember this number!
+                  ✨ Kumbhakarna wants {targetNumber} Puri Sabzi items! Remember this number!
                 </div>
                 <button
                   onClick={handleGoToBakery}
@@ -1163,7 +1163,7 @@ export default function FeedTheMonsterGame({ onBack }: GameProps) {
                     cursor: 'pointer'
                   }}
                 >
-                  <span>Visit the Bakery & Collect Cakes! 🧁➡️</span>
+                  <span>Visit the Royal Kitchen & Collect the Feast! 🍲➡️</span>
                   <ArrowRight size={20} />
                 </button>
               </div>
@@ -1172,7 +1172,7 @@ export default function FeedTheMonsterGame({ onBack }: GameProps) {
         )}
 
         {/* ─────────────────────────────────────────────────────────────
-            STAGE 2: VISIT THE BAKERY (NO TARGET SPOILER IN BASKET!)
+            STAGE 2: VISIT THE ROYAL KITCHEN (NO TARGET SPOILER IN BASKET!)
         ───────────────────────────────────────────────────────────── */}
         {stage === 'bakery' && (
           <div className="anim-pop" style={{
@@ -1183,7 +1183,7 @@ export default function FeedTheMonsterGame({ onBack }: GameProps) {
             boxShadow: 'var(--shadow-card)',
             textAlign: 'center'
           }}>
-            {/* Bakery Header & Shopkeeper (NO target count mentioned!) */}
+            {/* Kitchen Header & Halwai (NO target count mentioned!) */}
             <div style={{
               display: 'flex',
               alignItems: 'center',
@@ -1200,10 +1200,10 @@ export default function FeedTheMonsterGame({ onBack }: GameProps) {
                 <div style={{ fontSize: '3rem' }}>👨‍🍳</div>
                 <div style={{ textAlign: 'left' }}>
                   <div style={{ fontWeight: 700, fontSize: '1.1rem', color: 'var(--clr-text)' }}>
-                    Chef Pierre's Sweet Bakery
+                    Chacha Halwai's Royal Rasoi
                   </div>
                   <div style={{ fontSize: '0.88rem', color: 'var(--clr-text-soft)' }}>
-                    "Welcome! Pick cakes from the shelves into your basket!"
+                    "Namaste! Pick hot puris and savory sabzi bowls from the counter into your basket!"
                   </div>
                 </div>
               </div>
@@ -1218,11 +1218,11 @@ export default function FeedTheMonsterGame({ onBack }: GameProps) {
                 fontWeight: 700,
                 color: 'var(--clr-accent)'
               }}>
-                🤔 Remember how many cakes the monster wanted!
+                🤔 Remember how many feast items Kumbhakarna wanted!
               </div>
             </div>
 
-            {/* Cake Shelves (Tap to pick) */}
+            {/* Feast Counter (Tap to pick) */}
             <div style={{ marginBottom: '24px' }}>
               <h3 style={{
                 fontSize: '1.1rem',
@@ -1230,7 +1230,7 @@ export default function FeedTheMonsterGame({ onBack }: GameProps) {
                 color: 'var(--clr-text)',
                 marginBottom: '12px'
               }}>
-                Fresh Cakes on the Shelf (Tap to pick into basket):
+                Royal Feast Counter (Tap to pick puris & sabzi into basket):
               </h3>
 
               <div style={{
@@ -1238,10 +1238,10 @@ export default function FeedTheMonsterGame({ onBack }: GameProps) {
                 gridTemplateColumns: 'repeat(auto-fit, minmax(110px, 1fr))',
                 gap: '12px'
               }}>
-                {CAKE_VARIETIES.map(cake => (
+                {FEAST_VARIETIES.map(item => (
                   <button
-                    key={cake.id}
-                    onClick={() => handleAddCake(cake)}
+                    key={item.id}
+                    onClick={() => handleAddCake(item)}
                     style={{
                       background: 'var(--clr-surface)',
                       border: '2px solid var(--clr-border)',
@@ -1258,16 +1258,16 @@ export default function FeedTheMonsterGame({ onBack }: GameProps) {
                     onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.05)'}
                     onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
                   >
-                    <span style={{ fontSize: '2.6rem' }}>{cake.emoji}</span>
+                    <span style={{ fontSize: '2.6rem' }}>{item.emoji}</span>
                     <span style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--clr-text)' }}>
-                      {cake.name}
+                      {item.name}
                     </span>
                     <span style={{
                       fontSize: '0.75rem',
                       color: 'var(--clr-accent)',
                       fontWeight: 700
                     }}>
-                      + Take Cake
+                      + Take Item
                     </span>
                   </button>
                 ))}
@@ -1307,7 +1307,7 @@ export default function FeedTheMonsterGame({ onBack }: GameProps) {
                   borderRadius: 'var(--radius-pill)',
                   border: '2px solid #b45309'
                 }}>
-                  Cakes in Basket: {basket.length}
+                  Feast Items in Basket: {basket.length}
                 </div>
               </div>
 
@@ -1320,7 +1320,7 @@ export default function FeedTheMonsterGame({ onBack }: GameProps) {
                   color: '#92400e',
                   fontWeight: 600
                 }}>
-                  🧺 Your basket is empty! Tap the cakes above to collect them (1, 2, 3...)!
+                  🧺 Your basket is empty! Tap the puris and sabzi bowls above to collect them (1, 2, 3...)!
                 </div>
               ) : (
                 <div style={{
@@ -1330,9 +1330,9 @@ export default function FeedTheMonsterGame({ onBack }: GameProps) {
                   justifyContent: 'center',
                   padding: '10px 0'
                 }}>
-                  {basket.map((cake, idx) => (
+                  {basket.map((item, idx) => (
                     <div
-                      key={cake.uid}
+                      key={item.uid}
                       className="anim-pop"
                       style={{
                         background: '#ffffff',
@@ -1360,10 +1360,10 @@ export default function FeedTheMonsterGame({ onBack }: GameProps) {
                       }}>
                         {idx + 1}
                       </span>
-                      <span style={{ fontSize: '1.8rem' }}>{cake.emoji}</span>
+                      <span style={{ fontSize: '1.8rem' }}>{item.emoji}</span>
                       <button
-                        onClick={() => handleRemoveCake(cake.uid)}
-                        title="Remove cake from basket"
+                        onClick={() => handleRemoveCake(item.uid)}
+                        title="Remove item from basket"
                         style={{
                           background: '#fee2e2',
                           color: '#dc2626',
@@ -1401,7 +1401,7 @@ export default function FeedTheMonsterGame({ onBack }: GameProps) {
                 margin: '0 auto'
               }}
             >
-              <span>DELIVER THE CAKES TO THE MONSTER! 🚚🍰</span>
+              <span>DELIVER THE PURI SABZI FEAST TO KUMBHAKARNA! 🚚🍛</span>
             </button>
           </div>
         )}
@@ -1507,7 +1507,7 @@ export default function FeedTheMonsterGame({ onBack }: GameProps) {
                   😢 Heyyy! I'm Still Hungry!
                 </h3>
                 <p style={{ fontSize: '1.05rem', color: 'var(--clr-text)', margin: '0 0 12px 0' }}>
-                  "I wanted <strong>{targetNumber}</strong> cakes, but you brought only <strong>{basket.length}</strong>!"
+                  "I wanted <strong>{targetNumber}</strong> feast items, but you brought only <strong>{basket.length}</strong>!"
                 </p>
                 <div style={{
                   fontSize: '1.25rem',
@@ -1516,7 +1516,7 @@ export default function FeedTheMonsterGame({ onBack }: GameProps) {
                   color: 'var(--clr-wrong)',
                   marginBottom: '16px'
                 }}>
-                  {targetNumber} - {basket.length} = {targetNumber - basket.length} more cakes needed!
+                  {targetNumber} - {basket.length} = {targetNumber - basket.length} more items needed!
                 </div>
                 <button
                   onClick={handleReturnToBakery}
@@ -1530,7 +1530,7 @@ export default function FeedTheMonsterGame({ onBack }: GameProps) {
                   }}
                 >
                   <ArrowLeft size={18} />
-                  <span>Return to Bakery to Add More Cakes!</span>
+                  <span>Return to Kitchen to Add More Food!</span>
                 </button>
               </div>
             )}
@@ -1545,10 +1545,10 @@ export default function FeedTheMonsterGame({ onBack }: GameProps) {
                 margin: '0 auto 20px auto'
               }}>
                 <h3 style={{ color: '#ef4444', margin: '0 0 8px 0', fontSize: '1.3rem' }}>
-                  😵‍💫 WHOA! That's Too Many Cakes!
+                  😵‍💫 WHOA! That's Too Much Food!
                 </h3>
                 <p style={{ fontSize: '1.05rem', color: 'var(--clr-text)', margin: '0 0 12px 0' }}>
-                  "My stomach will burst! I only wanted <strong>{targetNumber}</strong> cakes, but you brought <strong>{basket.length}</strong>!"
+                  "My stomach will burst! I only wanted <strong>{targetNumber}</strong> feast items, but you brought <strong>{basket.length}</strong>!"
                 </p>
                 <div style={{
                   fontSize: '1.25rem',
@@ -1557,7 +1557,7 @@ export default function FeedTheMonsterGame({ onBack }: GameProps) {
                   color: '#ef4444',
                   marginBottom: '16px'
                 }}>
-                  {basket.length} - {targetNumber} = {basket.length - targetNumber} extra cakes!
+                  {basket.length} - {targetNumber} = {basket.length - targetNumber} extra items!
                 </div>
                 <button
                   onClick={handleReturnToBakery}
@@ -1571,7 +1571,7 @@ export default function FeedTheMonsterGame({ onBack }: GameProps) {
                   }}
                 >
                   <ArrowLeft size={18} />
-                  <span>Return to Bakery to Remove Extra Cakes!</span>
+                  <span>Return to Kitchen to Remove Extra Food!</span>
                 </button>
               </div>
             )}

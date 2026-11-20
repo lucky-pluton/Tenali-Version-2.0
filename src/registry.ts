@@ -20,12 +20,12 @@ import { GameCard } from './types';
 export const MODULE_REGISTRY: GameCard[] = [
   {
     id: 'feed-monster',
-    name: "Feed the Monster!",
+    name: "Feed Kumbhakarna!",
     component: feedMonsterModule.Component,
     icon: '👹',
     domainId: 'counting-logic',
     levelsCount: 5,
-    tags: ['monster', 'cakes', 'bakery', 'counting', 'one-to-one']
+    tags: ['kumbhakarna', 'puri-sabzi', 'feast', 'counting', 'one-to-one']
   },
   {
     id: 'aarav-jamun',
