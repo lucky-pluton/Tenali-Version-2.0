@@ -25,7 +25,7 @@ export const MODULE_REGISTRY: GameCard[] = [
     icon: '👹',
     domainId: 'counting-logic',
     levelsCount: 5,
-    tags: ['kumbhakarna', 'puri-sabzi', 'feast', 'counting', 'one-to-one']
+    tags: ['kumbhakarna', 'multilingual-cuisine', 'puri-sabzi', 'dosa-idli', 'dhokla', 'feast', 'counting']
   },
   {
     id: 'aarav-jamun',

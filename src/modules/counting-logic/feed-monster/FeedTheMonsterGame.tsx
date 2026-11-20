@@ -12,17 +12,23 @@ import {
   playKitchenBell,
   playMunch
 } from '../../../core/soundEffects';
-import { ShoppingBasket, ArrowRight, ArrowLeft } from 'lucide-react';
+import { ShoppingBasket, ArrowRight, ArrowLeft, Volume2 } from 'lucide-react';
 import { GameProps } from '../../../types';
 import KumbhakarnaFace, { KumbhakarnaMood } from './KumbhakarnaFace';
 
-interface FeastVariety {
+export type CuisineRegion = 'all' | 'north' | 'south' | 'west' | 'east';
+
+export interface FeastVariety {
   id: string;
   emoji: string;
   name: string;
+  nativeName: string;
+  language: string;
+  region: 'north' | 'south' | 'west' | 'east';
+  regionLabel: string;
 }
 
-interface BasketItem extends FeastVariety {
+export interface BasketItem extends FeastVariety {
   uid: number;
   itemIndex: number;
 }
@@ -52,13 +58,166 @@ function speak(text: string | number, rate: number = 0.82, pitch: number = 1.15)
   }
 }
 
-const FEAST_VARIETIES: FeastVariety[] = [
-  { id: 'golden-puri', emoji: '🫓', name: 'Golden Puffed Puri' },
-  { id: 'aloo-sabzi', emoji: '🍲', name: 'Aloo Sabzi Bowl' },
-  { id: 'masala-puri', emoji: '🫓', name: 'Crispy Masala Puri' },
-  { id: 'chana-sabzi', emoji: '🥘', name: 'Chana Masala Bowl' },
-  { id: 'bhatura', emoji: '🫓', name: 'Fluffy Bhatura' },
-  { id: 'paneer-sabzi', emoji: '🥣', name: 'Paneer Sabzi Bowl' }
+export const CUISINE_REGIONS: { id: CuisineRegion; label: string; icon: string; native: string }[] = [
+  { id: 'all', label: 'All Cuisines', icon: '🇮🇳', native: 'सभी व्यंजन' },
+  { id: 'north', label: 'North India', icon: '🍲', native: 'Hindi (पूरी • भटूरे)' },
+  { id: 'south', label: 'South India', icon: '🥥', native: 'Tamil & Telugu (தோசை • இட்லி)' },
+  { id: 'west', label: 'West India', icon: '🧆', native: 'Gujarati & Marathi (ઢોકળા • पाव भाजी)' },
+  { id: 'east', label: 'East India', icon: '🍯', native: 'Bengali (লুচি • রসগোল্লা)' }
+];
+
+export const FEAST_VARIETIES: FeastVariety[] = [
+  // NORTH INDIA (Hindi / Punjabi)
+  {
+    id: 'golden-puri',
+    emoji: '🫓',
+    name: 'Puri Sabzi',
+    nativeName: 'पूरी सब्ज़ी',
+    language: 'Hindi',
+    region: 'north',
+    regionLabel: 'North Indian'
+  },
+  {
+    id: 'chole-bhature',
+    emoji: '🥘',
+    name: 'Chole Bhature',
+    nativeName: 'छोले भटूरे',
+    language: 'Hindi / Punjabi',
+    region: 'north',
+    regionLabel: 'North Indian'
+  },
+  {
+    id: 'shahi-paneer',
+    emoji: '🥣',
+    name: 'Shahi Paneer',
+    nativeName: 'शाही पनीर',
+    language: 'Hindi',
+    region: 'north',
+    regionLabel: 'North Indian'
+  },
+  {
+    id: 'dal-makhani',
+    emoji: '🍲',
+    name: 'Dal Makhani',
+    nativeName: 'दाल मखनी',
+    language: 'Punjabi / Hindi',
+    region: 'north',
+    regionLabel: 'North Indian'
+  },
+
+  // SOUTH INDIA (Tamil / Telugu / Kannada / Malayalam)
+  {
+    id: 'masala-dosa',
+    emoji: '🥞',
+    name: 'Masala Dosa',
+    nativeName: 'தோசை • దోశ',
+    language: 'Tamil / Telugu',
+    region: 'south',
+    regionLabel: 'South Indian'
+  },
+  {
+    id: 'idli-sambar',
+    emoji: '🥟',
+    name: 'Idli Sambar',
+    nativeName: 'இட்லி சாம்பார் • ఇడ్లీ',
+    language: 'Tamil / Telugu',
+    region: 'south',
+    regionLabel: 'South Indian'
+  },
+  {
+    id: 'medu-vada',
+    emoji: '🍩',
+    name: 'Medu Vada',
+    nativeName: 'மெது வடை • వడ',
+    language: 'Tamil / Telugu',
+    region: 'south',
+    regionLabel: 'South Indian'
+  },
+  {
+    id: 'thayir-sadam',
+    emoji: '🍚',
+    name: 'Curd Rice (Thayir Sadam)',
+    nativeName: 'தயிர் சாதம் • పెరుగన్నం',
+    language: 'Tamil / Telugu',
+    region: 'south',
+    regionLabel: 'South Indian'
+  },
+
+  // WEST INDIA (Gujarati / Marathi)
+  {
+    id: 'khaman-dhokla',
+    emoji: '🧽',
+    name: 'Khaman Dhokla',
+    nativeName: 'ખમણ ઢોકળા • ढोकला',
+    language: 'Gujarati / Marathi',
+    region: 'west',
+    regionLabel: 'West Indian'
+  },
+  {
+    id: 'pav-bhaji',
+    emoji: '🥪',
+    name: 'Mumbai Pav Bhaji',
+    nativeName: 'पाव भाजी',
+    language: 'Marathi / Hindi',
+    region: 'west',
+    regionLabel: 'West Indian'
+  },
+  {
+    id: 'vada-pav',
+    emoji: '🍔',
+    name: 'Hot Vada Pav',
+    nativeName: 'वडा पाव',
+    language: 'Marathi',
+    region: 'west',
+    regionLabel: 'West Indian'
+  },
+  {
+    id: 'methi-thepla',
+    emoji: '🫓',
+    name: 'Methi Thepla',
+    nativeName: 'મેથી થેપલા',
+    language: 'Gujarati',
+    region: 'west',
+    regionLabel: 'West Indian'
+  },
+
+  // EAST INDIA (Bengali / Odia)
+  {
+    id: 'luchi-alur-dom',
+    emoji: '🫓',
+    name: 'Luchi Alur Dom',
+    nativeName: 'লুচি আলুর দম',
+    language: 'Bengali',
+    region: 'east',
+    regionLabel: 'East Indian'
+  },
+  {
+    id: 'kolkata-rasgulla',
+    emoji: '🍯',
+    name: 'Sweet Rosogolla',
+    nativeName: 'রসগোল্লা • ରସଗୋଲା',
+    language: 'Bengali / Odia',
+    region: 'east',
+    regionLabel: 'East Indian'
+  },
+  {
+    id: 'mishti-doi',
+    emoji: '🍮',
+    name: 'Claypot Mishti Doi',
+    nativeName: 'মিষ্টি দই',
+    language: 'Bengali',
+    region: 'east',
+    regionLabel: 'East Indian'
+  },
+  {
+    id: 'sandesh',
+    emoji: '🍬',
+    name: 'Sandesh Mithai',
+    nativeName: 'সন্দেশ',
+    language: 'Bengali',
+    region: 'east',
+    regionLabel: 'East Indian'
+  }
 ];
 
 /**
@@ -644,6 +803,12 @@ export default function FeedTheMonsterGame({ onBack }: GameProps) {
   // CRITICAL: Does NOT display the target count (e.g. no "0 / 3" or target spoiler!)
   const [basket, setBasket] = useState<BasketItem[]>([]);
 
+  // Stage 2: Multilingual Cuisine Region Filter ('all' | 'north' | 'south' | 'west' | 'east')
+  const [selectedRegion, setSelectedRegion] = useState<CuisineRegion>('all');
+  const filteredFeastItems = selectedRegion === 'all'
+    ? FEAST_VARIETIES
+    : FEAST_VARIETIES.filter(item => item.region === selectedRegion);
+
   // Stage 3: Verdict outcome ('too_few' | 'too_many' | 'exact' | null)
   const [verdict, setVerdict] = useState<'too_few' | 'too_many' | 'exact' | null>(null);
   const [eatenCount, setEatenCount] = useState<number>(0);
@@ -679,10 +844,10 @@ export default function FeedTheMonsterGame({ onBack }: GameProps) {
         // Story continues!
         setStoryChapter({
           isOpen: true,
-          title: "Off to the Royal Feast Kitchen!",
+          title: "Off to the Royal Multilingual Kitchen!",
           icon: "🍲",
           badge: "Story Continues • Chapter 2",
-          story: `Kumbhakarna's tummy needs exactly ${targetNumber} Puri Sabzi items! You jump on your bicycle and zoom down to the Royal Kitchen. The chef smiles: "Namaste! Pick golden puris and steaming sabzi bowls from my counter to fill your basket!"`,
+          story: `Kumbhakarna's tummy needs exactly ${targetNumber} delicious delicacies! You jump on your bicycle and zoom down to the Royal Multilingual Kitchen. Chacha Halwai smiles: "Namaste! Pick hot puris, crispy dosas, fluffy idlis, soft dhoklas, and sweet rasgullas from across India to fill your basket!"`,
           buttonText: "Next ➔ Go to Royal Kitchen!",
           onProceed: () => {
             handleGoToKitchen();
@@ -760,10 +925,10 @@ export default function FeedTheMonsterGame({ onBack }: GameProps) {
       // Story continues to Chapter 3: The Monster Feast!
       setStoryChapter({
         isOpen: true,
-        title: "The Monster Feast Begins!",
+        title: "The Grand Multilingual Feast Begins!",
         icon: "😋",
         badge: "Story Continues • Chapter 3",
-        story: `Kumbhakarna's eyes light up with pure joy! "YUMMMM! Exactly ${targetNumber} delicious servings, just what my tummy was dreaming of!" Look at this giant plate of Puri Sabzi with golden puffed puris and hot potato sabzi! Watch him feast and gobble it down!`,
+        story: `Kumbhakarna's eyes light up with pure joy! "YUMMMM! Exactly ${targetNumber} delicious dishes from across India, just what my tummy was dreaming of!" Look at this grand royal feast with golden puris, dosas, dhoklas, and sweets! Watch him feast and gobble it down!`,
         buttonText: "Next ➔ Watch Kumbhakarna Feast!",
         onProceed: () => {
           // Trigger animated one-by-one eating into the stomach and count along: 1, 2, 3...
@@ -1185,11 +1350,11 @@ export default function FeedTheMonsterGame({ onBack }: GameProps) {
               <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
                 <div style={{ fontSize: '3rem' }}>👨‍🍳</div>
                 <div style={{ textAlign: 'left' }}>
-                  <div style={{ fontWeight: 700, fontSize: '1.1rem', color: 'var(--clr-text)' }}>
-                    Chacha Halwai's Royal Rasoi
+                  <div style={{ fontWeight: 800, fontSize: '1.15rem', color: 'var(--clr-text)' }}>
+                    Chacha Halwai's Royal Multilingual Rasoi 🇮🇳
                   </div>
                   <div style={{ fontSize: '0.88rem', color: 'var(--clr-text-soft)' }}>
-                    "Namaste! Pick hot puris and savory sabzi bowls from the counter into your basket!"
+                    "Namaste! Pick delicious specialties from North, South, East, and West India into your basket!"
                   </div>
                 </div>
               </div>
@@ -1208,54 +1373,207 @@ export default function FeedTheMonsterGame({ onBack }: GameProps) {
               </div>
             </div>
 
-            {/* Feast Counter (Tap to pick) */}
+            {/* Feast Counter & Multilingual Region Filters */}
             <div style={{ marginBottom: '24px' }}>
-              <h3 style={{
-                fontSize: '1.1rem',
-                fontFamily: 'var(--font-display)',
-                color: 'var(--clr-text)',
-                marginBottom: '12px'
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                flexWrap: 'wrap',
+                gap: '10px',
+                marginBottom: '14px'
               }}>
-                Royal Feast Counter (Tap to pick puris & sabzi into basket):
-              </h3>
+                <div style={{ textAlign: 'left' }}>
+                  <h3 style={{
+                    fontSize: '1.2rem',
+                    fontFamily: 'var(--font-display)',
+                    color: 'var(--clr-text)',
+                    margin: '0 0 4px 0'
+                  }}>
+                    Royal Multilingual Feast Counter 🇮🇳🍲
+                  </h3>
+                  <div style={{ fontSize: '0.85rem', color: 'var(--clr-text-soft)' }}>
+                    Tap any dish to count into basket. Tap 🔊 to hear its authentic regional name!
+                  </div>
+                </div>
 
+                <div style={{
+                  fontSize: '0.82rem',
+                  fontWeight: 700,
+                  color: 'var(--clr-accent)',
+                  background: 'var(--clr-accent-soft)',
+                  padding: '5px 14px',
+                  borderRadius: 'var(--radius-pill)',
+                  border: '1px solid var(--clr-accent)'
+                }}>
+                  ✨ Count 1, 2, 3 as you pick!
+                </div>
+              </div>
+
+              {/* Regional Language Filter Tabs */}
+              <div style={{
+                display: 'flex',
+                gap: '8px',
+                overflowX: 'auto',
+                paddingBottom: '10px',
+                marginBottom: '16px'
+              }}>
+                {CUISINE_REGIONS.map(reg => {
+                  const isActive = selectedRegion === reg.id;
+                  return (
+                    <button
+                      key={reg.id}
+                      type="button"
+                      onClick={() => setSelectedRegion(reg.id)}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '6px',
+                        padding: '8px 16px',
+                        borderRadius: 'var(--radius-pill)',
+                        border: isActive ? '2px solid var(--clr-accent)' : '1px solid var(--clr-border)',
+                        background: isActive ? 'var(--clr-accent)' : 'var(--clr-surface)',
+                        color: isActive ? '#ffffff' : 'var(--clr-text)',
+                        fontWeight: 700,
+                        fontSize: '0.85rem',
+                        cursor: 'pointer',
+                        whiteSpace: 'nowrap',
+                        boxShadow: isActive ? '0 4px 12px rgba(217, 119, 6, 0.3)' : 'none',
+                        transition: 'all 0.15s ease'
+                      }}
+                    >
+                      <span style={{ fontSize: '1.1rem' }}>{reg.icon}</span>
+                      <span>{reg.label}</span>
+                      <span style={{
+                        fontSize: '0.72rem',
+                        opacity: isActive ? 0.95 : 0.65,
+                        fontWeight: 600
+                      }}>
+                        ({reg.native})
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Grid of Multilingual Cuisines */}
               <div style={{
                 display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(110px, 1fr))',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))',
                 gap: '12px'
               }}>
-                {FEAST_VARIETIES.map(item => (
-                  <button
+                {filteredFeastItems.map(item => (
+                  <div
                     key={item.id}
                     onClick={() => handleAddFeastItem(item)}
                     style={{
                       background: 'var(--clr-surface)',
                       border: '2px solid var(--clr-border)',
                       borderRadius: 'var(--radius-sm)',
-                      padding: '14px 10px',
+                      padding: '12px 10px',
                       display: 'flex',
                       flexDirection: 'column',
                       alignItems: 'center',
-                      gap: '6px',
+                      justifyContent: 'space-between',
                       boxShadow: 'var(--shadow-btn)',
                       cursor: 'pointer',
+                      position: 'relative',
+                      minHeight: '165px',
                       transition: 'transform 0.15s, border-color 0.15s'
                     }}
-                    onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.05)'}
-                    onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
+                    onMouseEnter={e => {
+                      e.currentTarget.style.transform = 'translateY(-3px)';
+                      e.currentTarget.style.borderColor = 'var(--clr-accent)';
+                    }}
+                    onMouseLeave={e => {
+                      e.currentTarget.style.transform = 'none';
+                      e.currentTarget.style.borderColor = 'var(--clr-border)';
+                    }}
                   >
-                    <span style={{ fontSize: '2.6rem' }}>{item.emoji}</span>
-                    <span style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--clr-text)' }}>
+                    {/* Language Badge & Audio Pronounce Button */}
+                    <div style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      width: '100%',
+                      marginBottom: '4px'
+                    }}>
+                      <span style={{
+                        fontSize: '0.66rem',
+                        fontWeight: 700,
+                        padding: '2px 6px',
+                        borderRadius: '4px',
+                        background: 'rgba(217, 119, 6, 0.12)',
+                        color: 'var(--clr-accent)',
+                        letterSpacing: '0.02em'
+                      }}>
+                        {item.language}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          speak(`${item.name}, ${item.nativeName}`, 0.82);
+                        }}
+                        title={`Listen to pronunciation of ${item.name}`}
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          cursor: 'pointer',
+                          color: 'var(--clr-accent)',
+                          padding: '3px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          borderRadius: '50%'
+                        }}
+                      >
+                        <Volume2 size={16} />
+                      </button>
+                    </div>
+
+                    {/* Food Emoji */}
+                    <span style={{ fontSize: '2.5rem', lineHeight: 1.1, margin: '2px 0' }}>
+                      {item.emoji}
+                    </span>
+
+                    {/* English Name */}
+                    <span style={{
+                      fontSize: '0.86rem',
+                      fontWeight: 800,
+                      color: 'var(--clr-text)',
+                      textAlign: 'center',
+                      lineHeight: 1.2,
+                      marginTop: '2px'
+                    }}>
                       {item.name}
                     </span>
+
+                    {/* Native Script Name */}
                     <span style={{
-                      fontSize: '0.75rem',
+                      fontSize: '0.8rem',
+                      fontWeight: 700,
                       color: 'var(--clr-accent)',
-                      fontWeight: 700
+                      textAlign: 'center',
+                      lineHeight: 1.2,
+                      marginBottom: '6px'
+                    }}>
+                      {item.nativeName}
+                    </span>
+
+                    {/* + Take Item Pill */}
+                    <span style={{
+                      fontSize: '0.74rem',
+                      color: '#ffffff',
+                      background: 'var(--clr-accent)',
+                      fontWeight: 800,
+                      padding: '4px 10px',
+                      borderRadius: 'var(--radius-pill)',
+                      width: '100%',
+                      textAlign: 'center'
                     }}>
                       + Take Item
                     </span>
-                  </button>
+                  </div>
                 ))}
               </div>
             </div>
@@ -1306,7 +1624,7 @@ export default function FeedTheMonsterGame({ onBack }: GameProps) {
                   color: '#92400e',
                   fontWeight: 600
                 }}>
-                  🧺 Your basket is empty! Tap the puris and sabzi bowls above to collect them (1, 2, 3...)!
+                  🧺 Your basket is empty! Tap any delicious Indian dish above to collect into basket (1, 2, 3...)!
                 </div>
               ) : (
                 <div style={{
@@ -1327,29 +1645,38 @@ export default function FeedTheMonsterGame({ onBack }: GameProps) {
                         padding: '10px 14px',
                         display: 'flex',
                         alignItems: 'center',
-                        gap: '8px',
+                        gap: '10px',
                         boxShadow: '0 4px 10px rgba(0,0,0,0.1)',
                         position: 'relative'
                       }}
                     >
                       <span style={{
-                        width: '24px',
-                        height: '24px',
+                        width: '26px',
+                        height: '26px',
                         borderRadius: '50%',
                         background: '#d97706',
                         color: '#ffffff',
-                        fontSize: '0.8rem',
-                        fontWeight: 800,
+                        fontSize: '0.85rem',
+                        fontWeight: 900,
                         display: 'flex',
                         alignItems: 'center',
-                        justifyContent: 'center'
+                        justifyContent: 'center',
+                        flexShrink: 0
                       }}>
                         {idx + 1}
                       </span>
-                      <span style={{ fontSize: '1.8rem' }}>{item.emoji}</span>
+                      <span style={{ fontSize: '1.9rem', lineHeight: 1 }}>{item.emoji}</span>
+                      <div style={{ textAlign: 'left', lineHeight: 1.15 }}>
+                        <div style={{ fontSize: '0.85rem', fontWeight: 800, color: '#78350f' }}>
+                          {item.name}
+                        </div>
+                        <div style={{ fontSize: '0.72rem', color: '#b45309', fontWeight: 700 }}>
+                          {item.nativeName}
+                        </div>
+                      </div>
                       <button
                         onClick={() => handleRemoveFeastItem(item.uid)}
-                        title="Remove item from basket"
+                        title={`Remove ${item.name}`}
                         style={{
                           background: '#fee2e2',
                           color: '#dc2626',
@@ -1362,7 +1689,8 @@ export default function FeedTheMonsterGame({ onBack }: GameProps) {
                           justifyContent: 'center',
                           fontSize: '12px',
                           fontWeight: 800,
-                          cursor: 'pointer'
+                          cursor: 'pointer',
+                          marginLeft: '4px'
                         }}
                       >
                         ✕
@@ -1387,7 +1715,7 @@ export default function FeedTheMonsterGame({ onBack }: GameProps) {
                 margin: '0 auto'
               }}
             >
-              <span>DELIVER THE PURI SABZI FEAST TO KUMBHAKARNA! 🚚🍛</span>
+              <span>DELIVER THE MULTILINGUAL FEAST TO KUMBHAKARNA! 🚚🇮🇳</span>
             </button>
           </div>
         )}
@@ -1454,6 +1782,7 @@ export default function FeedTheMonsterGame({ onBack }: GameProps) {
                 }}>
                   {Array.from({ length: targetNumber }).map((_, idx) => {
                     const isEaten = verdict === 'exact' && idx < eatenCount;
+                    const basketFood = basket[idx];
                     return (
                       <div
                         key={idx}
@@ -1472,7 +1801,7 @@ export default function FeedTheMonsterGame({ onBack }: GameProps) {
                           transition: 'all 0.3s'
                         }}
                       >
-                        {isEaten ? '🫓' : '🍽️'}
+                        {isEaten ? (basketFood?.emoji || '🫓') : '🍽️'}
                       </div>
                     );
                   })}
@@ -1576,7 +1905,7 @@ export default function FeedTheMonsterGame({ onBack }: GameProps) {
                   🎉 YUMMMM! Perfect!
                 </h3>
                 <p style={{ fontSize: '1.1rem', color: 'var(--clr-text)', margin: '0 0 8px 0' }}>
-                  You brought exactly <strong>{targetNumber}</strong> treats! Kumbhakarna enjoys his giant plate of golden Puri Sabzi! His stomach is happy and full!
+                  You brought exactly <strong>{targetNumber}</strong> treats! Kumbhakarna enjoys his grand royal feast of delicious Indian delicacies from across the regions! His stomach is happy and full!
                 </p>
               </div>
             )}
@@ -1599,7 +1928,7 @@ export default function FeedTheMonsterGame({ onBack }: GameProps) {
       {showCelebration && (
         <CelebrationModal
           title="Monster Feeder Champion!"
-          subtitle={`You successfully matched Kumbhakarna's hunger with a giant feast of Puri Sabzi!`}
+          subtitle={`You successfully matched Kumbhakarna's hunger with a grand multilingual feast of Indian delicacies!`}
           stars={3}
           onNextLevel={handleNextLevel}
           onReplay={handleReplay}
