@@ -263,8 +263,8 @@ export function playStomachGrowl(): void {
   osc.stop(ctx.currentTime + 0.65);
 }
 
-// Cheerful bakery shop entry bell
-export function playBakeryBell(): void {
+// Cheerful kitchen / halwai shop entry bell
+export function playKitchenBell(): void {
   if (!soundEnabled) return;
   const ctx = getAudioContext();
   if (!ctx) return;
@@ -287,9 +287,10 @@ export function playBakeryBell(): void {
     osc.stop(ctx.currentTime + idx * 0.06 + 0.35);
   });
 }
+export const playBakeryBell = playKitchenBell;
 
-// Cake pick / select sweet chime
-export function playCakePick(): void {
+// Feast item pick / select sweet chime
+export function playFeastItemPick(): void {
   if (!soundEnabled) return;
   const ctx = getAudioContext();
   if (!ctx) return;

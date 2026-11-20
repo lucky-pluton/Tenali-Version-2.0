@@ -3,13 +3,13 @@ import QuizLayout from '../../../components/QuizLayout';
 import CelebrationModal from '../../../components/CelebrationModal';
 import GameStoryModal from '../../../components/GameStoryModal';
 import {
-  playCakePick,
+  playFeastItemPick,
   playSuccessChime,
   playGentleBoing,
   playMonsterBurp,
   playMonsterGroan,
   playStomachGrowl,
-  playBakeryBell,
+  playKitchenBell,
   playMunch
 } from '../../../core/soundEffects';
 import { ShoppingBasket, ArrowRight, ArrowLeft } from 'lucide-react';
@@ -23,7 +23,7 @@ interface FeastVariety {
 
 interface BasketItem extends FeastVariety {
   uid: number;
-  cakeIndex: number;
+  itemIndex: number;
 }
 
 interface StoryChapterState {
@@ -605,7 +605,7 @@ export default function FeedTheMonsterGame({ onBack }: GameProps) {
     2: { min: 1, max: 5, name: "Level 2: Hungry Buddy (1–5)" },
     3: { min: 1, max: 7, name: "Level 3: Big Appetite (1–7)" },
     4: { min: 1, max: 10, name: "Level 4: Monster Feast (1–10)" },
-    5: { min: 1, max: 10, name: "Level 5: Master Baker (1–10 Challenge)" }
+    5: { min: 1, max: 10, name: "Level 5: Royal Halwai (1–10 Challenge)" }
   };
 
   const generateTarget = (lvl: number): number => {
@@ -662,7 +662,7 @@ export default function FeedTheMonsterGame({ onBack }: GameProps) {
   const handleCountStomachSlot = (slotIdx: number) => {
     if (countedSlots.includes(slotIdx)) return;
 
-    playCakePick();
+    playFeastItemPick();
     const nextCount = countedSlots.length + 1;
     const newCounted = [...countedSlots, slotIdx];
     setCountedSlots(newCounted);
@@ -684,7 +684,7 @@ export default function FeedTheMonsterGame({ onBack }: GameProps) {
           story: `Kumbhakarna's tummy needs exactly ${targetNumber} Puri Sabzi items! You jump on your bicycle and zoom down to the Royal Kitchen. The chef smiles: "Namaste! Pick golden puris and steaming sabzi bowls from my counter to fill your basket!"`,
           buttonText: "Next ➔ Go to Royal Kitchen!",
           onProceed: () => {
-            handleGoToBakery();
+            handleGoToKitchen();
           }
         });
       }, 500);
@@ -692,24 +692,24 @@ export default function FeedTheMonsterGame({ onBack }: GameProps) {
   };
 
   // Transition from Stage 1 to Stage 2 (Kitchen)
-  const handleGoToBakery = () => {
-    playBakeryBell();
+  const handleGoToKitchen = () => {
+    playKitchenBell();
     setStage('bakery');
   };
 
   // Stage 2: Add item to basket and speak ONLY the count: 1, 2, 3...
-  const handleAddCake = (item: FeastVariety) => {
-    playCakePick();
+  const handleAddFeastItem = (item: FeastVariety) => {
+    playFeastItemPick();
     const nextBasketCount = basket.length + 1;
-    setBasket(prev => [...prev, { ...item, uid: Date.now() + Math.random(), cakeIndex: nextBasketCount }]);
+    setBasket(prev => [...prev, { ...item, uid: Date.now() + Math.random(), itemIndex: nextBasketCount }]);
 
     // Speak ONLY the count when picking items: 1, 2, 3...
     speak(String(nextBasketCount), 0.85);
   };
 
   // Stage 2: Remove specific item from basket - speaks remaining count
-  const handleRemoveCake = (uid: number) => {
-    playCakePick();
+  const handleRemoveFeastItem = (uid: number) => {
+    playFeastItemPick();
     setBasket(prev => {
       const updated = prev.filter(c => c.uid !== uid);
       speak(String(updated.length), 0.85);
@@ -718,7 +718,7 @@ export default function FeedTheMonsterGame({ onBack }: GameProps) {
   };
 
   // Stage 2: Deliver feast to monster
-  const handleDeliverCakes = () => {
+  const handleDeliverFeast = () => {
     const count = basket.length;
     setStage('verdict');
 
@@ -733,7 +733,7 @@ export default function FeedTheMonsterGame({ onBack }: GameProps) {
         story: `GURRRLE! Kumbhakarna's tummy still rumbles! He looks down and whispers: "My belly still has empty room! I only got ${count} items, but I need ${targetNumber}!" Let's go back to the kitchen and fetch ${targetNumber - count} more!`,
         buttonText: "Next ➔ Get More Food!",
         onProceed: () => {
-          handleReturnToBakery();
+          handleReturnToKitchen();
         }
       });
     } else if (count > targetNumber) {
@@ -747,7 +747,7 @@ export default function FeedTheMonsterGame({ onBack }: GameProps) {
         story: `Uh oh! Kumbhakarna holds his bulging belly: "Whoa, that is ${count} items! My tummy will pop if I eat all of those! I only need ${targetNumber}!" Let's return to the kitchen and take out ${count - targetNumber} extra items!`,
         buttonText: "Next ➔ Remove Extra Food!",
         onProceed: () => {
-          handleReturnToBakery();
+          handleReturnToKitchen();
         }
       });
     } else {
@@ -788,9 +788,9 @@ export default function FeedTheMonsterGame({ onBack }: GameProps) {
     }
   };
 
-  // Return to bakery to correct cake count
-  const handleReturnToBakery = () => {
-    playBakeryBell();
+  // Return to kitchen to correct feast count
+  const handleReturnToKitchen = () => {
+    playKitchenBell();
     setStage('bakery');
     setVerdict(null);
     setEatenCount(0);
@@ -1055,7 +1055,7 @@ export default function FeedTheMonsterGame({ onBack }: GameProps) {
                   <span>🫧</span>
                 </div>
 
-                {/* Empty Cake Plate Slots inside Stomach */}
+                {/* Empty Feast Plate Slots inside Stomach */}
                 <div style={{
                   display: 'flex',
                   flexWrap: 'wrap',
@@ -1153,7 +1153,7 @@ export default function FeedTheMonsterGame({ onBack }: GameProps) {
                   ✨ Kumbhakarna wants {targetNumber} Puri Sabzi items! Remember this number!
                 </div>
                 <button
-                  onClick={handleGoToBakery}
+                  onClick={handleGoToKitchen}
                   className="tenali-btn-primary"
                   style={{
                     fontSize: '1.2rem',
@@ -1241,7 +1241,7 @@ export default function FeedTheMonsterGame({ onBack }: GameProps) {
                 {FEAST_VARIETIES.map(item => (
                   <button
                     key={item.id}
-                    onClick={() => handleAddCake(item)}
+                    onClick={() => handleAddFeastItem(item)}
                     style={{
                       background: 'var(--clr-surface)',
                       border: '2px solid var(--clr-border)',
@@ -1362,7 +1362,7 @@ export default function FeedTheMonsterGame({ onBack }: GameProps) {
                       </span>
                       <span style={{ fontSize: '1.8rem' }}>{item.emoji}</span>
                       <button
-                        onClick={() => handleRemoveCake(item.uid)}
+                        onClick={() => handleRemoveFeastItem(item.uid)}
                         title="Remove item from basket"
                         style={{
                           background: '#fee2e2',
@@ -1389,7 +1389,7 @@ export default function FeedTheMonsterGame({ onBack }: GameProps) {
 
             {/* Deliver Button */}
             <button
-              onClick={handleDeliverCakes}
+              onClick={handleDeliverFeast}
               disabled={basket.length === 0}
               className="tenali-btn-primary"
               style={{
@@ -1519,7 +1519,7 @@ export default function FeedTheMonsterGame({ onBack }: GameProps) {
                   {targetNumber} - {basket.length} = {targetNumber - basket.length} more items needed!
                 </div>
                 <button
-                  onClick={handleReturnToBakery}
+                  onClick={handleReturnToKitchen}
                   className="tenali-btn-primary"
                   style={{
                     fontSize: '1.05rem',
@@ -1560,7 +1560,7 @@ export default function FeedTheMonsterGame({ onBack }: GameProps) {
                   {basket.length} - {targetNumber} = {basket.length - targetNumber} extra items!
                 </div>
                 <button
-                  onClick={handleReturnToBakery}
+                  onClick={handleReturnToKitchen}
                   className="tenali-btn-primary"
                   style={{
                     fontSize: '1.05rem',
