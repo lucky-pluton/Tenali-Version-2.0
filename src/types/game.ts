@@ -1,0 +1,29 @@
+import React from 'react';
+import { OpenSpec } from './spec';
+
+export interface GameProps {
+  onBack: () => void;
+}
+
+export interface StoryChapter {
+  title: string;
+  illustration: string;
+  text: string;
+}
+
+export type DomainCategory = 'addition' | 'subtraction' | 'counting-logic' | 'all';
+
+export interface GameCard {
+  id: string;
+  name: string;
+  component: React.ComponentType<GameProps>;
+  icon: string;
+  domainId: 'addition' | 'subtraction' | 'counting-logic';
+  levelsCount: number;
+  tags: string[];
+}
+
+export interface GameModule {
+  spec: OpenSpec;
+  Component: React.ComponentType<GameProps>;
+}
