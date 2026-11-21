@@ -1,11 +1,11 @@
-import MathOLanternGame from './MathOLanternGame';
+import FrogHopGame from './FrogHopGame';
 import spec from './spec.json';
 import { GameModule } from '../../../types';
 
-const mathOLanternModule: GameModule = {
+const frogHopModule: GameModule = {
   spec: spec as any,
-  Component: MathOLanternGame
+  Component: FrogHopGame
 };
 
-export default mathOLanternModule;
-export { MathOLanternGame, spec };
+export default frogHopModule;
+export { FrogHopGame, spec };

@@ -13,7 +13,7 @@ import marigoldMagicModule from './modules/addition/marigold-magic';
 import vanishingButtonsModule from './modules/subtraction/vanishing-buttons';
 import schoolBusModule from './modules/subtraction/school-bus';
 import trickOrThinkModule from './modules/subtraction/trick-or-think';
-import mathOLanternModule from './modules/subtraction/math-o-lantern';
+import frogHopModule from './modules/subtraction/math-o-lantern';
 
 import lavaHopModule from './modules/counting-logic/lava-hop';
 import sum7DiceModule from './modules/counting-logic/sum7-dice';
@@ -95,13 +95,13 @@ export const MODULE_REGISTRY: GameCard[] = [
     tags: ['subtraction', 'balloons', 'gubbarewala', 'take away', 'flying balloons', 'counting', 'easy', 'mela']
   },
   {
-    id: 'math-o-lantern',
-    name: "Math O' Lantern: Jump & Count-Up",
-    component: mathOLanternModule.Component,
-    icon: '🏮',
+    id: 'frog-hop',
+    name: "Mendhak Hop: Lotus Pond",
+    component: frogHopModule.Component,
+    icon: '🐸',
     domainId: 'subtraction',
     levelsCount: 5,
-    tags: ['subtraction', 'counting up', 'number line', 'friendly numbers', 'benchmark jumps', 'sandbox']
+    tags: ['subtraction', 'frog', 'mendhak', 'pond', 'lily pads', 'lotus', 'number line', 'counting up', 'ncert']
   },
   {
     id: 'lava-hop',

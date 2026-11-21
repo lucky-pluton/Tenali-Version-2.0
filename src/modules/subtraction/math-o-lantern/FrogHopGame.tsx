@@ -9,10 +9,10 @@ import {
   playHop,
   playVictoryFanfare
 } from '../../../core/soundEffects';
-import { Sparkles, ArrowRight, RotateCcw, Compass, Footprints, Undo2 } from 'lucide-react';
+import { Sparkles, ArrowRight, RotateCcw, Compass, Footprints, Undo2, Waves } from 'lucide-react';
 import { GameProps } from '../../../types';
 
-// Speech synthesis helper for friendly narration
+// Speech synthesis helper for friendly Indian narration
 function speak(text: string | number, rate: number = 0.82): void {
   if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
     try {
@@ -49,16 +49,16 @@ export interface LevelConfig {
   rounds: TrailRound[];
 }
 
-// 5 Progressive Levels tailored for young minds
-const TRAIL_LEVELS: LevelConfig[] = [
+// 5 Progressive Levels for young learners
+const POND_LEVELS: LevelConfig[] = [
   {
     level: 1,
-    name: 'Firefly Hops (Within 30)',
+    name: 'Little Froggy Hops (Within 30)',
     badge: 'Level 1 • Numbers up to 30',
-    description: 'Learn the jump strategy with friendly 20 and 30!',
+    description: 'Help Mendhak Raja make short hops across friendly leaves!',
     rounds: [
       {
-        title: 'Trail to 20',
+        title: 'Lily Pad to 20',
         start: 14,
         dest: 20,
         diff: 6,
@@ -67,7 +67,7 @@ const TRAIL_LEVELS: LevelConfig[] = [
         ]
       },
       {
-        title: 'Trail to 30',
+        title: 'Lily Pad to 30',
         start: 23,
         dest: 30,
         diff: 7,
@@ -76,7 +76,7 @@ const TRAIL_LEVELS: LevelConfig[] = [
         ]
       },
       {
-        title: 'Two-Hop Trail: 30 − 18',
+        title: 'Two-Leaf Hop: 30 − 18',
         start: 18,
         dest: 30,
         diff: 12,
@@ -91,10 +91,10 @@ const TRAIL_LEVELS: LevelConfig[] = [
     level: 2,
     name: 'Friendly Tens Trail (Within 60)',
     badge: 'Level 2 • Numbers up to 60',
-    description: 'Hop to the next 10, then hop in friendly tens to the goal!',
+    description: 'Hop to the next friendly 10, then leap across the pond in tens!',
     rounds: [
       {
-        title: 'Trail to 50: 50 − 36',
+        title: 'Pond Hop to 50: 50 − 36',
         start: 36,
         dest: 50,
         diff: 14,
@@ -104,7 +104,7 @@ const TRAIL_LEVELS: LevelConfig[] = [
         ]
       },
       {
-        title: 'Trail to 60: 60 − 27',
+        title: 'Pond Hop to 60: 60 − 27',
         start: 27,
         dest: 60,
         diff: 33,
@@ -114,7 +114,7 @@ const TRAIL_LEVELS: LevelConfig[] = [
         ]
       },
       {
-        title: 'Trail to 50: 50 − 25',
+        title: 'Pond Hop to 50: 50 − 25',
         start: 25,
         dest: 50,
         diff: 25,
@@ -129,7 +129,7 @@ const TRAIL_LEVELS: LevelConfig[] = [
     level: 3,
     name: 'Century Leap (Hop to 100)',
     badge: 'Level 3 • Numbers up to 100',
-    description: 'Reach friendly 10, then leap all the way to 100!',
+    description: 'Reach friendly 10, then make a giant splash to 100!',
     rounds: [
       {
         title: 'Century Trail: 100 − 64',
@@ -165,12 +165,12 @@ const TRAIL_LEVELS: LevelConfig[] = [
   },
   {
     level: 4,
-    name: 'Beyond Hundred (Up to 200)',
+    name: 'Across the Grand Pond (Up to 200)',
     badge: 'Level 4 • Numbers up to 200',
     description: 'Hop across 100 into friendly hundreds!',
     rounds: [
       {
-        title: 'Across Century: 150 − 85',
+        title: 'Across Lotus Pond: 150 − 85',
         start: 85,
         dest: 150,
         diff: 65,
@@ -181,7 +181,7 @@ const TRAIL_LEVELS: LevelConfig[] = [
         ]
       },
       {
-        title: 'Trail to 200: 200 − 165',
+        title: 'Pond Hop to 200: 200 − 165',
         start: 165,
         dest: 200,
         diff: 35,
@@ -194,12 +194,12 @@ const TRAIL_LEVELS: LevelConfig[] = [
   },
   {
     level: 5,
-    name: 'Grand Trail Master (Up to 500)',
+    name: 'Pond Champion (Up to 500)',
     badge: 'Level 5 • Numbers up to 500',
     description: 'Master big friendly hops to 300 and 500!',
     rounds: [
       {
-        title: 'Grand Trail: 300 − 245',
+        title: 'Grand Pond Leap: 300 − 245',
         start: 245,
         dest: 300,
         diff: 55,
@@ -209,7 +209,7 @@ const TRAIL_LEVELS: LevelConfig[] = [
         ]
       },
       {
-        title: 'Grand Trail: 500 − 438',
+        title: 'Grand Pond Leap: 500 − 438',
         start: 438,
         dest: 500,
         diff: 62,
@@ -229,15 +229,15 @@ interface CompletedHop {
   color: string;
 }
 
-const HOP_COLORS = ['#f59e0b', '#10b981', '#38bdf8', '#a855f7'];
+const HOP_COLORS = ['#22c55e', '#38bdf8', '#f59e0b', '#a855f7'];
 
-export default function MathOLanternGame({ onBack }: GameProps) {
+export default function FrogHopGame({ onBack }: GameProps) {
   const [level, setLevel] = useState<number>(1);
   const [roundIdx, setRoundIdx] = useState<number>(0);
   const [stars, setStars] = useState<number>(0);
   const [subMode, setSubMode] = useState<'guided' | 'sandbox'>('guided');
 
-  const currentLevel = TRAIL_LEVELS[level - 1] || TRAIL_LEVELS[0];
+  const currentLevel = POND_LEVELS[level - 1] || POND_LEVELS[0];
   const currentRound = currentLevel.rounds[roundIdx] || currentLevel.rounds[0];
   const { start, dest, diff, hops } = currentRound;
 
@@ -324,10 +324,10 @@ export default function MathOLanternGame({ onBack }: GameProps) {
       setCompletedHops(prev => [...prev, newHop]);
       setCurrentPos(nextPos);
       setFeedback({
-        text: `Great hop! +${chosenAmount} takes Jugnu to milestone ${nextPos}!`,
+        text: `Ribbit! Boing! +${chosenAmount} hops! Mendhak Raja landed safely on leaf ${nextPos}!`,
         isCorrect: true
       });
-      speak(`Hop plus ${chosenAmount}! Reached ${nextPos}!`);
+      speak(`Hop plus ${chosenAmount}! Reached leaf ${nextPos}!`);
 
       setTimeout(() => {
         setFeedback(null);
@@ -336,12 +336,12 @@ export default function MathOLanternGame({ onBack }: GameProps) {
         if (nextStep >= hops.length) {
           playVictoryFanfare();
           setStars(s => s + 3);
-          speak(`Destination ${dest} reached! Total hops equal ${diff}! So ${dest} minus ${start} is ${diff}!`, 0.85);
+          speak(`Destination leaf ${dest} reached! All the frog hops equal ${diff}! So ${dest} minus ${start} is ${diff}!`, 0.85);
         }
       }, 900);
     } else {
       playGentleBoing();
-      const hint = `Check: from ${currentPos} to ${currentMilestone.target} is +${currentMilestone.hopAmount}!`;
+      const hint = `Look closely at the leaves: from leaf ${currentPos} to leaf ${currentMilestone.target} is +${currentMilestone.hopAmount}!`;
       setFeedback({ text: hint, isCorrect: false });
       speak(hint, 0.85);
     }
@@ -351,7 +351,7 @@ export default function MathOLanternGame({ onBack }: GameProps) {
   const handleSandboxHop = (amt: number) => {
     if (sandboxPos + amt > dest) {
       playGentleBoing();
-      speak(`That hop of +${amt} would overshoot ${dest}! Try a smaller hop.`, 0.85);
+      speak(`Splash! That hop of +${amt} would overshoot leaf ${dest}! Try a smaller leap.`, 0.85);
       return;
     }
 
@@ -366,13 +366,13 @@ export default function MathOLanternGame({ onBack }: GameProps) {
 
     setSandboxHops(prev => [...prev, newHop]);
     setSandboxPos(newPos);
-    speak(`Plus ${amt}, now at ${newPos}`);
+    speak(`Plus ${amt}, now on leaf ${newPos}`);
 
     if (newPos === dest) {
       playVictoryFanfare();
       playSuccessChime();
       setStars(s => s + 3);
-      speak(`Goal reached! All your hops sum to ${diff}!`, 0.85);
+      speak(`Goal leaf reached! All your frog hops sum to ${diff}!`, 0.85);
     }
   };
 
@@ -417,9 +417,9 @@ export default function MathOLanternGame({ onBack }: GameProps) {
 
   return (
     <QuizLayout
-      title="Math O' Lantern: Jump Trail"
-      subtitle="Discover subtraction by hopping forward along the friendly lantern trail!"
-      category="Counting-Up Subtraction"
+      title="Mendhak Hop: Lotus Pond Subtraction"
+      subtitle="Help Mendhak Raja hop across floating lily pads to discover subtraction!"
+      category="Subtraction & Frog Hops"
       level={level}
       stars={stars}
       onBack={onBack}
@@ -441,7 +441,7 @@ export default function MathOLanternGame({ onBack }: GameProps) {
           gap: '12px'
         }}>
           <div>
-            <span style={{ fontSize: '0.82rem', fontWeight: 700, color: '#f59e0b', textTransform: 'uppercase' }}>
+            <span style={{ fontSize: '0.82rem', fontWeight: 700, color: '#16a34a', textTransform: 'uppercase' }}>
               {currentLevel.badge} • Round {roundIdx + 1} of {currentLevel.rounds.length}
             </span>
             <div style={{ fontSize: '1.25rem', fontWeight: 900, color: 'var(--clr-text)', fontFamily: 'var(--font-kids)' }}>
@@ -461,7 +461,7 @@ export default function MathOLanternGame({ onBack }: GameProps) {
                 fontWeight: 800,
                 padding: '8px 16px',
                 borderRadius: 'var(--radius-pill)',
-                background: subMode === 'guided' ? '#f59e0b' : 'var(--clr-surface)',
+                background: subMode === 'guided' ? '#16a34a' : 'var(--clr-surface)',
                 color: subMode === 'guided' ? '#ffffff' : 'var(--clr-text)',
                 border: '1px solid var(--clr-border)',
                 display: 'flex',
@@ -470,8 +470,8 @@ export default function MathOLanternGame({ onBack }: GameProps) {
                 cursor: 'pointer'
               }}
             >
-              <Sparkles size={16} />
-              <span>Guided Journey</span>
+              <span>🐸</span>
+              <span>Guided Pond Hops</span>
             </button>
 
             <button
@@ -484,7 +484,7 @@ export default function MathOLanternGame({ onBack }: GameProps) {
                 fontWeight: 800,
                 padding: '8px 16px',
                 borderRadius: 'var(--radius-pill)',
-                background: subMode === 'sandbox' ? '#f59e0b' : 'var(--clr-surface)',
+                background: subMode === 'sandbox' ? '#16a34a' : 'var(--clr-surface)',
                 color: subMode === 'sandbox' ? '#ffffff' : 'var(--clr-text)',
                 border: '1px solid var(--clr-border)',
                 display: 'flex',
@@ -494,41 +494,50 @@ export default function MathOLanternGame({ onBack }: GameProps) {
               }}
             >
               <Compass size={16} />
-              <span>Free Sandbox</span>
+              <span>Free Explorer</span>
             </button>
           </div>
         </div>
 
-        {/* GLOWING NUMBER LINE TRAIL SCENE */}
+        {/* LOTUS POND SCENE WITH LILY PADS */}
         <div style={{
-          background: 'linear-gradient(180deg, #181124 0%, #24143a 100%)',
+          background: 'radial-gradient(ellipse at 50% 30%, #0369a1 0%, #0f766e 65%, #064e3b 100%)',
           borderRadius: '24px',
-          border: '3px solid #7c3aed',
+          border: '3px solid #14b8a6',
           padding: '24px 20px',
-          boxShadow: '0 8px 32px rgba(124, 58, 237, 0.35)',
+          boxShadow: '0 8px 32px rgba(15, 118, 110, 0.4)',
           color: '#ffffff',
           marginBottom: '20px',
           position: 'relative',
           overflow: 'hidden'
         }}>
 
-          {/* Subtraction Concept Banner */}
+          {/* Floating water ripples & Lotus flower in corner */}
+          <div style={{ position: 'absolute', top: '10px', left: '16px', fontSize: '1.8rem', opacity: 0.85, filter: 'drop-shadow(0 2px 6px rgba(0,0,0,0.3))' }}>
+            🪷
+          </div>
+          <div style={{ position: 'absolute', top: '14px', right: '18px', fontSize: '1.4rem', opacity: 0.85 }}>
+            🍃 🪷
+          </div>
+
+          {/* Concept Header */}
           <div style={{
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
             marginBottom: '20px',
             flexWrap: 'wrap',
-            gap: '12px'
+            gap: '12px',
+            position: 'relative',
+            zIndex: 1
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '1.05rem', fontWeight: 800, color: '#fef08a' }}>
-              <span>🏮</span>
-              <span>Find the distance from {start} to {dest}!</span>
-              <span style={{ fontSize: '1.1rem', opacity: 0.8, marginLeft: '6px' }}>🌙✨</span>
+              <span>🐸</span>
+              <span>Hop from leaf {start} to destination leaf {dest}!</span>
             </div>
 
             <div style={{
-              background: 'rgba(254, 240, 138, 0.15)',
+              background: 'rgba(254, 240, 138, 0.18)',
               border: '1px solid #fef08a',
               borderRadius: 'var(--radius-pill)',
               padding: '6px 16px',
@@ -541,64 +550,96 @@ export default function MathOLanternGame({ onBack }: GameProps) {
             </div>
           </div>
 
-          {/* SVG Visual Number Line with Bouncy Hop Arcs */}
+          {/* SVG Visual Lily Pad Number Line with Curved Splash Arcs */}
           <div style={{ position: 'relative', margin: '20px 0 10px 0' }}>
             <svg
-              viewBox="0 0 600 130"
+              viewBox="0 0 600 140"
               style={{ width: '100%', height: 'auto', overflow: 'visible' }}
             >
               <defs>
-                <linearGradient id="trailLineGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                  <stop offset="0%" stopColor="#f59e0b" />
-                  <stop offset="50%" stopColor="#10b981" />
-                  <stop offset="100%" stopColor="#38bdf8" />
+                {/* Water Stream Gradient */}
+                <linearGradient id="pondWaterGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="#38bdf8" stopOpacity="0.4" />
+                  <stop offset="50%" stopColor="#34d399" stopOpacity="0.6" />
+                  <stop offset="100%" stopColor="#2dd4bf" stopOpacity="0.4" />
                 </linearGradient>
 
-                <filter id="glowArc" x="-20%" y="-20%" width="140%" height="140%">
-                  <feGaussianBlur stdDeviation="3" result="blur" />
+                {/* Lily Pad Green Gradient */}
+                <radialGradient id="lilyPadGrad" cx="40%" cy="35%" r="60%">
+                  <stop offset="0%" stopColor="#86efac" />
+                  <stop offset="60%" stopColor="#22c55e" />
+                  <stop offset="100%" stopColor="#15803d" />
+                </radialGradient>
+
+                {/* Active Lily Pad Glow */}
+                <radialGradient id="lilyPadActive" cx="40%" cy="35%" r="60%">
+                  <stop offset="0%" stopColor="#fef08a" />
+                  <stop offset="50%" stopColor="#4ade80" />
+                  <stop offset="100%" stopColor="#16a34a" />
+                </radialGradient>
+
+                <filter id="splashGlow" x="-20%" y="-20%" width="140%" height="140%">
+                  <feGaussianBlur stdDeviation="3.5" result="blur" />
                   <feComposite in="SourceGraphic" in2="blur" operator="over" />
                 </filter>
               </defs>
 
-              {/* Number Line Axis */}
-              <line
-                x1="40"
-                y1="100"
-                x2="560"
-                y2="100"
-                stroke="url(#trailLineGrad)"
-                strokeWidth="5"
+              {/* Water Stream Track */}
+              <path
+                d="M 30 105 Q 180 95 300 105 T 570 105"
+                fill="none"
+                stroke="url(#pondWaterGrad)"
+                strokeWidth="10"
                 strokeLinecap="round"
               />
 
-              {/* Render Nodes along the Axis */}
+              {/* Render Floating Lily Pads along the Stream */}
               {trailMilestones.map((val, idx) => {
                 const totalNodes = trailMilestones.length;
                 const cx = 50 + (idx * (500 / (totalNodes - 1)));
-                const cy = 100;
+                const cy = 105;
                 const isReached = subMode === 'guided'
                   ? currentPos >= val
                   : sandboxPos >= val;
+                const isCurrent = subMode === 'guided'
+                  ? currentPos === val
+                  : sandboxPos === val;
                 const isStart = val === start;
                 const isDest = val === dest;
 
                 return (
-                  <g key={`node-${val}-${idx}`}>
-                    {/* Tick Mark */}
-                    <line x1={cx} y1="92" x2={cx} y2="108" stroke="#ffffff" strokeWidth="2" />
+                  <g key={`pad-${val}-${idx}`}>
+                    {/* Water Ripple Circle beneath pad */}
+                    {isReached && (
+                      <ellipse
+                        cx={cx}
+                        cy={cy + 8}
+                        rx="26"
+                        ry="10"
+                        fill="rgba(56, 189, 248, 0.25)"
+                        stroke="rgba(255, 255, 255, 0.4)"
+                        strokeWidth="1.2"
+                      />
+                    )}
 
-                    {/* Milestone Circle */}
-                    <circle
-                      cx={cx}
-                      cy={cy}
-                      r="16"
-                      fill={isReached ? (isDest ? '#a855f7' : isStart ? '#f59e0b' : '#10b981') : '#33204e'}
-                      stroke="#ffffff"
-                      strokeWidth="2.5"
+                    {/* Lily Pad Leaf Body with natural notch */}
+                    <path
+                      d={`M ${cx} ${cy - 18} 
+                          A 21 19 0 1 1 ${cx - 4} ${cy + 18} 
+                          L ${cx} ${cy} 
+                          Z`}
+                      fill={isCurrent ? 'url(#lilyPadActive)' : isReached ? 'url(#lilyPadGrad)' : '#1e3a34'}
+                      stroke={isCurrent ? '#fef08a' : '#22c55e'}
+                      strokeWidth={isCurrent ? '2.5' : '1.5'}
                       style={{ transition: 'all 0.3s ease' }}
                     />
 
-                    {/* Milestone Number Label */}
+                    {/* Leaf Vein */}
+                    <line x1={cx} y1={cy} x2={cx + 12} y2={cy - 10} stroke="#15803d" strokeWidth="1" opacity="0.6" />
+                    <line x1={cx} y1={cy} x2={cx - 12} y2={cy - 10} stroke="#15803d" strokeWidth="1" opacity="0.6" />
+
+                    {/* Milestone Number Label in Leaf Center */}
+                    <circle cx={cx} cy={cy - 1} r="12" fill="rgba(0, 0, 0, 0.35)" />
                     <text
                       x={cx}
                       y={cy + 4}
@@ -611,37 +652,30 @@ export default function MathOLanternGame({ onBack }: GameProps) {
                       {val}
                     </text>
 
-                    {/* Lantern Icon above milestone when reached */}
-                    {isReached && (
-                      <text
-                        x={cx}
-                        y={cy - 20}
-                        fontSize="14"
-                        textAnchor="middle"
-                        style={{ filter: 'drop-shadow(0 0 6px #fef08a)' }}
-                      >
-                        🏮
+                    {/* Lotus Flower on Goal & Reached Milestones */}
+                    {isReached && isDest && (
+                      <text x={cx} y={cy - 24} fontSize="16" textAnchor="middle" style={{ filter: 'drop-shadow(0 0 6px #f472b6)' }}>
+                        🪷
                       </text>
                     )}
 
                     {/* Bottom Tag */}
                     <text
                       x={cx}
-                      y={cy + 22}
-                      fill={isDest ? '#c084fc' : isStart ? '#fde68a' : '#86efac'}
+                      y={cy + 26}
+                      fill={isDest ? '#f472b6' : isStart ? '#fde68a' : '#86efac'}
                       fontSize="9"
-                      fontWeight="700"
+                      fontWeight="800"
                       textAnchor="middle"
                     >
-                      {isStart ? 'Start' : isDest ? 'Goal' : 'Ten'}
+                      {isStart ? 'Start Leaf' : isDest ? 'Goal 🪷' : 'Friendly 10'}
                     </text>
                   </g>
                 );
               })}
 
-              {/* Render Completed Hop Arcs */}
+              {/* Render Completed Frog Hop Arcs */}
               {(subMode === 'guided' ? completedHops : sandboxHops).map((hop, hIdx) => {
-                // Find node index or interpolate
                 const totalNodes = trailMilestones.length;
                 const fromIdx = trailMilestones.indexOf(hop.from);
                 const toIdx = trailMilestones.indexOf(hop.to);
@@ -655,38 +689,38 @@ export default function MathOLanternGame({ onBack }: GameProps) {
                   : 50 + ((hop.to - start) / (dest - start)) * 500;
 
                 const midX = (x1 + x2) / 2;
-                const arcHeight = Math.min(65, 30 + Math.abs(x2 - x1) * 0.25);
+                const arcHeight = Math.min(68, 32 + Math.abs(x2 - x1) * 0.26);
                 const midY = 100 - arcHeight;
 
                 return (
                   <g key={`hop-${hIdx}`}>
-                    {/* Parabolic Jump Arc */}
+                    {/* Splash Hop Arc */}
                     <path
                       d={`M ${x1} 96 Q ${midX} ${midY} ${x2} 96`}
                       fill="none"
                       stroke={hop.color}
                       strokeWidth="4"
                       strokeLinecap="round"
-                      strokeDasharray="6 2"
-                      filter="url(#glowArc)"
+                      strokeDasharray="6 3"
+                      filter="url(#splashGlow)"
                     />
 
                     {/* Hop Amount Badge */}
                     <rect
-                      x={midX - 16}
+                      x={midX - 18}
                       y={midY - 14}
-                      width="32"
-                      height="18"
-                      rx="9"
+                      width="36"
+                      height="19"
+                      rx="9.5"
                       fill={hop.color}
                       stroke="#ffffff"
                       strokeWidth="1.5"
                     />
                     <text
                       x={midX}
-                      y={midY - 2}
+                      y={midY}
                       fill="#ffffff"
-                      fontSize="10"
+                      fontSize="11"
                       fontWeight="900"
                       textAnchor="middle"
                     >
@@ -696,7 +730,7 @@ export default function MathOLanternGame({ onBack }: GameProps) {
                 );
               })}
 
-              {/* Jugnu the Firefly Active Position Indicator */}
+              {/* Mendhak Raja the Frog sitting on the active lily pad! */}
               {(() => {
                 const totalNodes = trailMilestones.length;
                 const activeVal = subMode === 'guided' ? currentPos : sandboxPos;
@@ -706,9 +740,9 @@ export default function MathOLanternGame({ onBack }: GameProps) {
                   : 50 + ((activeVal - start) / (dest - start)) * 500;
 
                 return (
-                  <g transform={`translate(${curX - 14}, 54)`}>
-                    <text fontSize="20" style={{ filter: 'drop-shadow(0 0 8px #fde047)' }}>
-                      🪲💡
+                  <g transform={`translate(${curX - 16}, 60)`} style={{ transition: 'transform 0.4s ease-out' }}>
+                    <text fontSize="24" style={{ filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.5))' }}>
+                      🐸
                     </text>
                   </g>
                 );
@@ -716,32 +750,32 @@ export default function MathOLanternGame({ onBack }: GameProps) {
             </svg>
           </div>
 
-          {/* Traveler Status Bar */}
+          {/* Pond Traveler Status Bar */}
           <div style={{
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            background: 'rgba(255, 255, 255, 0.08)',
-            border: '1px solid rgba(255, 255, 255, 0.15)',
+            background: 'rgba(0, 0, 0, 0.25)',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
             borderRadius: 'var(--radius-pill)',
             padding: '8px 18px',
             fontSize: '0.92rem',
             fontWeight: 700,
             color: '#fef08a'
           }}>
-            <span>📍 Position: <strong>{subMode === 'guided' ? currentPos : sandboxPos}</strong></span>
-            <span>🏁 Destination: <strong>{dest}</strong></span>
-            <span>Remaining: <strong>{dest - (subMode === 'guided' ? currentPos : sandboxPos)}</strong> steps</span>
+            <span>🐸 Mendhak Raja on Leaf: <strong>{subMode === 'guided' ? currentPos : sandboxPos}</strong></span>
+            <span>🪷 Goal Leaf: <strong>{dest}</strong></span>
+            <span>Hops to go: <strong>{dest - (subMode === 'guided' ? currentPos : sandboxPos)}</strong></span>
           </div>
         </div>
 
-        {/* 1. GUIDED JOURNEY INTERACTION */}
+        {/* 1. GUIDED POND JOURNEY INTERACTION */}
         {subMode === 'guided' && (
           <div>
             {!isGuidedFinished && currentMilestone && (
               <div className="anim-pop" style={{
                 background: 'var(--clr-card)',
-                border: '2px solid var(--clr-accent)',
+                border: '2px solid #22c55e',
                 borderRadius: '20px',
                 padding: '24px 20px',
                 textAlign: 'center',
@@ -749,7 +783,7 @@ export default function MathOLanternGame({ onBack }: GameProps) {
                 marginBottom: '20px'
               }}>
                 <div style={{
-                  fontSize: '1.15rem',
+                  fontSize: '1.2rem',
                   fontWeight: 800,
                   color: 'var(--clr-text)',
                   marginBottom: '18px',
@@ -758,9 +792,9 @@ export default function MathOLanternGame({ onBack }: GameProps) {
                   justifyContent: 'center',
                   gap: '8px'
                 }}>
-                  <Footprints size={22} color="var(--clr-accent)" />
+                  <span>🐸</span>
                   <span>
-                    Jugnu is at <strong>{currentPos}</strong>. How many steps to reach milestone <strong>{currentMilestone.target}</strong>?
+                    Mendhak Raja is on leaf <strong>{currentPos}</strong>. How many hops to leap onto leaf <strong>{currentMilestone.target}</strong>?
                   </span>
                 </div>
 
@@ -790,7 +824,7 @@ export default function MathOLanternGame({ onBack }: GameProps) {
                         transition: 'all 0.15s ease'
                       }}
                       onMouseEnter={e => {
-                        e.currentTarget.style.borderColor = '#f59e0b';
+                        e.currentTarget.style.borderColor = '#16a34a';
                         e.currentTarget.style.transform = 'translateY(-3px)';
                       }}
                       onMouseLeave={e => {
@@ -798,7 +832,7 @@ export default function MathOLanternGame({ onBack }: GameProps) {
                         e.currentTarget.style.transform = 'none';
                       }}
                     >
-                      +{opt} 🏮
+                      +{opt} 🐸
                     </button>
                   ))}
                 </div>
@@ -832,13 +866,13 @@ export default function MathOLanternGame({ onBack }: GameProps) {
                 boxShadow: 'var(--shadow-card)',
                 marginBottom: '20px'
               }}>
-                <div style={{ fontSize: '2.5rem', marginBottom: '8px' }}>🎉</div>
+                <div style={{ fontSize: '2.5rem', marginBottom: '8px' }}>🪷 🐸 🎉</div>
                 <h3 style={{ color: '#10b981', fontSize: '1.45rem', fontWeight: 900, margin: '0 0 10px 0' }}>
-                  Destination Reached! The Secret of Subtraction!
+                  Goal Leaf Reached! The Secret of Subtraction!
                 </h3>
 
-                <p style={{ fontSize: '1.05rem', color: 'var(--clr-text-soft)', maxWidth: '560px', margin: '0 auto 16px auto', lineHeight: 1.5 }}>
-                  Instead of taking away backwards, we hopped forward from <strong>{start}</strong> to <strong>{dest}</strong>!
+                <p style={{ fontSize: '1.05rem', color: 'var(--clr-text-soft)', maxWidth: '580px', margin: '0 auto 16px auto', lineHeight: 1.5 }}>
+                  Instead of counting backwards, Mendhak Raja hopped forward from leaf <strong>{start}</strong> all the way to leaf <strong>{dest}</strong>!
                 </p>
 
                 {/* The Visual Equation Equation */}
@@ -869,14 +903,14 @@ export default function MathOLanternGame({ onBack }: GameProps) {
                     {diff}
                   </span>
                   <span style={{ margin: '0 10px', color: 'var(--clr-text-soft)' }}>➔</span>
-                  <span style={{ color: '#f59e0b' }}>{dest} − {start} = {diff} ✓</span>
+                  <span style={{ color: '#16a34a' }}>{dest} − {start} = {diff} ✓</span>
                 </div>
 
                 <div>
                   <button
                     onClick={handleNextRoundOrLevel}
                     style={{
-                      background: '#10b981',
+                      background: '#16a34a',
                       color: '#ffffff',
                       border: 'none',
                       borderRadius: 'var(--radius-pill)',
@@ -884,13 +918,13 @@ export default function MathOLanternGame({ onBack }: GameProps) {
                       fontSize: '1.1rem',
                       fontWeight: 800,
                       cursor: 'pointer',
-                      boxShadow: '0 4px 12px rgba(16, 185, 129, 0.35)',
+                      boxShadow: '0 4px 12px rgba(22, 163, 74, 0.35)',
                       display: 'inline-flex',
                       alignItems: 'center',
                       gap: '8px'
                     }}
                   >
-                    <span>{roundIdx + 1 < currentLevel.rounds.length ? 'Next Trail Challenge ➔' : 'Complete Level 🎉'}</span>
+                    <span>{roundIdx + 1 < currentLevel.rounds.length ? 'Next Pond Challenge ➔' : 'Complete Level 🎉'}</span>
                     <ArrowRight size={18} />
                   </button>
                 </div>
@@ -899,7 +933,7 @@ export default function MathOLanternGame({ onBack }: GameProps) {
           </div>
         )}
 
-        {/* 2. FREE SANDBOX MODE INTERACTION */}
+        {/* 2. FREE POND SANDBOX MODE */}
         {subMode === 'sandbox' && (
           <div className="anim-pop" style={{
             background: 'var(--clr-card)',
@@ -911,10 +945,10 @@ export default function MathOLanternGame({ onBack }: GameProps) {
             marginBottom: '20px'
           }}>
             <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--clr-text)', margin: '0 0 6px 0' }}>
-              🧪 Free Jump Explorer
+              🧪 Free Pond Explorer
             </h3>
             <p style={{ fontSize: '0.95rem', color: 'var(--clr-text-soft)', margin: '0 0 16px 0' }}>
-              Choose your own hops to reach <strong>{dest}</strong> from <strong>{start}</strong>!
+              Choose your own hops to help Mendhak Raja leap from leaf <strong>{start}</strong> to leaf <strong>{dest}</strong>!
             </p>
 
             {/* Clear, logical jump buttons */}
@@ -943,7 +977,7 @@ export default function MathOLanternGame({ onBack }: GameProps) {
                     boxShadow: 'var(--shadow-btn)'
                   }}
                 >
-                  +{amt} 🏮
+                  +{amt} 🐸
                 </button>
               ))}
             </div>
@@ -993,7 +1027,7 @@ export default function MathOLanternGame({ onBack }: GameProps) {
                 }}
               >
                 <RotateCcw size={16} />
-                <span>Reset Trail</span>
+                <span>Reset Pond Trail</span>
               </button>
             </div>
           </div>
@@ -1005,18 +1039,18 @@ export default function MathOLanternGame({ onBack }: GameProps) {
       <GameStoryModal
         isOpen={storyOpen}
         onClose={() => setStoryOpen(false)}
-        title="Jugnu & the Glowing Lantern Trail"
-        badge="Counting-Up Story"
-        icon="🏮"
-        story={`Meet Jugnu the glowing firefly! Did you know that subtraction is really just measuring distance? To find out what ${dest} minus ${start} is, we don't have to take anything away. Instead, Jugnu starts at ${start} and takes friendly hops forward until reaching ${dest}! All the hops you take add up to the exact answer!`}
-        buttonText="Next ➔ Start Hopping!"
+        title="Mendhak Raja & the Lotus Pond!"
+        badge="Pond Jump Story"
+        icon="🐸"
+        story={`Meet Mendhak Raja, the cheerful frog in the village lotus pond (Kamal Talab)! Mendhak Raja wants to reach his favorite blooming lotus at leaf ${dest}, starting from leaf ${start}. Instead of counting backwards, he takes friendly hops forward across floating lily pads! Watch each splash, count up all the hops, and you'll find the exact answer to ${dest} − ${start}!`}
+        buttonText="Next ➔ Hop with Mendhak Raja!"
       />
 
       {/* Level Celebration Modal */}
       {showCelebration && (
         <CelebrationModal
-          title="Trailblazer Champion! 🏮🌟"
-          subtitle={`You mastered all the jump trails in ${currentLevel.name}! You know how to hop forward to find the difference!`}
+          title="Lotus Pond Champion! 🪷🐸"
+          subtitle={`You mastered all the frog hop challenges in ${currentLevel.name}! You know how to leap across lily pads to find the difference!`}
           stars={3}
           onNextLevel={handleNextLevel}
           onReplay={handleReplay}
