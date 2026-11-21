@@ -512,26 +512,30 @@ export default function MathOLanternGame({ onBack }: GameProps) {
           overflow: 'hidden'
         }}>
 
-          {/* Twilight Stars & Moon */}
-          <div style={{ position: 'absolute', top: '12px', right: '24px', fontSize: '1.8rem', opacity: 0.9 }}>
-            🌙 ✨
-          </div>
-
           {/* Subtraction Concept Banner */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '8px' }}>
+          <div style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: '20px',
+            flexWrap: 'wrap',
+            gap: '12px'
+          }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '1.05rem', fontWeight: 800, color: '#fef08a' }}>
               <span>🏮</span>
               <span>Find the distance from {start} to {dest}!</span>
+              <span style={{ fontSize: '1.1rem', opacity: 0.8, marginLeft: '6px' }}>🌙✨</span>
             </div>
 
             <div style={{
               background: 'rgba(254, 240, 138, 0.15)',
               border: '1px solid #fef08a',
               borderRadius: 'var(--radius-pill)',
-              padding: '4px 14px',
+              padding: '6px 16px',
               fontSize: '0.9rem',
               fontWeight: 800,
-              color: '#fef08a'
+              color: '#fef08a',
+              whiteSpace: 'nowrap'
             }}>
               Hops Counted: {subMode === 'guided' ? totalGuidedAmount : totalSandboxAmount} / {diff}
             </div>
