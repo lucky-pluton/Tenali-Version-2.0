@@ -1,0 +1,62 @@
+{
+  "$schema": "https://tenali.fun/schemas/openspec-v1.json",
+  "specVersion": "1.0.0",
+  "id": "subtraction.trick-or-think",
+  "name": "Trick-or-Think: Place Value Regrouping",
+  "domain": "Subtraction with Regrouping Across Zeros",
+  "competencyCode": "FLN-SUB-REGROUP-01",
+  "competency": "Understanding 3-digit subtraction across zeros through place-value borrowing, cascading regrouping (Hundreds to Tens to Ones), and value conservation",
+  "targetAge": "Ages 6-10 (Grade 2 to Grade 4)",
+  "ncertStandard": "Grade 3 Mathematics: Chapter 6 - Fun with Give and Take",
+  "overview": "Three living place-value houses (Hundreds, Tens, Ones) have 500 candies. When trick-or-treaters need 53 candies, children help Ones borrow from Tens, and Tens borrow from Hundreds. Demonstrates that 1 Hundred = 10 Tens and 1 Ten = 10 Ones, proving that 400 + 90 + 10 = 500 candies before column-by-column subtraction.",
+  "learningOutcomes": [
+    "Understand why you cannot subtract a larger digit from zero",
+    "Master the sequential chain of borrowing across neighboring place-value columns",
+    "Recognize that 1 Hundred = 10 Tens and 1 Ten = 10 Ones",
+    "Verify value conservation: 500 = 400 + 90 + 10 without losing a single unit",
+    "Perform standard vertical column subtraction: 500 - 53 = 447"
+  ],
+  "levels": [
+    {
+      "level": 1,
+      "name": "The Classic 500 - 53",
+      "description": "500 candies - 53 needed = 447 difference",
+      "range": "500 - 53"
+    },
+    {
+      "level": 2,
+      "name": "Sweet 300 - 46",
+      "description": "300 candies - 46 needed = 254 difference",
+      "range": "300 - 46"
+    },
+    {
+      "level": 3,
+      "name": "Sunny 400 - 75",
+      "description": "400 candies - 75 needed = 325 difference",
+      "range": "400 - 75"
+    },
+    {
+      "level": 4,
+      "name": "Royal 600 - 82",
+      "description": "600 candies - 82 needed = 518 difference",
+      "range": "600 - 82"
+    },
+    {
+      "level": 5,
+      "name": "Grand 700 - 64",
+      "description": "700 candies - 64 needed = 636 difference",
+      "range": "700 - 64"
+    }
+  ],
+  "stateMachine": [
+    "step1_ones_needs_help",
+    "step2_tens_needs_help",
+    "step3_hundreds_regroups_to_tens",
+    "step4_tens_regroups_to_ones",
+    "step5_verify_conservation",
+    "step6_subtract_ones",
+    "step7_subtract_tens",
+    "step8_subtract_hundreds",
+    "celebration"
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "$schema": "https://tenali.fun/schemas/openspec-v1.json",
+  "specVersion": "1.0.0",
+  "id": "subtraction.math-o-lantern",
+  "name": "Math O' Lantern: Counting Up Trail",
+  "domain": "Subtraction by Counting Up to Benchmark Numbers",
+  "competencyCode": "FLN-SUB-BENCHMARK-01",
+  "competency": "Understanding subtraction as the distance between two numbers by hopping along benchmark tens and hundreds",
+  "targetAge": "Ages 6-10 (Grade 2 to Grade 4)",
+  "ncertStandard": "Grade 3 Mathematics: Chapter 6 - Fun with Give and Take (Mental Math)",
+  "overview": "Children help the traveler hop along a glowing lantern trail starting from the smaller number (subtrahend) forward to the larger destination (minuend). By hopping to friendly tens and hundreds, children collect lantern distances whose sum equals the exact mathematical difference without column borrowing.",
+  "learningOutcomes": [
+    "Understand subtraction as the forward distance between two numbers on a number line",
+    "Identify friendly benchmark numbers (nearest 10, nearest 100)",
+    "Calculate jump distances between milestones",
+    "Sum milestone jumps to discover the exact difference (e.g., 7 + 40 + 400 = 447)",
+    "Explore both structured Guided Journey and exploratory Sandbox modes"
+  ],
+  "levels": [
+    {
+      "level": 1,
+      "name": "Starter Trail: 300 - 28",
+      "description": "Start at 28 -> 30 (+2) -> 100 (+70) -> 300 (+200) = 272",
+      "range": "300 - 28"
+    },
+    {
+      "level": 2,
+      "name": "Forest Trail: 400 - 65",
+      "description": "Start at 65 -> 70 (+5) -> 100 (+30) -> 400 (+300) = 335",
+      "range": "400 - 65"
+    },
+    {
+      "level": 3,
+      "name": "Magic Trail: 500 - 53",
+      "description": "Start at 53 -> 60 (+7) -> 100 (+40) -> 500 (+400) = 447",
+      "range": "500 - 53"
+    },
+    {
+      "level": 4,
+      "name": "Moonlight Trail: 600 - 84",
+      "description": "Start at 84 -> 90 (+6) -> 100 (+10) -> 600 (+500) = 516",
+      "range": "600 - 84"
+    },
+    {
+      "level": 5,
+      "name": "Grand Trail: 700 - 49",
+      "description": "Start at 49 -> 50 (+1) -> 100 (+50) -> 700 (+600) = 651",
+      "range": "700 - 49"
+    }
+  ],
+  "stateMachine": [
+    "step1_hop_to_friendly_ten",
+    "step2_hop_to_friendly_hundred",
+    "step3_hop_to_final_destination",
+    "step4_sum_lantern_distances",
+    "celebration"
+  ]
+}

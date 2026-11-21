@@ -10,6 +10,9 @@ import marigoldMagicModule from './modules/addition/marigold-magic';
 
 import vanishingButtonsModule from './modules/subtraction/vanishing-buttons';
 import schoolBusModule from './modules/subtraction/school-bus';
+import trickOrThinkModule from './modules/subtraction/trick-or-think';
+import mathOLanternModule from './modules/subtraction/math-o-lantern';
+import polotasticModule from './modules/subtraction/polotastic';
 
 import lavaHopModule from './modules/counting-logic/lava-hop';
 import sum7DiceModule from './modules/counting-logic/sum7-dice';
@@ -80,6 +83,33 @@ export const MODULE_REGISTRY: GameCard[] = [
     domainId: 'subtraction',
     levelsCount: 2,
     tags: ['subtraction', 'bus', 'school bus', 'five little children', 'countdown', 'poem', 'ncert']
+  },
+  {
+    id: 'trick-or-think',
+    name: "Trick-or-Think: Place Value Regrouping",
+    component: trickOrThinkModule.Component,
+    icon: '🏰',
+    domainId: 'subtraction',
+    levelsCount: 5,
+    tags: ['subtraction', 'borrowing', 'regrouping', 'place value', 'hundreds', 'tens', 'ones', 'across zeros']
+  },
+  {
+    id: 'math-o-lantern',
+    name: "Math O' Lantern: Jump & Count-Up",
+    component: mathOLanternModule.Component,
+    icon: '🏮',
+    domainId: 'subtraction',
+    levelsCount: 5,
+    tags: ['subtraction', 'counting up', 'number line', 'friendly numbers', 'benchmark jumps', 'sandbox']
+  },
+  {
+    id: 'polotastic',
+    name: "Polotastic: Bundles & Unrolling",
+    component: polotasticModule.Component,
+    icon: '🍬',
+    domainId: 'subtraction',
+    levelsCount: 5,
+    tags: ['subtraction', 'base 10', 'place value', 'bundles', 'unrolling', 'rolls', 'packets']
   },
   {
     id: 'lava-hop',

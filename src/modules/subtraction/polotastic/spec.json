@@ -1,0 +1,59 @@
+{
+  "$schema": "https://tenali.fun/schemas/openspec-v1.json",
+  "specVersion": "1.0.0",
+  "id": "subtraction.polotastic",
+  "name": "Polotastic: Sweet Bundles & Unrolling",
+  "domain": "Place Value Units, Bundling & Concrete Subtraction",
+  "competencyCode": "FLN-SUB-BUNDLES-01",
+  "competency": "Understanding place value as physical groups of ten (Singles, Rolls of 10, Packets of 100) and mastering borrowing by physically unrolling bundles",
+  "targetAge": "Ages 5-9 (Grade 1 to Grade 3)",
+  "ncertStandard": "Grade 2 & 3 Mathematics: Joyful Mathematics Chapter 8 - Tens and Ones",
+  "overview": "Children help Pip the sweet shopkeeper manage Polo sweets organized into concrete place-value bundles: loose Singles (Ones), Rolls of 10 (Tens), Packets of 100 (Hundreds), and Cartons of 1000 (Thousands). When children lack enough loose singles to complete an order, they tap a roll to physically unroll it into 10 loose sweets, bridging concrete manipulatives with abstract subtraction.",
+  "learningOutcomes": [
+    "Identify place-value units through concrete manipulatives (1 sweet = One, 1 roll = Ten, 1 packet = Hundred)",
+    "Perform direct subtraction without regrouping (e.g., 35 - 12)",
+    "Understand borrowing as unrolling 1 Ten into 10 loose Ones (e.g., 42 - 17)",
+    "Perform cascading regrouping by unpacking 1 Hundred into 10 Tens, then unrolling 1 Ten (e.g., 204 - 58)",
+    "Connect physical bundle manipulation directly to written vertical subtraction"
+  ],
+  "levels": [
+    {
+      "level": 1,
+      "name": "Direct Takeaway: 35 - 12",
+      "description": "3 rolls + 5 singles. Take away 2 singles and 1 roll = 23",
+      "range": "35 - 12"
+    },
+    {
+      "level": 2,
+      "name": "Unrolling a Roll: 42 - 17",
+      "description": "4 rolls + 2 singles. Unroll 1 roll -> 3 rolls + 12 singles = 25",
+      "range": "42 - 17"
+    },
+    {
+      "level": 3,
+      "name": "Roll Breaking Challenge: 54 - 28",
+      "description": "5 rolls + 4 singles. Unroll 1 roll -> 4 rolls + 14 singles = 26",
+      "range": "54 - 28"
+    },
+    {
+      "level": 4,
+      "name": "Packet Unpacking: 125 - 47",
+      "description": "1 packet + 2 rolls + 5 singles. Unpack & unroll = 78",
+      "range": "125 - 47"
+    },
+    {
+      "level": 5,
+      "name": "Zero-Roll Cascade: 204 - 58",
+      "description": "2 packets + 0 rolls + 4 singles. Unpack packet then unroll roll = 146",
+      "range": "204 - 58"
+    }
+  ],
+  "stateMachine": [
+    "step1_inspect_bundles",
+    "step2_unroll_needed_bundles",
+    "step3_takeaway_singles",
+    "step4_takeaway_rolls",
+    "step5_takeaway_packets",
+    "celebration"
+  ]
+}
