@@ -424,7 +424,7 @@ export default function GubbarewalaGame({ onBack }: GameProps) {
               <>
                 <Wind size={18} color="#0284c7" />
                 <span>Tap {flyCount} balloons to let the wind carry them away! 💨</span>
-                <span style={{ color: '#ea580c' }}>({releasedCount} / {flyCount} flown)</span>
+                <span style={{ color: '#ea580c' }}>({releasedCount} / {flyCount} flew away)</span>
               </>
             )}
             {stage === 'solve' && (
@@ -630,7 +630,7 @@ export default function GubbarewalaGame({ onBack }: GameProps) {
                 padding: '6px 14px',
                 borderRadius: 'var(--radius-pill)'
               }}>
-                Fluew away: {releasedCount} of {flyCount}
+                Flew away: {releasedCount} of {flyCount}
               </div>
             )}
           </div>

@@ -61,7 +61,7 @@ export default function AaravGulabJamunGame({ onBack }: GameProps) {
     badge: "Chapter 1: The Birthday Morning",
     story: "Today is Aarav's birthday! He is sitting at the dining table with a big smile on his face. His Mother arrives first carrying a warm plate of fresh sweets!",
     buttonText: "Next ➔ Feed Mother's Sweets!",
-    onProceed: () => {}
+    onProceed: () => { }
   });
 
   const handleCloseStoryChapter = () => {
@@ -170,7 +170,7 @@ export default function AaravGulabJamunGame({ onBack }: GameProps) {
                 badge: `Story Continues • Chapter ${nextStep + 1}`,
                 story: `Aarav munched all of ${givers[stepIdx].name}'s treats! Just then, ${nextGiver.name} walks in with a fresh plate of ${nextGiver.amount} sweet${nextGiver.amount > 1 ? 's' : ''}! Let's feed Aarav!`,
                 buttonText: `Next ➔ Feed ${nextGiver.name}'s Sweets!`,
-                onProceed: () => {}
+                onProceed: () => { }
               });
             }, 600);
           } else {
@@ -188,7 +188,7 @@ export default function AaravGulabJamunGame({ onBack }: GameProps) {
                 badge: "Story Continues • The Grand Total",
                 story: `Aarav rubs his happy round belly! "I am so full of delicious sweets!" he giggles. But wait—can you count up the GRAND TOTAL of all the sweets Aarav ate today?`,
                 buttonText: "Next ➔ Count Grand Total!",
-                onProceed: () => {}
+                onProceed: () => { }
               });
             }, 600);
           }
@@ -237,7 +237,7 @@ export default function AaravGulabJamunGame({ onBack }: GameProps) {
       badge: `Level ${nextLvl} • Chapter 1`,
       story: `Aarav's family is back with an even bigger batch of sweets! Help feed Aarav and count each treat!`,
       buttonText: "Next ➔ Feed Mother's Sweets!",
-      onProceed: () => {}
+      onProceed: () => { }
     });
   };
 
@@ -257,7 +257,7 @@ export default function AaravGulabJamunGame({ onBack }: GameProps) {
       badge: `Level ${level} • Chapter 1`,
       story: `Ready to count all of Aarav's birthday sweets again? Mother is ready with the first plate!`,
       buttonText: "Next ➔ Feed Mother's Sweets!",
-      onProceed: () => {}
+      onProceed: () => { }
     });
   };
 
@@ -606,8 +606,8 @@ export default function AaravGulabJamunGame({ onBack }: GameProps) {
                   border: isCurrent
                     ? '2px solid var(--clr-accent)'
                     : isCompleted
-                    ? '1px solid var(--clr-correct)'
-                    : '1px solid var(--clr-border)',
+                      ? '1px solid var(--clr-correct)'
+                      : '1px solid var(--clr-border)',
                   borderRadius: 'var(--radius-sm)',
                   padding: '14px',
                   textAlign: 'center',
