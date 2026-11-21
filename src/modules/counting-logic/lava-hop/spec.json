@@ -2,46 +2,46 @@
   "$schema": "https://tenali.fun/schemas/openspec-v1.json",
   "specVersion": "1.0.0",
   "id": "counting-logic.lava-hop",
-  "name": "Gali Ka Stapoo (Kit-Kit)",
-  "domain": "Counting & Childhood Street Games",
+  "name": "Nadi Aur Pahar",
+  "domain": "Counting & Childhood Schoolyard Games",
   "competencyCode": "FLN-NUM-COUNT-PATH",
-  "competency": "One-to-one correspondence, progressive ordinal counting, and spatial path traversal on authentic street crossing layouts",
+  "competency": "One-to-one correspondence, progressive ordinal counting, and spatial path traversal on stepping stone river crossings",
   "targetAge": "Ages 5-8 (Grades 1-2)",
-  "ncertStandard": "Grade 1 & 2 Mathematics: Joyful Mathematics Chapter 2 (Counting & Hopscotch Paths)",
-  "overview": "Inspired by the classic childhood game 'the road is lava', children cross a realistic asphalt volcano street by hopping only on blank white stepping stones. When hopped on, each stone reveals its sequential number and counts aloud (1, 2, 3...) until reaching the safe sidewalk.",
+  "ncertStandard": "Grade 1 & 2 Mathematics: Joyful Mathematics Chapter 2 (Counting & Traditional Games)",
+  "overview": "Inspired by the classic Indian childhood schoolyard game 'Nadi Aur Pahar' (River and Mountain), children cross a rushing river by hopping only on sturdy white mountain stones (Pahar). When hopped on, each stone reveals its sequential number and counts aloud (1, 2, 3...) until reaching the safe riverbank.",
   "learningOutcomes": [
     "Develop 1-to-1 correspondence through tactile hopping interactions",
     "Discover sequential numbers dynamically upon hopping rather than pre-printed clues",
     "Reinforce number pronunciation and verbal counting with browser speech synthesis",
-    "Learn spatial risk-assessment by distinguishing safe white stepping stones from boiling red lava"
+    "Learn spatial path planning by distinguishing safe mountain stones (Pahar) from river rapids (Nadi)"
   ],
   "levels": [
     {
       "level": 1,
-      "name": "The Suburban Street Crossing",
-      "description": "5 white stones hidden among bubbling lava cracks",
+      "name": "Chhoti Nadi Ka Safar",
+      "description": "5 mountain stones (Pahar) across a peaceful river",
       "range": "1 to 5"
     },
     {
       "level": 2,
-      "name": "The Wide Avenue Crossing",
-      "description": "7 white stones across a wide asphalt roadway",
+      "name": "Tez Dhaara Ki Nadi",
+      "description": "7 mountain stones (Pahar) across swift river rapids",
       "range": "1 to 7"
     },
     {
       "level": 3,
-      "name": "The Grand Volcano Highway",
-      "description": "10 white stones spanning the ultimate volcano highway",
+      "name": "Maha-Nadi Paar",
+      "description": "10 mountain stones (Pahar) spanning the wide mountain river",
       "range": "1 to 10"
     }
   ],
   "stateMachine": [
     "story_intro",
-    "road_initialization",
+    "river_initialization",
     "stepwise_hop_event",
     "number_reveal_and_speech",
-    "lava_sizzle_warning",
-    "safe_sidewalk_arrival",
+    "river_splash_warning",
+    "safe_riverbank_arrival",
     "celebration"
   ]
 }

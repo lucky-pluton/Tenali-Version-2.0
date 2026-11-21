@@ -512,11 +512,11 @@ export default function FrogHopGame({ onBack }: GameProps) {
           overflow: 'hidden'
         }}>
 
-          {/* Floating water ripples & Lotus flower in corner */}
-          <div style={{ position: 'absolute', top: '10px', left: '16px', fontSize: '1.8rem', opacity: 0.85, filter: 'drop-shadow(0 2px 6px rgba(0,0,0,0.3))' }}>
+          {/* Floating water ripples & Lotus flower in corner (positioned at bottom so it never overlaps top headers) */}
+          <div style={{ position: 'absolute', bottom: '10px', left: '16px', fontSize: '1.8rem', opacity: 0.4, pointerEvents: 'none', filter: 'drop-shadow(0 2px 6px rgba(0,0,0,0.3))' }}>
             🪷
           </div>
-          <div style={{ position: 'absolute', top: '14px', right: '18px', fontSize: '1.4rem', opacity: 0.85 }}>
+          <div style={{ position: 'absolute', bottom: '12px', right: '18px', fontSize: '1.4rem', opacity: 0.4, pointerEvents: 'none' }}>
             🍃 🪷
           </div>
 

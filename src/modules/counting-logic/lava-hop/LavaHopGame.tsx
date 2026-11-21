@@ -60,11 +60,11 @@ export default function LavaHopGame({ onBack }: GameProps) {
   // Episodic Story Chapters: Story says something -> Activity happens -> Story continues!
   const [storyChapter, setStoryChapter] = useState<StoryChapterState>({
     isOpen: true,
-    title: "Gali Ka Stapoo (Kit-Kit)!",
-    icon: "🦶",
-    badge: "Childhood Nostalgia • स्टापू / कित-कित",
-    story: "Remember those summer afternoons in our mohalla lane? With a piece of chalk or charcoal, we drew numbered squares for STAPOO (Kit-Kit)! The golden childhood rule: only land on the safe numbered stones, and if your shoe touches the red tiles—'Out'! Hop on one foot, count each stone in order, and cross to the finish line!",
-    buttonText: "Next ➔ Chhalang Lagao!",
+    title: "Nadi Aur Pahar (नदी और पहाड़)!",
+    icon: "🏞️",
+    badge: "Childhood Schoolyard Game • नदी और पहाड़",
+    story: "Remember playing 'Nadi Aur Pahar' during school recess? When someone shouts 'Nadi ya Pahar?', everyone dashes to safe ground! In our adventure, you are crossing a rushing river. The sturdy white stepping stones are 'Pahar' (पहाड़ - Safe Mountain Rocks), while the red tiles are the swift 'Nadi' (नदी - Deep River Rapids)! To cross safely to the green bank, hop only on the numbered mountain stones in exact order, counting each step aloud! Ready to leap?",
+    buttonText: "Next ➔ Pahar Par Chhalang Lagao!",
     onProceed: () => {}
   });
 
@@ -78,12 +78,12 @@ export default function LavaHopGame({ onBack }: GameProps) {
   const [stars, setStars] = useState<number>(0);
 
   // Road configuration:
-  // Using authentic pavement paver tiles (Red Terracotta = Lava, White/Cream = Safe)
+  // Authentic pavement tiles (Red Terracotta = River Rapids, White/Cream = Safe Mountain Stones)
   const ROAD_LEVELS: Record<number, RoadLevel> = {
     1: {
-      name: "The Suburban Footpath Crossing",
+      name: "Chhoti Nadi Ka Safar (5 Stones)",
       targetCount: 5,
-      description: "Hop across 5 white paver stones without stepping on the red lava tiles!",
+      description: "Hop across 5 mountain stones (पहाड़) without slipping into the river rapids (नदी)!",
       tiles: [
         { id: 1, type: 'safe', targetNum: 1 },
         { id: 2, type: 'lava' },
@@ -96,9 +96,9 @@ export default function LavaHopGame({ onBack }: GameProps) {
       ]
     },
     2: {
-      name: "The Wide Avenue Promenade",
+      name: "Tez Dhaara Ki Nadi (7 Stones)",
       targetCount: 7,
-      description: "A wider street! Hop across all 7 white paver stones to reach the other side!",
+      description: "A wider river! Hop across all 7 mountain stones to reach the other riverbank!",
       tiles: [
         { id: 1, type: 'safe', targetNum: 1 },
         { id: 2, type: 'lava' },
@@ -114,9 +114,9 @@ export default function LavaHopGame({ onBack }: GameProps) {
       ]
     },
     3: {
-      name: "The Grand Volcano Boulevard",
+      name: "Maha-Nadi Paar (10 Stones)",
       targetCount: 10,
-      description: "The ultimate 10-stone challenge! Count all 10 white stepping stones to safety!",
+      description: "The ultimate 10-stone crossing! Count all 10 mountain stones to safety!",
       tiles: [
         { id: 1, type: 'safe', targetNum: 1 },
         { id: 2, type: 'lava' },
@@ -163,7 +163,7 @@ export default function LavaHopGame({ onBack }: GameProps) {
       setTimeout(() => setSizzleEffect(null), 600);
       setFeedback({
         type: 'error',
-        text: "🔥 SIZZLE! That's a red volcano tile! Your shoes will burn! Only hop on the white paver stones!"
+        text: "🌊 CHHAPAAK! That's the rushing river (नदी)! You slipped into the water! Hop only on the white mountain stones (पहाड़)!"
       });
       return;
     }
@@ -188,11 +188,11 @@ export default function LavaHopGame({ onBack }: GameProps) {
         setTimeout(() => {
           setStoryChapter({
             isOpen: true,
-            title: "Halfway Across the Volcano!",
-            icon: "🔥",
+            title: "Halfway Across the River!",
+            icon: "🌊",
             badge: "Story Continues • Chapter 2",
-            story: `Whew! You made it halfway across! Look down: the red tiles are smoking and sizzling, but your feet are completely safe on stone number ${currentStepNumber}! The cool green sidewalk is right ahead! Catch your breath and let's leap across the rest!`,
-            buttonText: "Next ➔ Keep Hopping!",
+            story: `Shabash! You made it halfway across the river! The water is rushing fast below, but your footing is strong and safe on mountain stone #${currentStepNumber}! The green riverbank is right ahead! Catch your breath and let's leap across the rest!`,
+            buttonText: "Next ➔ Aage Chhalang Lagao!",
             onProceed: () => {}
           });
         }, 500);
@@ -205,17 +205,17 @@ export default function LavaHopGame({ onBack }: GameProps) {
           setReachedFinish(true);
           setFeedback({
             type: 'success',
-            text: `🎉 Hooray! You reached the safe sidewalk! All ${currentRoad.targetCount} paver stones counted safely!`
+            text: `🎉 Hooray! You reached the safe riverbank! All ${currentRoad.targetCount} mountain stones counted safely!`
           });
           setStars(s => s + 3);
 
           // Episodic finale
           setStoryChapter({
             isOpen: true,
-            title: "Safe on the Sidewalk!",
+            title: "Safe on the Green Riverbank!",
             icon: "🏆",
             badge: "Story Continues • Chapter 3",
-            story: `HOORAY! Both feet land safely on the cool green sidewalk! You leaped across all ${currentRoad.targetCount} white stones without scorching your shoes once, and counted every single step! You are a master street explorer!`,
+            story: `HOORAY! Both feet land safely on the soft green riverbank! You leaped across all ${currentRoad.targetCount} mountain stones without slipping into the river even once, and counted every single step! You are the champion of Nadi Aur Pahar!`,
             buttonText: "Next ➔ See Your Trophy!",
             onProceed: () => {
               playVictoryFanfare();
@@ -226,7 +226,7 @@ export default function LavaHopGame({ onBack }: GameProps) {
       } else {
         setFeedback({
           type: 'info',
-          text: `✨ Stone ${currentStepNumber} safe! Now hop on the next white stone!`
+          text: `✨ Mountain stone ${currentStepNumber} safe! Now hop on the next white stone!`
         });
       }
     } else if (revealedNumbers[tileIndex] !== undefined) {
@@ -239,7 +239,7 @@ export default function LavaHopGame({ onBack }: GameProps) {
       playGentleBoing();
       setFeedback({
         type: 'error',
-        text: "👣 Don't jump too far ahead! Hop on the next white stone right in front of you."
+        text: "👣 Don't jump too far ahead! Hop on the next mountain stone right in front of you."
       });
     }
   };
@@ -254,10 +254,10 @@ export default function LavaHopGame({ onBack }: GameProps) {
     setLevel(nextLvl);
     setStoryChapter({
       isOpen: true,
-      title: "The Lava Challenge Expands!",
-      icon: "🌋",
+      title: "The River Challenge Expands!",
+      icon: "🏞️",
       badge: `Level ${nextLvl} • Chapter 1`,
-      story: `You reached a wider avenue! There are ${ROAD_LEVELS[nextLvl].targetCount} white stones to cross this street. Watch out for the red volcano tiles and keep counting!`,
+      story: `You reached a wider river! There are ${ROAD_LEVELS[nextLvl].targetCount} mountain stones to cross this stream. Watch out for the river rapids and keep counting!`,
       buttonText: "Next ➔ Start Hopping!",
       onProceed: () => {}
     });
@@ -271,10 +271,10 @@ export default function LavaHopGame({ onBack }: GameProps) {
     setFeedback(null);
     setStoryChapter({
       isOpen: true,
-      title: "The Secret Street Lava Game!",
-      icon: "🌋",
+      title: "Nadi Aur Pahar Challenge!",
+      icon: "🏞️",
       badge: `Level ${level} • Chapter 1`,
-      story: "Can you cross the street even faster this time? Remember: hop only on the white paver stones to stay safe!",
+      story: "Can you cross the river even faster this time? Remember: hop only on the white mountain stones to stay safe!",
       buttonText: "Next ➔ Start Hopping!",
       onProceed: () => {}
     });
@@ -299,9 +299,9 @@ export default function LavaHopGame({ onBack }: GameProps) {
 
   return (
     <QuizLayout
-      title="Gali Ka Stapoo (Kit-Kit)"
-      subtitle="Hop on the safe numbered stones, avoid the red tiles, and count 1, 2, 3 to victory!"
-      category="Counting & Indian Childhood Games"
+      title="Nadi Aur Pahar"
+      subtitle="Hop on the safe mountain stones (पहाड़), avoid the rushing river (नदी), and count 1, 2, 3 as you cross!"
+      category="Counting & Schoolyard Games • नदी और पहाड़"
       level={level}
       stars={stars}
       onBack={onBack}
@@ -310,7 +310,7 @@ export default function LavaHopGame({ onBack }: GameProps) {
       <div style={{ width: '100%', maxWidth: '920px' }}>
 
         {/* ============================================================== */}
-        {/* THE REALISTIC PAVEMENT ROAD ARENA                              */}
+        {/* THE RIVER CROSSING ARENA (NADI AUR PAHAR)                      */}
         {/* ============================================================== */}
         <div>
           {/* Level Controls & Stats Header */}
@@ -347,7 +347,7 @@ export default function LavaHopGame({ onBack }: GameProps) {
                 color: 'var(--clr-text-soft)',
                 marginRight: '6px'
               }}>
-                White Stones Hopped: <strong style={{ color: 'var(--clr-correct)' }}>{Object.keys(revealedNumbers).length} / {currentRoad.targetCount}</strong>
+                Mountain Stones Hopped: <strong style={{ color: 'var(--clr-correct)' }}>{Object.keys(revealedNumbers).length} / {currentRoad.targetCount}</strong>
               </span>
 
               <button
@@ -372,7 +372,7 @@ export default function LavaHopGame({ onBack }: GameProps) {
             </div>
           </div>
 
-          {/* THE ROAD CONTAINER (Authentic road pavement with paver tiles & curbs) */}
+          {/* THE RIVER CONTAINER */}
           <div style={{
             background: '#1c1917',
             border: '3px solid #44403c',
@@ -384,16 +384,16 @@ export default function LavaHopGame({ onBack }: GameProps) {
             overflow: 'hidden'
           }}>
 
-            {/* TOP ROAD CURB (Yellow/Black Concrete Sidewalk Curb) */}
+            {/* TOP RIVERBANK CURB */}
             <div style={{
               height: '14px',
               borderRadius: '8px',
-              background: 'repeating-linear-gradient(45deg, #f59e0b, #f59e0b 16px, #1c1917 16px, #1c1917 32px)',
+              background: 'repeating-linear-gradient(45deg, #10b981, #10b981 16px, #047857 16px, #047857 32px)',
               marginBottom: '16px',
               boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.6)'
             }} />
 
-            {/* START SIDEWALK & FINISH SIDEWALK LABELS */}
+            {/* START RIVERBANK & FINISH RIVERBANK LABELS */}
             <div style={{
               display: 'flex',
               justifyContent: 'space-between',
@@ -413,16 +413,16 @@ export default function LavaHopGame({ onBack }: GameProps) {
                 gap: '6px',
                 boxShadow: '0 4px 12px rgba(16, 185, 129, 0.3)'
               }}>
-                <span>🚩 START SIDEWALK</span>
+                <span>🚩 START RIVERBANK</span>
               </div>
 
               <div style={{
                 fontSize: '0.85rem',
                 fontWeight: 700,
-                color: '#f59e0b',
+                color: '#38bdf8',
                 letterSpacing: '0.04em'
               }}>
-                ⚠️ HOP ON WHITE PAVER TILES • DODGE RED LAVA TILES! ⚠️
+                🏞️ HOP ON MOUNTAIN STONES (पहाड़) • DODGE THE RIVER RAPIDS (नदी)! 🏞️
               </div>
 
               <div style={{
@@ -437,7 +437,7 @@ export default function LavaHopGame({ onBack }: GameProps) {
                 gap: '6px',
                 boxShadow: '0 4px 12px rgba(245, 158, 11, 0.3)'
               }}>
-                <span>🏁 SAFE SIDEWALK</span>
+                <span>🏁 SAFE RIVERBANK</span>
               </div>
             </div>
 
@@ -567,7 +567,7 @@ export default function LavaHopGame({ onBack }: GameProps) {
                         </div>
                       )}
 
-                      {/* Sizzle Steam Effect if stepped on lava tile */}
+                      {/* Splash Effect if stepped on river tile */}
                       {isSizzling && (
                         <div style={{
                           position: 'absolute',
@@ -575,7 +575,7 @@ export default function LavaHopGame({ onBack }: GameProps) {
                           fontSize: '1.8rem',
                           animation: 'popIn 0.3s forwards'
                         }}>
-                          💨🔥
+                          💦🌊
                         </div>
                       )}
 
@@ -605,7 +605,7 @@ export default function LavaHopGame({ onBack }: GameProps) {
                             </span>
                           </div>
                         ) : (
-                          /* Blank White Paver Stone before hopping */
+                          /* Blank White Mountain Stone before hopping */
                           <div style={{
                             width: '32px',
                             height: '32px',
@@ -621,7 +621,7 @@ export default function LavaHopGame({ onBack }: GameProps) {
                           </div>
                         )
                       ) : (
-                        /* Hot Red Lava Paver Tile */
+                        /* River Rapids Hazard Tile */
                         <div style={{
                           width: '30px',
                           height: '30px',
@@ -634,7 +634,7 @@ export default function LavaHopGame({ onBack }: GameProps) {
                           justifyContent: 'center',
                           fontSize: '0.95rem'
                         }}>
-                          🔥
+                          🌊
                         </div>
                       )}
                     </div>
@@ -758,8 +758,8 @@ export default function LavaHopGame({ onBack }: GameProps) {
 
       {showCelebration && (
         <CelebrationModal
-          title="Street Crossing Champion!"
-          subtitle={`You bravely hopped across all ${currentRoad.targetCount} white paver stones and conquered the boiling lava road!`}
+          title="Nadi Aur Pahar Champion!"
+          subtitle={`Shaabaash! You bravely hopped across all ${currentRoad.targetCount} mountain stones (पहाड़) and conquered the rushing river!`}
           stars={3}
           onNextLevel={handleNextLevel}
           onReplay={handleReplay}

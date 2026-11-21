@@ -44,12 +44,12 @@ export const MODULE_REGISTRY: GameCard[] = [
   },
   {
     id: 'lava-hop',
-    name: "Gali Ka Stapoo (Kit-Kit)",
+    name: "Nadi Aur Pahar",
     component: lavaHopModule.Component,
-    icon: '🦶',
+    icon: '🏞️',
     domainId: 'counting-logic',
     levelsCount: 3,
-    tags: ['stapoo', 'kit-kit', 'kith-kith', 'gali', 'childhood', 'street', 'hopscotch', 'counting']
+    tags: ['nadi aur pahar', 'nadi', 'pahar', 'river and mountain', 'bachpan', 'schoolyard', 'stepping stones', 'counting']
   },
   {
     id: 'sum7-dice',
