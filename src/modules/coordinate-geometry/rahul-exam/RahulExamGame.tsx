@@ -26,7 +26,13 @@ function speak(text: string | number, rate: number = 0.82): void {
   }
 }
 
-export default function RahulExamGame({ onBack }: GameProps) {
+export interface RahulExamGameProps extends GameProps {
+  isEmbedded?: boolean;
+  onNextChapter?: () => void;
+  onChapterStars?: (stars: number) => void;
+}
+
+export default function RahulExamGame({ onBack, isEmbedded, onNextChapter, onChapterStars }: RahulExamGameProps) {
   const [stage, setStage] = useState<1 | 2 | 3>(1);
   const [stars, setStars] = useState<number>(0);
   const [storyOpen, setStoryOpen] = useState<boolean>(true);
@@ -84,19 +90,12 @@ export default function RahulExamGame({ onBack }: GameProps) {
 
   const handleFinishTopper = () => {
     playVictoryFanfare();
+    onChapterStars?.(3);
     setShowCelebration(true);
   };
 
-  return (
-    <QuizLayout
-      title="Rahul Ki Night-Before Exam Strategy"
-      subtitle="Master linear equations y = mx + c and slope to finish 40 questions and top the exam!"
-      category="Coordinate Geometry / निर्देशांक"
-      level={stage}
-      stars={stars}
-      onBack={onBack}
-      onOpenStory={() => setStoryOpen(true)}
-    >
+  const content = (
+    <>
       <div style={{ width: '100%', maxWidth: '880px', margin: '0 auto' }}>
 
         {/* Phase Header */}
@@ -503,16 +502,38 @@ export default function RahulExamGame({ onBack }: GameProps) {
           stars={3}
           onNextLevel={() => {
             setShowCelebration(false);
-            setStage(1);
+            if (onNextChapter) {
+              onNextChapter();
+            } else {
+              setStage(1);
+            }
           }}
           onReplay={() => {
             setShowCelebration(false);
             setStage(1);
           }}
           onHome={onBack}
-          hasNextLevel={false}
+          hasNextLevel={Boolean(onNextChapter)}
         />
       )}
+    </>
+  );
+
+  if (isEmbedded) {
+    return content;
+  }
+
+  return (
+    <QuizLayout
+      title="Rahul Ki Night-Before Exam Strategy"
+      subtitle="Master linear equations y = mx + c and slope to finish 40 questions and top the exam!"
+      category="Coordinate Geometry / निर्देशांक"
+      level={stage}
+      stars={stars}
+      onBack={onBack}
+      onOpenStory={() => setStoryOpen(true)}
+    >
+      {content}
     </QuizLayout>
   );
 }

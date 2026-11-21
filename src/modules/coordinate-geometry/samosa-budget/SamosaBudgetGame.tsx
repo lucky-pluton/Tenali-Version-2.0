@@ -25,7 +25,13 @@ function speak(text: string | number, rate: number = 0.82): void {
   }
 }
 
-export default function SamosaBudgetGame({ onBack }: GameProps) {
+export interface SamosaBudgetGameProps extends GameProps {
+  isEmbedded?: boolean;
+  onNextChapter?: () => void;
+  onChapterStars?: (stars: number) => void;
+}
+
+export default function SamosaBudgetGame({ onBack, isEmbedded, onNextChapter, onChapterStars }: SamosaBudgetGameProps) {
   const [stage, setStage] = useState<1 | 2 | 3 | 4>(1);
   const [stars, setStars] = useState<number>(0);
   const [storyOpen, setStoryOpen] = useState<boolean>(true);
@@ -74,6 +80,7 @@ export default function SamosaBudgetGame({ onBack }: GameProps) {
       playSuccessChime();
       playVictoryFanfare();
       setStars(s => s + 3);
+      onChapterStars?.(3);
       setFeedback({
         text: `EXACTLY! 12x + 20 ≤ 200 gives x ≤ 15! You can buy at most 15 samosas without going broke!`,
         isCorrect: true
@@ -90,16 +97,8 @@ export default function SamosaBudgetGame({ onBack }: GameProps) {
     }
   };
 
-  return (
-    <QuizLayout
-      title="School Canteen Ki Samosa Party"
-      subtitle="Explore linear functions C(x) = 12x + 20 and budget inequalities in the school canteen!"
-      category="Coordinate Geometry / निर्देशांक"
-      level={stage}
-      stars={stars}
-      onBack={onBack}
-      onOpenStory={() => setStoryOpen(true)}
-    >
+  const content = (
+    <>
       <div style={{ width: '100%', maxWidth: '880px', margin: '0 auto' }}>
 
         {/* Stage Header */}
@@ -535,16 +534,38 @@ export default function SamosaBudgetGame({ onBack }: GameProps) {
           stars={3}
           onNextLevel={() => {
             setShowCelebration(false);
-            setStage(1);
+            if (onNextChapter) {
+              onNextChapter();
+            } else {
+              setStage(1);
+            }
           }}
           onReplay={() => {
             setShowCelebration(false);
             setStage(1);
           }}
           onHome={onBack}
-          hasNextLevel={false}
+          hasNextLevel={Boolean(onNextChapter)}
         />
       )}
+    </>
+  );
+
+  if (isEmbedded) {
+    return content;
+  }
+
+  return (
+    <QuizLayout
+      title="School Canteen Ki Samosa Party"
+      subtitle="Explore linear functions C(x) = 12x + 20 and budget inequalities in the school canteen!"
+      category="Coordinate Geometry / निर्देशांक"
+      level={stage}
+      stars={stars}
+      onBack={onBack}
+      onOpenStory={() => setStoryOpen(true)}
+    >
+      {content}
     </QuizLayout>
   );
 }

@@ -23,11 +23,8 @@ import lavaHopModule from './modules/counting-logic/lava-hop';
 import sum7DiceModule from './modules/counting-logic/sum7-dice';
 import feedMonsterModule from './modules/counting-logic/feed-monster';
 
-// Coordinate Geometry Modules (Stories 1 to 4)
-import classroomGridModule from './modules/coordinate-geometry/classroom-grid';
-import rahulExamModule from './modules/coordinate-geometry/rahul-exam';
-import rajuKiranaModule from './modules/coordinate-geometry/raju-kirana';
-import samosaBudgetModule from './modules/coordinate-geometry/samosa-budget';
+// Coordinate Geometry Master Module (Stories 1 to 4 Unified)
+import coordinateGeometryZeroModule from './modules/coordinate-geometry/coordinate-geometry-zero';
 
 import { GameCard } from './types';
 
@@ -137,41 +134,31 @@ export const MODULE_REGISTRY: GameCard[] = [
     tags: ['mendhak', 'chhalang', 'frog hop', 'lotus pond', 'lily pads', 'kamal', 'number line']
   },
 
-  // --- COORDINATE GEOMETRY GAMES (STORIES 1 TO 4) ---
+  // --- COORDINATE GEOMETRY (STORIES 1 TO 4 UNIFIED IN ONE MODULE) ---
   {
-    id: 'classroom-grid',
-    name: "Classroom Ka Fish Market",
-    component: classroomGridModule.Component,
-    icon: '🏫',
-    domainId: 'coordinate-geometry',
-    levelsCount: 3,
-    tags: ['classroom', 'fish market', 'pt teacher', 'paper bullet', 'coordinates', 'rows', 'seats', 'straight line', 'collinear']
-  },
-  {
-    id: 'rahul-exam',
-    name: "Rahul Ki Night-Before Strategy",
-    component: rahulExamModule.Component,
-    icon: '📈',
-    domainId: 'coordinate-geometry',
-    levelsCount: 3,
-    tags: ['rahul', 'exam', 'topper', 'pyq', 'linear equations', 'y=mx+c', 'slope', 'sleep']
-  },
-  {
-    id: 'raju-kirana',
-    name: "Raju Kirana Robbery Mystery",
-    component: rajuKiranaModule.Component,
-    icon: '🔍',
-    domainId: 'coordinate-geometry',
-    levelsCount: 1,
-    tags: ['raju kirana', 'bank robbery', 'detective', 'chips', 'juice', 'intersection', 'linear system']
-  },
-  {
-    id: 'samosa-budget',
-    name: "Canteen Ki Samosa Party",
-    component: samosaBudgetModule.Component,
-    icon: '🥟',
+    id: 'coordinate-geometry-zero',
+    name: "Coordinate Geometry: From Zero",
+    component: coordinateGeometryZeroModule.Component,
+    icon: '📐',
     domainId: 'coordinate-geometry',
     levelsCount: 4,
-    tags: ['samosa', 'canteen', 'cost function', 'c(x)', 'budget', 'inequality', 'maths in real life']
+    tags: [
+      'coordinate geometry',
+      'from zero',
+      'cartesian plane',
+      'classroom grid',
+      'fish market',
+      'rahul exam',
+      'topper strategy',
+      'raju kirana',
+      'robbery mystery',
+      'samosa party',
+      'budget',
+      'linear equations',
+      'y=mx+c',
+      'intersection',
+      'collinear',
+      'geogebra'
+    ]
   }
 ];

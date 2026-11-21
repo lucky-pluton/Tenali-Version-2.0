@@ -1,0 +1,55 @@
+{
+  "$schema": "https://tenali.fun/schemas/openspec-v1.json",
+  "specVersion": "1.0.0",
+  "id": "coordinate-geometry.zero",
+  "name": "Coordinate Geometry: From Zero",
+  "domain": "Coordinate Geometry & Algebraic Modeling",
+  "competencyCode": "MATH-GEOM-COORD-ZERO",
+  "competency": "Cartesian plane representation, linear equations y = mx + c, slope as rate of change, point of intersection in systems of linear equations, and budget inequalities modeled through 4 real-life stories",
+  "targetAge": "Ages 12-16 (Grades 8-10)",
+  "ncertStandard": "NCERT Class 9 Chapter 3 (Coordinate Geometry), Class 9 Chapter 4 (Linear Equations in Two Variables), and Class 10 Chapter 3 (Pair of Linear Equations in Two Variables)",
+  "overview": "A unified story-driven learning module that takes students from zero to mastery in coordinate geometry. Spans four interconnected real-life scenarios: (1) Classroom fish market seating grid & collinearity, (2) Rahul's night-before exam rate optimization and sleep strategy, (3) Raju Kirana robbery mystery solved via intersection of linear equations, and (4) School canteen samosa party cost function and budget constraints.",
+  "learningOutcomes": [
+    "Identify Cartesian coordinate components: Origin (0,0), X-axis (rows), and Y-axis (seats)",
+    "Plot ordered pairs (x, y) on a GeoGebra-style interactive coordinate plane",
+    "Discover collinearity and write linear relations (y = 2x + 3) connecting plotted points",
+    "Interpret slope (m) as rate of change (questions per hour) and y-intercept (c) as initial condition in y = mx + c",
+    "Solve simultaneous linear equations graphically by pinpointing their unique intersection point (4, 0)",
+    "Formulate linear cost functions C(x) = 12x + 20 and evaluate linear budget inequalities (12x + 20 <= 200)"
+  ],
+  "levels": [
+    {
+      "level": 1,
+      "name": "Story 1: Classroom Ka Fish Market",
+      "description": "Plot Parth & Anish from Origin (0,0) and determine Amit's seat on the straight line",
+      "concept": "Points, Coordinates & Collinearity"
+    },
+    {
+      "level": 2,
+      "name": "Story 2: Rahul Ki Night-Before Strategy",
+      "description": "Model exam preparation rate y = mx + c to finish 40 questions and maximize sleep",
+      "concept": "Slope, Rate of Change & Y-Intercept"
+    },
+    {
+      "level": 3,
+      "name": "Story 3: Raju Kirana Robbery Mystery",
+      "description": "Graph 3 daily store receipts and identify the intersection point (4, 0) to catch the thief",
+      "concept": "Simultaneous Linear Systems & Intersections"
+    },
+    {
+      "level": 4,
+      "name": "Story 4: Canteen Ki Samosa Party",
+      "description": "Model party expense function C(x) = 12x + 20 and solve 12x + 20 <= 200 budget constraint",
+      "concept": "Linear Cost Functions & Inequalities"
+    }
+  ],
+  "stateMachine": [
+    "master_overview",
+    "chapter_selection",
+    "story_intro",
+    "interactive_geogebra_plot",
+    "deduction_and_algebra",
+    "chapter_celebration",
+    "course_grand_celebration"
+  ]
+}

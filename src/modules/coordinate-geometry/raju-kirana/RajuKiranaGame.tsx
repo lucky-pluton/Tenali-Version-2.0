@@ -34,7 +34,13 @@ interface ReceiptLine {
   isPlotted: boolean;
 }
 
-export default function RajuKiranaGame({ onBack }: GameProps) {
+export interface RajuKiranaGameProps extends GameProps {
+  isEmbedded?: boolean;
+  onNextChapter?: () => void;
+  onChapterStars?: (stars: number) => void;
+}
+
+export default function RajuKiranaGame({ onBack, isEmbedded, onNextChapter, onChapterStars }: RajuKiranaGameProps) {
   const [stars, setStars] = useState<number>(0);
   const [storyOpen, setStoryOpen] = useState<boolean>(true);
   const [showCelebration, setShowCelebration] = useState<boolean>(false);
@@ -72,6 +78,7 @@ export default function RajuKiranaGame({ onBack }: GameProps) {
       playSuccessChime();
       playVictoryFanfare();
       setStars(s => s + 3);
+      onChapterStars?.(3);
       setIdentifiedIntersection(true);
       setFeedback({
         text: `BULLSEYE! Intersection Point (4, 0) identified! The thief bought 4 packets of Chips and 0 bottles of Juice!`,
@@ -97,16 +104,8 @@ export default function RajuKiranaGame({ onBack }: GameProps) {
     setFeedback(null);
   };
 
-  return (
-    <QuizLayout
-      title="Raju Kirana Bank Robbery"
-      subtitle="Solve the bank robbery by finding the intersection point of linear equations!"
-      category="Coordinate Geometry / निर्देशांक"
-      level={activeStep + 1}
-      stars={stars}
-      onBack={onBack}
-      onOpenStory={() => setStoryOpen(true)}
-    >
+  const content = (
+    <>
       <div style={{ width: '100%', maxWidth: '880px', margin: '0 auto' }}>
 
         {/* Case File Header */}
@@ -429,12 +428,37 @@ export default function RajuKiranaGame({ onBack }: GameProps) {
           title="Case Solved! Detective Champion 🔍🏆"
           subtitle="You solved the bank robbery using simultaneous linear equations and the intersection point (4, 0)!"
           stars={3}
-          onNextLevel={handleReplay}
+          onNextLevel={() => {
+            setShowCelebration(false);
+            if (onNextChapter) {
+              onNextChapter();
+            } else {
+              handleReplay();
+            }
+          }}
           onReplay={handleReplay}
           onHome={onBack}
-          hasNextLevel={false}
+          hasNextLevel={Boolean(onNextChapter)}
         />
       )}
+    </>
+  );
+
+  if (isEmbedded) {
+    return content;
+  }
+
+  return (
+    <QuizLayout
+      title="Raju Kirana Bank Robbery"
+      subtitle="Solve the bank robbery by finding the intersection point of linear equations!"
+      category="Coordinate Geometry / निर्देशांक"
+      level={activeStep + 1}
+      stars={stars}
+      onBack={onBack}
+      onOpenStory={() => setStoryOpen(true)}
+    >
+      {content}
     </QuizLayout>
   );
 }

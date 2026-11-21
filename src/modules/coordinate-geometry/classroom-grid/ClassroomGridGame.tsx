@@ -70,7 +70,13 @@ const CLASSROOM_ROUNDS: ClassroomProblem[] = [
   }
 ];
 
-export default function ClassroomGridGame({ onBack }: GameProps) {
+export interface ClassroomGridGameProps extends GameProps {
+  isEmbedded?: boolean;
+  onNextChapter?: () => void;
+  onChapterStars?: (stars: number) => void;
+}
+
+export default function ClassroomGridGame({ onBack, isEmbedded, onNextChapter, onChapterStars }: ClassroomGridGameProps) {
   const [roundIdx, setRoundIdx] = useState<number>(0);
   const [stars, setStars] = useState<number>(0);
   const [storyOpen, setStoryOpen] = useState<boolean>(true);
@@ -157,6 +163,7 @@ export default function ClassroomGridGame({ onBack }: GameProps) {
       setSelectedSeat(null);
       setFeedback(null);
     } else {
+      onChapterStars?.(3);
       setShowCelebration(true);
     }
   };
@@ -173,16 +180,8 @@ export default function ClassroomGridGame({ onBack }: GameProps) {
   const MAX_ROWS = 5;
   const MAX_SEATS = 10;
 
-  return (
-    <QuizLayout
-      title="Classroom Ka Fish Market"
-      subtitle="Discover coordinates & straight lines during the PT teacher's classroom inspection!"
-      category="Coordinate Geometry / निर्देशांक"
-      level={roundIdx + 1}
-      stars={stars}
-      onBack={onBack}
-      onOpenStory={() => setStoryOpen(true)}
-    >
+  const content = (
+    <>
       <div style={{ width: '100%', maxWidth: '880px', margin: '0 auto' }}>
 
         {/* Round Header */}
@@ -505,15 +504,40 @@ export default function ClassroomGridGame({ onBack }: GameProps) {
       {/* Celebration Modal */}
       {showCelebration && (
         <CelebrationModal
-          title="Classroom Grid Master! 📐🎓"
+          title="Classroom Grid Solved! 📐🎓"
           subtitle="You solved where all the friends were sitting and proved that their seats lie on a straight line!"
           stars={3}
-          onNextLevel={handleNextRound}
+          onNextLevel={() => {
+            setShowCelebration(false);
+            if (onNextChapter) {
+              onNextChapter();
+            } else {
+              handleNextRound();
+            }
+          }}
           onReplay={handleReplay}
           onHome={onBack}
-          hasNextLevel={false}
+          hasNextLevel={Boolean(onNextChapter)}
         />
       )}
+    </>
+  );
+
+  if (isEmbedded) {
+    return content;
+  }
+
+  return (
+    <QuizLayout
+      title="Classroom Ka Fish Market"
+      subtitle="Discover coordinates & straight lines during the PT teacher's classroom inspection!"
+      category="Coordinate Geometry / निर्देशांक"
+      level={roundIdx + 1}
+      stars={stars}
+      onBack={onBack}
+      onOpenStory={() => setStoryOpen(true)}
+    >
+      {content}
     </QuizLayout>
   );
 }
