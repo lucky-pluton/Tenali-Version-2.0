@@ -88,12 +88,12 @@ export const MODULE_REGISTRY: GameCard[] = [
   },
   {
     id: 'trick-or-think',
-    name: "Trick-or-Think: Place Value Regrouping",
+    name: "Gubbarewala: The Flying Balloons",
     component: trickOrThinkModule.Component,
-    icon: '🏰',
+    icon: '🎈',
     domainId: 'subtraction',
     levelsCount: 5,
-    tags: ['subtraction', 'borrowing', 'regrouping', 'place value', 'hundreds', 'tens', 'ones', 'across zeros']
+    tags: ['subtraction', 'balloons', 'gubbarewala', 'take away', 'flying balloons', 'counting', 'easy', 'mela']
   },
   {
     id: 'math-o-lantern',

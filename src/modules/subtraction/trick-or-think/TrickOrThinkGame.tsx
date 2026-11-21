@@ -1,270 +1,329 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import QuizLayout from '../../../components/QuizLayout';
 import CelebrationModal from '../../../components/CelebrationModal';
 import GameStoryModal from '../../../components/GameStoryModal';
-import { playPop, playSuccessChime, playGentleBoing, playVictoryFanfare } from '../../../core/soundEffects';
-import { Sparkles, ArrowRight, RotateCcw, CheckCircle2, HelpCircle } from 'lucide-react';
+import {
+  playPop,
+  playSuccessChime,
+  playVictoryFanfare,
+  playGentleBoing
+} from '../../../core/soundEffects';
+import { Sparkles, Wind, ArrowRight, RotateCcw } from 'lucide-react';
 import { GameProps } from '../../../types';
-import spec from './spec.json';
 
-// Child-friendly slow speech synthesis helper
-function speak(text: string | number, rate: number = 0.82, pitch: number = 1.15): void {
+// Palette of happy, vibrant balloon colors
+const BALLOON_PALETTES = [
+  { main: '#ef4444', light: '#fca5a5', dark: '#b91c1c', name: 'Red' },
+  { main: '#3b82f6', light: '#93c5fd', dark: '#1d4ed8', name: 'Blue' },
+  { main: '#22c55e', light: '#86efac', dark: '#15803d', name: 'Green' },
+  { main: '#f59e0b', light: '#fde68a', dark: '#b45309', name: 'Yellow' },
+  { main: '#ec4899', light: '#fbcfe8', dark: '#be185d', name: 'Pink' },
+  { main: '#8b5cf6', light: '#c4b5fd', dark: '#6d28d9', name: 'Purple' },
+  { main: '#06b6d4', light: '#a5f3fc', dark: '#0e7490', name: 'Cyan' },
+  { main: '#f97316', light: '#fed7aa', dark: '#c2410c', name: 'Orange' },
+];
+
+export interface BalloonItem {
+  id: number;
+  palette: typeof BALLOON_PALETTES[0];
+  isReleased: boolean;
+  countedBadge: number | null;
+  wobbleDelay: number;
+}
+
+export interface RoundConfig {
+  startCount: number;
+  flyCount: number;
+  questionType?: 'find_difference' | 'find_missing';
+}
+
+export interface LevelConfig {
+  level: number;
+  name: string;
+  badge: string;
+  description: string;
+  rounds: RoundConfig[];
+}
+
+const BALLOON_LEVELS: LevelConfig[] = [
+  {
+    level: 1,
+    name: 'Little Balloon Helper',
+    badge: 'Level 1 • Numbers up to 5',
+    description: 'Count up to 5 balloons and let 1 or 2 float away!',
+    rounds: [
+      { startCount: 3, flyCount: 1 },
+      { startCount: 4, flyCount: 2 },
+      { startCount: 5, flyCount: 2 },
+      { startCount: 5, flyCount: 3 },
+    ]
+  },
+  {
+    level: 2,
+    name: 'Fairground Friend',
+    badge: 'Level 2 • Numbers up to 8',
+    description: 'Bigger colorful bunches at the Sunday Mela!',
+    rounds: [
+      { startCount: 6, flyCount: 2 },
+      { startCount: 7, flyCount: 3 },
+      { startCount: 8, flyCount: 4 },
+      { startCount: 7, flyCount: 5 },
+    ]
+  },
+  {
+    level: 3,
+    name: 'Mela Champion',
+    badge: 'Level 3 • Numbers up to 10',
+    description: 'Subtractions across 10 with rainbow balloons!',
+    rounds: [
+      { startCount: 9, flyCount: 4 },
+      { startCount: 10, flyCount: 3 },
+      { startCount: 10, flyCount: 5 },
+      { startCount: 9, flyCount: 6 },
+    ]
+  },
+  {
+    level: 4,
+    name: 'Sky Detective',
+    badge: 'Level 4 • How Many Flew Away?',
+    description: 'Find the missing number of balloons that blew into the sky!',
+    rounds: [
+      { startCount: 6, flyCount: 2, questionType: 'find_missing' },
+      { startCount: 8, flyCount: 3, questionType: 'find_missing' },
+      { startCount: 10, flyCount: 4, questionType: 'find_missing' },
+      { startCount: 7, flyCount: 3, questionType: 'find_missing' },
+    ]
+  },
+  {
+    level: 5,
+    name: 'Grand Balloon Party',
+    badge: 'Level 5 • Numbers up to 15',
+    description: 'Festive subtraction challenges with up to 15 balloons!',
+    rounds: [
+      { startCount: 12, flyCount: 4 },
+      { startCount: 14, flyCount: 5 },
+      { startCount: 15, flyCount: 6 },
+      { startCount: 13, flyCount: 7 },
+    ]
+  }
+];
+
+// Slow, gentle speech synthesis helper
+function speak(text: string, rate: number = 0.82) {
   if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
     try {
       window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(String(text));
+      const utterance = new SpeechSynthesisUtterance(text);
       utterance.rate = rate;
-      utterance.pitch = pitch;
+      utterance.pitch = 1.15;
       window.speechSynthesis.speak(utterance);
-    } catch {
+    } catch (e) {
       // ignore
     }
   }
 }
 
-interface LevelConfig {
-  level: number;
-  minuend: number;
-  subtrahend: number;
-  diff: number;
-  hDigit: number;
-  tSub: number;
-  oSub: number;
-  title: string;
-}
+type GameStage = 'count_initial' | 'release' | 'solve' | 'celebrate_round';
 
-const TRICK_LEVELS: LevelConfig[] = [
-  { level: 1, minuend: 500, subtrahend: 53, diff: 447, hDigit: 5, tSub: 5, oSub: 3, title: "Level 1: The Magic 500 − 53 Trick" },
-  { level: 2, minuend: 300, subtrahend: 46, diff: 254, hDigit: 3, tSub: 4, oSub: 6, title: "Level 2: Sweet 300 − 46 Trick" },
-  { level: 3, minuend: 400, subtrahend: 75, diff: 325, hDigit: 4, tSub: 7, oSub: 5, title: "Level 3: Golden 400 − 75 Trick" },
-  { level: 4, minuend: 600, subtrahend: 82, diff: 518, hDigit: 6, tSub: 8, oSub: 2, title: "Level 4: Royal 600 − 82 Trick" },
-  { level: 5, minuend: 700, subtrahend: 64, diff: 636, hDigit: 7, tSub: 6, oSub: 4, title: "Level 5: Grand 700 − 64 Trick" }
-];
-
-type StepPhase =
-  | 'step1_ones_need'
-  | 'step2_tens_need'
-  | 'step3_hundreds_borrow'
-  | 'step4_tens_borrow'
-  | 'step5_check_conservation'
-  | 'step6_subtract_ones'
-  | 'step7_subtract_tens'
-  | 'step8_subtract_hundreds'
-  | 'complete';
-
-export default function TrickOrThinkGame({ onBack }: GameProps) {
+export default function GubbarewalaGame({ onBack }: GameProps) {
   const [level, setLevel] = useState<number>(1);
+  const [roundIdx, setRoundIdx] = useState<number>(0);
   const [stars, setStars] = useState<number>(0);
-  const [showCelebration, setShowCelebration] = useState<boolean>(false);
 
-  const currentLevelConfig = TRICK_LEVELS[level - 1] || TRICK_LEVELS[0];
-  const { minuend, subtrahend, diff, hDigit, tSub, oSub } = currentLevelConfig;
+  const currentLevel = BALLOON_LEVELS[level - 1] || BALLOON_LEVELS[0];
+  const currentRound = currentLevel.rounds[roundIdx] || currentLevel.rounds[0];
+  const { startCount, flyCount, questionType = 'find_difference' } = currentRound;
+  const remainCount = startCount - flyCount;
 
-  // Active step phase
-  const [step, setStep] = useState<StepPhase>('step1_ones_need');
+  // Game state
+  const [stage, setStage] = useState<GameStage>('count_initial');
+  const [balloons, setBalloons] = useState<BalloonItem[]>([]);
+  const [releasedCount, setReleasedCount] = useState<number>(0);
+  const [remainingCounted, setRemainingCounted] = useState<number>(0);
   const [feedback, setFeedback] = useState<{ text: string; isCorrect: boolean } | null>(null);
 
-  // Story modal state
+  // Modals
   const [storyOpen, setStoryOpen] = useState<boolean>(true);
+  const [showCelebration, setShowCelebration] = useState<boolean>(false);
 
-  // Regrouping values
-  const [hValue, setHValue] = useState<number>(hDigit);
-  const [tValue, setTValue] = useState<number>(0);
-  const [oValue, setOValue] = useState<number>(0);
-
-  // Slashed indicators for vertical place-value board
-  const [hSlashed, setHSlashed] = useState<boolean>(false);
-  const [tSlashedOnce, setTSlashedOnce] = useState<boolean>(false);
-  const [tSlashedTwice, setTSlashedTwice] = useState<boolean>(false);
-  const [oSlashed, setOSlashed] = useState<boolean>(false);
-
-  // Result digits
-  const [oResult, setOResult] = useState<number | null>(null);
-  const [tResult, setTResult] = useState<number | null>(null);
-  const [hResult, setHResult] = useState<number | null>(null);
-
-  // Reset board for a level
-  const resetBoardForLevel = (lvlConfig: LevelConfig) => {
-    setStep('step1_ones_need');
+  // Initialize round balloons
+  useEffect(() => {
+    const newBalloons: BalloonItem[] = Array.from({ length: startCount }).map((_, i) => ({
+      id: i,
+      palette: BALLOON_PALETTES[i % BALLOON_PALETTES.length],
+      isReleased: false,
+      countedBadge: null,
+      wobbleDelay: (i * 0.25) % 2,
+    }));
+    setBalloons(newBalloons);
+    setStage('count_initial');
+    setReleasedCount(0);
+    setRemainingCounted(0);
     setFeedback(null);
-    setHValue(lvlConfig.hDigit);
-    setTValue(0);
-    setOValue(0);
-    setHSlashed(false);
-    setTSlashedOnce(false);
-    setTSlashedTwice(false);
-    setOSlashed(false);
-    setOResult(null);
-    setTResult(null);
-    setHResult(null);
+  }, [level, roundIdx]);
+
+  // Stage 1: Tap to count initial balloons
+  const handleTapInitialBalloon = (id: number) => {
+    if (stage !== 'count_initial') return;
+
+    setBalloons(prev => {
+      const alreadyCounted = prev.filter(b => b.countedBadge !== null).length;
+      return prev.map(b => {
+        if (b.id === id && b.countedBadge === null) {
+          const nextCount = alreadyCounted + 1;
+          playPop(440 + nextCount * 40);
+          speak(String(nextCount));
+          return { ...b, countedBadge: nextCount };
+        }
+        return b;
+      });
+    });
+  };
+
+  // Check if all initial balloons are counted
+  const initialCountedTotal = balloons.filter(b => b.countedBadge !== null).length;
+  const isInitialCountDone = initialCountedTotal === startCount;
+
+  const handleProceedToRelease = () => {
+    playSuccessChime();
+    setStage('release');
+    speak(`Whoosh! A gentle wind blows! Tap ${flyCount} balloons to watch them float away into the clouds!`, 0.85);
+  };
+
+  // Stage 2: Tap to release balloon
+  const handleTapReleaseBalloon = (id: number) => {
+    if (stage !== 'release') return;
+    if (releasedCount >= flyCount) return;
+
+    const targetBalloon = balloons.find(b => b.id === id);
+    if (!targetBalloon || targetBalloon.isReleased) return;
+
+    const nextReleased = releasedCount + 1;
+    setReleasedCount(nextReleased);
+
+    // Audio pop & spoken counter
+    playPop(520 + nextReleased * 60);
+    speak(`${nextReleased} flew away!`);
+
+    setBalloons(prev =>
+      prev.map(b => (b.id === id ? { ...b, isReleased: true } : b))
+    );
+
+    // Check if target flyCount reached
+    if (nextReleased >= flyCount) {
+      setTimeout(() => {
+        playSuccessChime();
+        setStage('solve');
+        if (questionType === 'find_missing') {
+          speak(`Kaka had ${startCount} balloons. Now only ${remainCount} are left. How many balloons flew away?`, 0.85);
+        } else {
+          speak(`We had ${startCount} balloons. ${flyCount} floated away! How many balloons are left in Kaka's hand?`, 0.85);
+        }
+      }, 1000);
+    }
+  };
+
+  // Stage 3: Tap remaining balloon to count
+  const handleTapRemainingBalloon = (id: number) => {
+    if (stage !== 'solve') return;
+    const b = balloons.find(item => item.id === id);
+    if (!b || b.isReleased) return;
+
+    const nextCount = remainingCounted + 1;
+    setRemainingCounted(nextCount);
+    playPop(480 + nextCount * 50);
+    speak(String(nextCount));
+  };
+
+  // Multiple-choice options generator
+  const getOptions = () => {
+    const correctAnswer = questionType === 'find_missing' ? flyCount : remainCount;
+    const opts = new Set<number>([correctAnswer]);
+
+    while (opts.size < 4) {
+      const delta = (Math.random() > 0.5 ? 1 : -1) * (Math.floor(Math.random() * 3) + 1);
+      const fake = correctAnswer + delta;
+      if (fake >= 0 && fake <= startCount + 2 && fake !== correctAnswer) {
+        opts.add(fake);
+      }
+    }
+    return Array.from(opts).sort((a, b) => a - b);
+  };
+
+  const [options, setOptions] = useState<number[]>([]);
+  useEffect(() => {
+    if (stage === 'solve') {
+      setOptions(getOptions());
+    }
+  }, [stage, level, roundIdx]);
+
+  // Answer handler
+  const handleSelectAnswer = (ans: number) => {
+    const correctAnswer = questionType === 'find_missing' ? flyCount : remainCount;
+
+    if (ans === correctAnswer) {
+      playSuccessChime();
+      playVictoryFanfare();
+      setFeedback({
+        text: `Spot on! ${startCount} − ${flyCount} = ${remainCount} balloons!`,
+        isCorrect: true
+      });
+      speak(`Super job! ${startCount} minus ${flyCount} equals ${remainCount}!`, 0.85);
+      setStars(s => s + 3);
+      setStage('celebrate_round');
+
+      setTimeout(() => {
+        if (roundIdx + 1 < currentLevel.rounds.length) {
+          setRoundIdx(r => r + 1);
+        } else {
+          setShowCelebration(true);
+        }
+      }, 1800);
+    } else {
+      playGentleBoing();
+      const hint = questionType === 'find_missing'
+        ? `Let's count how many balloons floated away into the sky!`
+        : `Count the balloons still in Kaka's hand! There are ${remainCount} left.`;
+      setFeedback({ text: hint, isCorrect: false });
+      speak(hint, 0.85);
+    }
   };
 
   // Next level handler
   const handleNextLevel = () => {
     setShowCelebration(false);
-    const nextLvl = level < 5 ? level + 1 : 1;
-    setLevel(nextLvl);
-    resetBoardForLevel(TRICK_LEVELS[nextLvl - 1]);
+    if (level < 5) {
+      setLevel(l => l + 1);
+      setRoundIdx(0);
+    } else {
+      setLevel(1);
+      setRoundIdx(0);
+    }
   };
 
   const handleReplay = () => {
     setShowCelebration(false);
-    resetBoardForLevel(currentLevelConfig);
-  };
-
-  // Multiple-choice question generator per step
-  const getStepQuestion = () => {
-    switch (step) {
-      case 'step1_ones_need':
-        return {
-          question: `The Ones House has 0 candies, but needs to give ${oSub} candies! Who should the Ones house ask first?`,
-          options: [
-            { text: "The Tens House next door 🗼", correct: true, feedback: "Spot on! In place value, always ask your immediate neighbor to the left first!" },
-            { text: "The Hundreds House 🏰", correct: false, feedback: "You cannot skip neighbors! Always ask the Tens house first." },
-            { text: "Search the street 🛣️", correct: false, feedback: "Ask your friendly neighbor on the left: the Tens house!" }
-          ]
-        };
-
-      case 'step2_tens_need':
-        return {
-          question: `The Tens House also has 0 candies! Where should the Tens house go to borrow candies?`,
-          options: [
-            { text: "The Hundreds House 🏰", correct: true, feedback: "Correct! The Tens house asks its wealthy neighbor to the left: Hundreds!" },
-            { text: "Back to the Ones House 🎃", correct: false, feedback: "The Ones house is empty too! Tens must ask Hundreds on the left." },
-            { text: "Give up! 🤷", correct: false, feedback: "Don't give up! Hundreds has plenty of candies!" }
-          ]
-        };
-
-      case 'step3_hundreds_borrow':
-        return {
-          question: `The Hundreds House (having ${hDigit} hundreds) shares 1 Hundred (= 10 Tens). What happens now?`,
-          options: [
-            { text: `Hundreds becomes ${hDigit - 1}, and Tens gets 10 Tens! 🔄`, correct: true, feedback: `Bravo! Hundreds drops from ${hDigit} to ${hDigit - 1}, and Tens now has 10 tens!` },
-            { text: `Hundreds stays ${hDigit} and Tens gets 100 Tens`, correct: false, feedback: `1 Hundred equals exactly 10 Tens!` },
-            { text: `Tens gets only 1 candy`, correct: false, feedback: `1 Hundred gives 10 Tens, which is 100 candies!` }
-          ]
-        };
-
-      case 'step4_tens_borrow':
-        return {
-          question: `The Tens House now has 10 Tens. It passes 1 Ten (= 10 Ones) to the Ones House. How many Tens remain?`,
-          options: [
-            { text: "Tens has 9 tens left, and Ones has 10 ones! 🍬", correct: true, feedback: "Awesome! 10 − 1 = 9 tens remaining, and Ones now has 10 ones!" },
-            { text: "Tens has 10 tens left", correct: false, feedback: "Tens gave away 1 ten, so 10 − 1 = 9!" },
-            { text: "Ones only gets 1 single candy", correct: false, feedback: "1 Ten gives exactly 10 ones!" }
-          ]
-        };
-
-      case 'step5_check_conservation':
-        return {
-          question: `Look at the street now: ${(hDigit - 1) * 100} (in Hundreds) + 90 (in Tens) + 10 (in Ones). What is the total?`,
-          options: [
-            { text: `${(hDigit - 1) * 100} + 90 + 10 = ${minuend} candies! No candy was lost! ✨`, correct: true, feedback: `Mathematical Magic! Not a single candy was lost! Value is conserved: ${minuend} = ${(hDigit - 1) * 100} + 90 + 10!` },
-            { text: "The candies vanished into thin air!", correct: false, feedback: `Add them up: ${(hDigit - 1) * 100} + 90 + 10 = ${minuend}!` },
-            { text: `There are more than ${minuend} candies now`, correct: false, feedback: `The total is exactly ${minuend}!` }
-          ]
-        };
-
-      case 'step6_subtract_ones':
-        return {
-          question: `Now subtract the Ones column: 10 ones − ${oSub} needed = ?`,
-          options: [
-            { text: `10 − ${oSub} = ${10 - oSub} ones 🎃`, correct: true, feedback: `Terrific! 10 − ${oSub} = ${10 - oSub} in the Ones column!` },
-            { text: `10 − ${oSub} = ${10 - oSub + 1}`, correct: false, feedback: `Count carefully: 10 take away ${oSub} leaves ${10 - oSub}.` },
-            { text: `10 − ${oSub} = ${Math.max(1, 10 - oSub - 1)}`, correct: false, feedback: `Double check: 10 − ${oSub} = ${10 - oSub}.` }
-          ]
-        };
-
-      case 'step7_subtract_tens':
-        return {
-          question: `Now subtract the Tens column: 9 tens − ${tSub} needed = ?`,
-          options: [
-            { text: `9 − ${tSub} = ${9 - tSub} tens 🗼`, correct: true, feedback: `Superb! 9 − ${tSub} = ${9 - tSub} in the Tens column!` },
-            { text: `9 − ${tSub} = ${9 - tSub + 1}`, correct: false, feedback: `Check again: 9 take away ${tSub} leaves ${9 - tSub}.` },
-            { text: `9 − ${tSub} = ${Math.max(1, 9 - tSub - 1)}`, correct: false, feedback: `Subtract carefully: 9 − ${tSub} = ${9 - tSub}.` }
-          ]
-        };
-
-      case 'step8_subtract_hundreds':
-        return {
-          question: `Finally, subtract the Hundreds column: ${hDigit - 1} hundreds − 0 = ?`,
-          options: [
-            { text: `${hDigit - 1} − 0 = ${hDigit - 1} hundreds 🏰`, correct: true, feedback: `Spectacular! ${hDigit - 1} hundreds remain!` },
-            { text: `${hDigit - 1} − 0 = 0`, correct: false, feedback: `Taking away 0 leaves the same number: ${hDigit - 1}!` }
-          ]
-        };
-
-      default:
-        return null;
-    }
-  };
-
-  const currentQ = getStepQuestion();
-
-  // Answer handler
-  const handleOptionClick = (opt: { text: string; correct: boolean; feedback: string }) => {
-    if (opt.correct) {
-      playSuccessChime();
-      setFeedback({ text: opt.feedback, isCorrect: true });
-      speak(opt.feedback, 0.85);
-
-      // Advance step state
-      setTimeout(() => {
-        setFeedback(null);
-        if (step === 'step1_ones_need') {
-          setStep('step2_tens_need');
-        } else if (step === 'step2_tens_need') {
-          setStep('step3_hundreds_borrow');
-        } else if (step === 'step3_hundreds_borrow') {
-          setHSlashed(true);
-          setHValue(hDigit - 1);
-          setTSlashedOnce(true);
-          setTValue(10);
-          setStep('step4_tens_borrow');
-        } else if (step === 'step4_tens_borrow') {
-          setTSlashedTwice(true);
-          setTValue(9);
-          setOSlashed(true);
-          setOValue(10);
-          setStep('step5_check_conservation');
-        } else if (step === 'step5_check_conservation') {
-          setStep('step6_subtract_ones');
-        } else if (step === 'step6_subtract_ones') {
-          setOResult(10 - oSub);
-          setStep('step7_subtract_tens');
-        } else if (step === 'step7_subtract_tens') {
-          setTResult(9 - tSub);
-          setStep('step8_subtract_hundreds');
-        } else if (step === 'step8_subtract_hundreds') {
-          setHResult(hDigit - 1);
-          setStep('complete');
-          playVictoryFanfare();
-          setStars(s => s + 3);
-          setTimeout(() => {
-            setShowCelebration(true);
-          }, 800);
-        }
-      }, 900);
-    } else {
-      playGentleBoing();
-      setFeedback({ text: opt.feedback, isCorrect: false });
-      speak(opt.feedback, 0.85);
-    }
+    setRoundIdx(0);
+    setBalloons(prev => prev.map(b => ({ ...b, isReleased: false, countedBadge: null })));
+    setStage('count_initial');
+    setReleasedCount(0);
+    setRemainingCounted(0);
+    setFeedback(null);
   };
 
   return (
     <QuizLayout
-      title="Trick-or-Think"
-      subtitle={`Solve ${minuend} − ${subtrahend} through place-value borrowing across zeros!`}
-      category="Subtraction with Regrouping"
+      title="Gubbarewala: The Flying Balloons"
+      subtitle="Watch balloons float into the sky and discover subtraction naturally!"
+      category="Subtraction & Take-Away"
       level={level}
       stars={stars}
       onBack={onBack}
       onOpenStory={() => setStoryOpen(true)}
     >
-      <div style={{ width: '100%', maxWidth: '850px', margin: '0 auto' }}>
+      <div style={{ width: '100%', maxWidth: '860px', margin: '0 auto' }}>
 
-        {/* Level Indicator Tabs */}
+        {/* Level & Round Header */}
         <div style={{
           display: 'flex',
           justifyContent: 'space-between',
@@ -273,360 +332,416 @@ export default function TrickOrThinkGame({ onBack }: GameProps) {
           border: '1px solid var(--clr-border)',
           borderRadius: 'var(--radius)',
           padding: '12px 20px',
-          marginBottom: '18px',
+          marginBottom: '16px',
           flexWrap: 'wrap',
           gap: '10px'
         }}>
           <div>
-            <span style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--clr-accent)', textTransform: 'uppercase' }}>
-              Place Value Subtraction • {currentLevelConfig.title}
+            <span style={{ fontSize: '0.82rem', fontWeight: 700, color: '#f97316', textTransform: 'uppercase' }}>
+              {currentLevel.badge}
             </span>
             <div style={{ fontSize: '1.25rem', fontWeight: 900, color: 'var(--clr-text)', fontFamily: 'var(--font-kids)' }}>
-              Problem: {minuend} − {subtrahend} = {step === 'complete' ? diff : '?'}
+              Round {roundIdx + 1} of {currentLevel.rounds.length}
             </div>
           </div>
 
-          <div style={{
-            background: 'var(--clr-accent-soft)',
-            border: '2px solid var(--clr-accent)',
-            borderRadius: 'var(--radius-pill)',
-            padding: '6px 16px',
-            fontSize: '0.9rem',
-            fontWeight: 800,
-            color: 'var(--clr-accent)'
-          }}>
-            Level {level} / 5
+          {/* Quick Level Selector Pills */}
+          <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+            {BALLOON_LEVELS.map(lvl => (
+              <button
+                key={lvl.level}
+                onClick={() => {
+                  setLevel(lvl.level);
+                  setRoundIdx(0);
+                }}
+                style={{
+                  padding: '6px 14px',
+                  borderRadius: 'var(--radius-pill)',
+                  fontSize: '0.82rem',
+                  fontWeight: 700,
+                  background: level === lvl.level ? '#f97316' : 'var(--clr-surface)',
+                  color: level === lvl.level ? '#ffffff' : 'var(--clr-text-soft)',
+                  border: '1px solid var(--clr-border)',
+                  cursor: 'pointer'
+                }}
+              >
+                Lvl {lvl.level}
+              </button>
+            ))}
           </div>
         </div>
 
-        {/* 3 LIVING HOUSES NEIGHBORHOOD */}
+        {/* Sky Fairground Scene */}
         <div style={{
-          background: 'var(--clr-card)',
-          border: '1px solid var(--clr-border)',
-          borderRadius: 'var(--radius)',
-          padding: '20px 16px',
-          marginBottom: '20px',
-          boxShadow: 'var(--shadow-card)'
-        }}>
-          <h4 style={{
-            textAlign: 'center',
-            fontSize: '1rem',
-            color: 'var(--clr-text-soft)',
-            margin: '0 0 16px 0',
-            fontWeight: 700
-          }}>
-            🏘️ The 3 Place-Value Houses on Sweet Street
-          </h4>
-
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-            gap: '16px'
-          }}>
-            {/* Hundreds House */}
-            <div style={{
-              background: 'linear-gradient(180deg, #ede9fe 0%, #ddd6fe 100%)',
-              border: '3px solid #7c3aed',
-              borderRadius: '20px',
-              padding: '16px 12px',
-              textAlign: 'center',
-              boxShadow: '0 4px 12px rgba(124, 58, 237, 0.15)',
-              position: 'relative'
-            }}>
-              <span style={{ fontSize: '2.8rem' }}>🏰</span>
-              <div style={{ fontWeight: 800, fontSize: '1.1rem', color: '#5b21b6', marginTop: '4px' }}>
-                Hundreds House (H)
-              </div>
-              <div style={{ fontSize: '0.82rem', color: '#6d28d9', fontWeight: 600 }}>
-                Holds 100s bundles
-              </div>
-
-              <div style={{
-                background: '#ffffff',
-                border: '2px solid #7c3aed',
-                borderRadius: '12px',
-                padding: '8px',
-                marginTop: '10px'
-              }}>
-                <div style={{ fontSize: '0.8rem', color: '#5b21b6', fontWeight: 700 }}>Current Value:</div>
-                <div style={{ fontSize: '1.4rem', fontWeight: 900, color: '#4c1d95' }}>
-                  {hValue} Hundred{hValue !== 1 ? 's' : ''} ({hValue * 100})
-                </div>
-              </div>
-            </div>
-
-            {/* Tens House */}
-            <div style={{
-              background: 'linear-gradient(180deg, #e0f2fe 0%, #bae6fd 100%)',
-              border: '3px solid #0284c7',
-              borderRadius: '20px',
-              padding: '16px 12px',
-              textAlign: 'center',
-              boxShadow: '0 4px 12px rgba(2, 132, 199, 0.15)',
-              position: 'relative'
-            }}>
-              <span style={{ fontSize: '2.8rem' }}>🗼</span>
-              <div style={{ fontWeight: 800, fontSize: '1.1rem', color: '#0369a1', marginTop: '4px' }}>
-                Tens House (T)
-              </div>
-              <div style={{ fontSize: '0.82rem', color: '#0284c7', fontWeight: 600 }}>
-                Holds 10s rolls
-              </div>
-
-              <div style={{
-                background: '#ffffff',
-                border: '2px solid #0284c7',
-                borderRadius: '12px',
-                padding: '8px',
-                marginTop: '10px'
-              }}>
-                <div style={{ fontSize: '0.8rem', color: '#0369a1', fontWeight: 700 }}>Current Value:</div>
-                <div style={{ fontSize: '1.4rem', fontWeight: 900, color: '#0c4a6e' }}>
-                  {tValue} Ten{tValue !== 1 ? 's' : ''} ({tValue * 10})
-                </div>
-              </div>
-            </div>
-
-            {/* Ones House */}
-            <div style={{
-              background: 'linear-gradient(180deg, #fef3c7 0%, #fde68a 100%)',
-              border: '3px solid #d97706',
-              borderRadius: '20px',
-              padding: '16px 12px',
-              textAlign: 'center',
-              boxShadow: '0 4px 12px rgba(217, 119, 6, 0.15)',
-              position: 'relative'
-            }}>
-              <span style={{ fontSize: '2.8rem' }}>🎃</span>
-              <div style={{ fontWeight: 800, fontSize: '1.1rem', color: '#92400e', marginTop: '4px' }}>
-                Ones House (O)
-              </div>
-              <div style={{ fontSize: '0.82rem', color: '#b45309', fontWeight: 600 }}>
-                Holds loose 1s candies
-              </div>
-
-              <div style={{
-                background: '#ffffff',
-                border: '2px solid #d97706',
-                borderRadius: '12px',
-                padding: '8px',
-                marginTop: '10px'
-              }}>
-                <div style={{ fontSize: '0.8rem', color: '#92400e', fontWeight: 700 }}>Current Value:</div>
-                <div style={{ fontSize: '1.4rem', fontWeight: 900, color: '#78350f' }}>
-                  {oValue} One{oValue !== 1 ? 's' : ''} ({oValue})
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Conservation banner if regrouped */}
-          {(hSlashed || oSlashed) && (
-            <div className="anim-pop" style={{
-              background: '#ecfdf5',
-              border: '2px solid #10b981',
-              borderRadius: '12px',
-              padding: '10px 16px',
-              marginTop: '14px',
-              textAlign: 'center',
-              color: '#065f46',
-              fontSize: '0.92rem',
-              fontWeight: 800
-            }}>
-              ✨ Value Conservation Check: {hValue * 100} + {tValue * 10} + {oValue} = {hValue * 100 + tValue * 10 + oValue} total candies! (Not a single candy was lost!)
-            </div>
-          )}
-        </div>
-
-        {/* VERTICAL PLACE-VALUE NOTEBOOK BOARD */}
-        <div style={{
-          background: 'var(--clr-surface)',
-          border: '2px solid var(--clr-border)',
-          borderRadius: 'var(--radius)',
+          position: 'relative',
+          background: 'linear-gradient(180deg, #bae6fd 0%, #e0f2fe 55%, #fef3c7 100%)',
+          borderRadius: '24px',
+          border: '3px solid #38bdf8',
           padding: '24px 20px',
-          marginBottom: '20px',
           boxShadow: 'var(--shadow-card)',
+          overflow: 'hidden',
+          minHeight: '380px',
           display: 'flex',
           flexDirection: 'column',
-          alignItems: 'center'
+          justifyContent: 'space-between'
         }}>
-          <h4 style={{
-            fontSize: '1rem',
-            color: 'var(--clr-text-soft)',
-            margin: '0 0 12px 0',
-            fontWeight: 800,
-            textTransform: 'uppercase',
-            letterSpacing: '0.04em'
-          }}>
-            📝 School Copybook Regrouping Column View
-          </h4>
 
-          {/* Vertical Math Grid */}
+          {/* Fluffy Clouds Background */}
+          <div style={{ position: 'absolute', top: '12px', left: '20px', fontSize: '2.5rem', opacity: 0.85, filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.06))' }}>
+            ☁️
+          </div>
+          <div style={{ position: 'absolute', top: '25px', right: '40px', fontSize: '3rem', opacity: 0.9, filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.06))' }}>
+            ☁️
+          </div>
+          <div style={{ position: 'absolute', top: '15px', left: '45%', fontSize: '1.8rem', opacity: 0.75 }}>
+            ☀️
+          </div>
+
+          {/* Stage Prompt Banner */}
           <div style={{
-            display: 'grid',
-            gridTemplateColumns: '40px 70px 70px 70px',
-            fontFamily: 'monospace, monospace',
-            fontSize: '1.6rem',
-            fontWeight: 900,
-            rowGap: '6px',
-            textAlign: 'center',
+            alignSelf: 'center',
+            background: 'rgba(255, 255, 255, 0.92)',
+            backdropFilter: 'blur(4px)',
+            border: '2px solid #38bdf8',
+            borderRadius: 'var(--radius-pill)',
+            padding: '8px 22px',
+            display: 'inline-flex',
             alignItems: 'center',
-            padding: '16px 24px',
-            background: 'var(--clr-card)',
-            border: '2px solid var(--clr-border)',
-            borderRadius: '16px'
+            gap: '8px',
+            fontSize: '0.98rem',
+            fontWeight: 800,
+            color: '#0369a1',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
+            zIndex: 10
           }}>
-            {/* Headers */}
-            <div style={{ color: 'var(--clr-text-soft)', fontSize: '0.9rem' }}></div>
-            <div style={{ color: '#7c3aed', fontSize: '1rem', fontWeight: 800 }}>H</div>
-            <div style={{ color: '#0284c7', fontSize: '1rem', fontWeight: 800 }}>T</div>
-            <div style={{ color: '#d97706', fontSize: '1rem', fontWeight: 800 }}>O</div>
+            {stage === 'count_initial' && (
+              <>
+                <span>🎈 Tap each balloon to count Kaka's bunch!</span>
+                <span style={{ color: '#f97316' }}>({initialCountedTotal} / {startCount})</span>
+              </>
+            )}
+            {stage === 'release' && (
+              <>
+                <Wind size={18} color="#0284c7" />
+                <span>Tap {flyCount} balloons to let the wind carry them away! 💨</span>
+                <span style={{ color: '#ea580c' }}>({releasedCount} / {flyCount} flown)</span>
+              </>
+            )}
+            {stage === 'solve' && (
+              <>
+                <span>✨ How many balloons are left in Kaka's hand?</span>
+              </>
+            )}
+            {stage === 'celebrate_round' && (
+              <>
+                <Sparkles size={18} color="#eab308" />
+                <span style={{ color: '#15803d' }}>Wonderful! You solved it! 🎉</span>
+              </>
+            )}
+          </div>
 
-            {/* Regrouped Numbers Row (Top annotations) */}
-            <div></div>
-            {/* Hundreds top */}
-            <div style={{ color: '#7c3aed', fontSize: '1.1rem', fontWeight: 800 }}>
-              {hSlashed ? hValue : ''}
-            </div>
-            {/* Tens top */}
-            <div style={{ color: '#0284c7', fontSize: '1.1rem', fontWeight: 800 }}>
-              {tSlashedTwice ? '9' : tSlashedOnce ? '10' : ''}
-            </div>
-            {/* Ones top */}
-            <div style={{ color: '#d97706', fontSize: '1.1rem', fontWeight: 800 }}>
-              {oSlashed ? '10' : ''}
+          {/* Balloons Cluster */}
+          <div style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            justifyContent: 'center',
+            alignItems: 'flex-end',
+            gap: startCount > 10 ? '12px 14px' : '18px 24px',
+            padding: '30px 10px 20px 10px',
+            minHeight: '220px',
+            zIndex: 5
+          }}>
+            {balloons.map((balloon) => {
+              const isFlyTarget = stage === 'release' && !balloon.isReleased && releasedCount < flyCount;
+              const isCountTarget = stage === 'count_initial' && balloon.countedBadge === null;
+
+              return (
+                <div
+                  key={balloon.id}
+                  onClick={() => {
+                    if (stage === 'count_initial') handleTapInitialBalloon(balloon.id);
+                    if (stage === 'release') handleTapReleaseBalloon(balloon.id);
+                    if (stage === 'solve') handleTapRemainingBalloon(balloon.id);
+                  }}
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    cursor: (isFlyTarget || isCountTarget || stage === 'solve') ? 'pointer' : 'default',
+                    transform: balloon.isReleased
+                      ? 'translateY(-260px) scale(0.4) rotate(15deg)'
+                      : 'translateY(0) scale(1)',
+                    opacity: balloon.isReleased ? 0 : 1,
+                    transition: balloon.isReleased
+                      ? 'all 1.2s cubic-bezier(0.25, 1, 0.5, 1)'
+                      : 'transform 0.2s',
+                    position: 'relative',
+                    userSelect: 'none'
+                  }}
+                >
+                  {/* Balloon Oval Body */}
+                  <div
+                    style={{
+                      width: startCount > 10 ? '54px' : '68px',
+                      height: startCount > 10 ? '68px' : '84px',
+                      borderRadius: '50% 50% 50% 50% / 40% 40% 60% 60%',
+                      background: `radial-gradient(circle at 35% 30%, ${balloon.palette.light} 0%, ${balloon.palette.main} 60%, ${balloon.palette.dark} 100%)`,
+                      boxShadow: `0 8px 16px ${balloon.palette.dark}44, inset 0 -4px 6px rgba(0,0,0,0.25)`,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      position: 'relative',
+                      border: isFlyTarget ? '3px dashed #ffffff' : 'none',
+                      animation: !balloon.isReleased ? `wobbleBalloon 3s ease-in-out infinite alternate ${balloon.wobbleDelay}s` : 'none'
+                    }}
+                  >
+                    {/* Cute smiling balloon face */}
+                    <div style={{
+                      position: 'absolute',
+                      top: '32%',
+                      display: 'flex',
+                      gap: '12px',
+                      opacity: 0.75
+                    }}>
+                      <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#ffffff' }} />
+                      <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#ffffff' }} />
+                    </div>
+
+                    {/* Number Badge */}
+                    {balloon.countedBadge !== null && stage === 'count_initial' && (
+                      <span style={{
+                        fontSize: '1.4rem',
+                        fontWeight: 900,
+                        color: '#ffffff',
+                        textShadow: '0 2px 4px rgba(0,0,0,0.5)',
+                        fontFamily: 'var(--font-kids)'
+                      }}>
+                        {balloon.countedBadge}
+                      </span>
+                    )}
+
+                    {/* Step indicator tag */}
+                    {stage === 'release' && !balloon.isReleased && releasedCount < flyCount && (
+                      <span style={{
+                        fontSize: '0.72rem',
+                        fontWeight: 800,
+                        background: 'rgba(255,255,255,0.9)',
+                        color: '#b91c1c',
+                        padding: '2px 6px',
+                        borderRadius: 'var(--radius-pill)',
+                        boxShadow: '0 2px 4px rgba(0,0,0,0.15)'
+                      }}>
+                        Fly! 💨
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Knot & String */}
+                  <div style={{
+                    width: '8px',
+                    height: '5px',
+                    background: balloon.palette.dark,
+                    borderRadius: '2px',
+                    marginTop: '-1px'
+                  }} />
+                  <div style={{
+                    width: '2px',
+                    height: '35px',
+                    background: 'rgba(100, 116, 139, 0.65)',
+                    transform: 'rotate(-4deg)'
+                  }} />
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Fairground Base: Gubbarewala Kaka avatar & prompt */}
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            background: 'rgba(255, 255, 255, 0.95)',
+            borderTop: '2px solid #bae6fd',
+            borderRadius: '16px',
+            padding: '12px 18px',
+            zIndex: 10,
+            gap: '12px',
+            flexWrap: 'wrap'
+          }}>
+            {/* Kaka Avatar */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <div style={{
+                width: '54px',
+                height: '54px',
+                borderRadius: '50%',
+                background: '#ffedd5',
+                border: '2px solid #f97316',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '2rem',
+                boxShadow: '0 4px 8px rgba(0,0,0,0.08)'
+              }}>
+                👳‍♂️
+              </div>
+              <div>
+                <strong style={{ fontSize: '1.05rem', color: 'var(--clr-text)' }}>Gubbarewala Kaka</strong>
+                <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--clr-text-soft)' }}>
+                  {stage === 'count_initial' && `Holding a bunch of ${startCount} balloons!`}
+                  {stage === 'release' && `Whoosh! The wind blows away ${flyCount} balloons!`}
+                  {stage === 'solve' && `How many balloons do I have left in my hand?`}
+                  {stage === 'celebrate_round' && `Shabash! You found the correct count!`}
+                </p>
+              </div>
             </div>
 
-            {/* Minuend Row */}
-            <div></div>
-            {/* H digit */}
-            <div style={{
-              color: 'var(--clr-text)',
-              textDecoration: hSlashed ? 'line-through' : 'none',
-              opacity: hSlashed ? 0.4 : 1
-            }}>
-              {hDigit}
-            </div>
-            {/* T digit */}
-            <div style={{
-              color: 'var(--clr-text)',
-              textDecoration: tSlashedOnce ? 'line-through' : 'none',
-              opacity: tSlashedOnce ? 0.4 : 1
-            }}>
-              0
-            </div>
-            {/* O digit */}
-            <div style={{
-              color: 'var(--clr-text)',
-              textDecoration: oSlashed ? 'line-through' : 'none',
-              opacity: oSlashed ? 0.4 : 1
-            }}>
-              0
-            </div>
+            {/* Stage 1 "Counted All!" Button */}
+            {stage === 'count_initial' && (
+              <button
+                onClick={handleProceedToRelease}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  background: '#f97316',
+                  color: '#ffffff',
+                  border: 'none',
+                  borderRadius: 'var(--radius-pill)',
+                  padding: '10px 22px',
+                  fontWeight: 800,
+                  fontSize: '0.95rem',
+                  cursor: 'pointer',
+                  boxShadow: '0 4px 10px rgba(249, 115, 22, 0.35)',
+                  transition: 'transform 0.15s'
+                }}
+              >
+                <span>{isInitialCountDone ? 'Let the Wind Blow! 💨' : `Ready with ${startCount} Balloons ➔`}</span>
+                <ArrowRight size={18} />
+              </button>
+            )}
 
-            {/* Subtrahend Row */}
-            <div style={{ color: 'var(--clr-wrong)', fontSize: '1.4rem' }}>−</div>
-            <div style={{ color: 'var(--clr-text)' }}>&nbsp;</div>
-            <div style={{ color: 'var(--clr-text)' }}>{tSub}</div>
-            <div style={{ color: 'var(--clr-text)' }}>{oSub}</div>
-
-            {/* Equals Divider Line */}
-            <div style={{ gridColumn: '1 / -1', height: '3px', background: 'var(--clr-text)', margin: '4px 0' }} />
-
-            {/* Result Row */}
-            <div></div>
-            <div style={{
-              color: hResult !== null ? 'var(--clr-correct)' : 'var(--clr-text-soft)',
-              fontWeight: 900
-            }}>
-              {hResult !== null ? hResult : '?'}
-            </div>
-            <div style={{
-              color: tResult !== null ? 'var(--clr-correct)' : 'var(--clr-text-soft)',
-              fontWeight: 900
-            }}>
-              {tResult !== null ? tResult : '?'}
-            </div>
-            <div style={{
-              color: oResult !== null ? 'var(--clr-correct)' : 'var(--clr-text-soft)',
-              fontWeight: 900
-            }}>
-              {oResult !== null ? oResult : '?'}
-            </div>
+            {/* Stage 2 Flown Counter */}
+            {stage === 'release' && (
+              <div style={{
+                fontSize: '0.92rem',
+                fontWeight: 700,
+                color: '#ea580c',
+                background: '#ffedd5',
+                padding: '6px 14px',
+                borderRadius: 'var(--radius-pill)'
+              }}>
+                Fluew away: {releasedCount} of {flyCount}
+              </div>
+            )}
           </div>
         </div>
 
-        {/* INTERACTIVE QUESTION PANEL */}
-        {currentQ && (
+        {/* Stage 3: The Subtraction Math Equation & Answers */}
+        {stage === 'solve' && (
           <div className="anim-pop" style={{
             background: 'var(--clr-card)',
-            border: '2px solid var(--clr-accent)',
-            borderRadius: 'var(--radius)',
-            padding: '20px',
-            boxShadow: 'var(--shadow-card)',
-            marginBottom: '20px'
+            border: '2px solid var(--clr-border)',
+            borderRadius: '20px',
+            padding: '24px 20px',
+            marginTop: '20px',
+            textAlign: 'center',
+            boxShadow: 'var(--shadow-card)'
           }}>
+
+            {/* The Concrete Subtraction Equation */}
             <div style={{
-              fontSize: '1.15rem',
-              fontWeight: 800,
-              color: 'var(--clr-text)',
-              marginBottom: '16px',
-              display: 'flex',
+              display: 'inline-flex',
               alignItems: 'center',
-              gap: '8px'
+              justifyContent: 'center',
+              gap: '12px',
+              background: 'var(--clr-surface)',
+              border: '2px solid var(--clr-accent)',
+              borderRadius: 'var(--radius-pill)',
+              padding: '12px 28px',
+              fontSize: '1.9rem',
+              fontWeight: 900,
+              fontFamily: 'var(--font-kids)',
+              color: 'var(--clr-text)',
+              marginBottom: '18px',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.06)'
             }}>
-              <HelpCircle size={22} color="var(--clr-accent)" />
-              <span>{currentQ.question}</span>
+              <span>{startCount}</span>
+              <span style={{ color: '#ef4444' }}>−</span>
+              <span>{questionType === 'find_missing' ? '?' : flyCount}</span>
+              <span style={{ color: 'var(--clr-accent)' }}>=</span>
+              <span style={{
+                color: '#f97316',
+                background: '#ffedd5',
+                padding: '2px 14px',
+                borderRadius: '12px',
+                minWidth: '42px'
+              }}>
+                {questionType === 'find_missing' ? remainCount : '?'}
+              </span>
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              {currentQ.options.map((opt, idx) => (
+            <p style={{
+              fontSize: '1.1rem',
+              color: 'var(--clr-text-soft)',
+              marginBottom: '20px',
+              fontWeight: 600
+            }}>
+              {questionType === 'find_missing'
+                ? `Kaka had ${startCount} balloons. Now ${remainCount} remain. How many balloons flew away into the sky?`
+                : `We started with ${startCount} balloons. ${flyCount} flew away into the sky. How many remain?`}
+            </p>
+
+            {/* Answer Options Grid */}
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(110px, 1fr))',
+              gap: '14px',
+              maxWidth: '520px',
+              margin: '0 auto'
+            }}>
+              {options.map((opt) => (
                 <button
-                  key={idx}
-                  onClick={() => handleOptionClick(opt)}
-                  className="tenali-btn-primary"
+                  key={opt}
+                  onClick={() => handleSelectAnswer(opt)}
                   style={{
+                    padding: '16px 20px',
+                    borderRadius: '16px',
                     background: 'var(--clr-surface)',
-                    color: 'var(--clr-text)',
                     border: '2px solid var(--clr-border)',
-                    borderRadius: '12px',
-                    padding: '12px 18px',
-                    textAlign: 'left',
-                    fontSize: '1rem',
-                    fontWeight: 700,
+                    fontSize: '1.8rem',
+                    fontWeight: 900,
+                    fontFamily: 'var(--font-kids)',
+                    color: 'var(--clr-text)',
                     cursor: 'pointer',
                     boxShadow: 'var(--shadow-btn)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    transition: 'all 0.15s ease'
+                    transition: 'all 0.15s ease-in-out'
                   }}
                   onMouseEnter={e => {
-                    e.currentTarget.style.borderColor = 'var(--clr-accent)';
-                    e.currentTarget.style.transform = 'translateX(4px)';
+                    e.currentTarget.style.transform = 'translateY(-3px)';
+                    e.currentTarget.style.borderColor = '#f97316';
                   }}
                   onMouseLeave={e => {
+                    e.currentTarget.style.transform = 'translateY(0)';
                     e.currentTarget.style.borderColor = 'var(--clr-border)';
-                    e.currentTarget.style.transform = 'none';
                   }}
                 >
-                  <span>{opt.text}</span>
-                  <ArrowRight size={18} color="var(--clr-accent)" />
+                  {opt}
                 </button>
               ))}
             </div>
 
-            {/* Instant Feedback Notice */}
+            {/* Feedback message */}
             {feedback && (
-              <div className="anim-pop" style={{
-                marginTop: '14px',
-                padding: '10px 16px',
-                borderRadius: '10px',
-                background: feedback.isCorrect ? 'var(--clr-correct-bg)' : 'var(--clr-wrong-bg)',
-                border: `2px solid ${feedback.isCorrect ? 'var(--clr-correct)' : 'var(--clr-wrong)'}`,
-                color: feedback.isCorrect ? 'var(--clr-correct)' : 'var(--clr-wrong)',
-                fontWeight: 800,
-                fontSize: '0.95rem'
+              <div style={{
+                marginTop: '16px',
+                padding: '10px 18px',
+                borderRadius: 'var(--radius-pill)',
+                fontSize: '1rem',
+                fontWeight: 700,
+                display: 'inline-block',
+                background: feedback.isCorrect ? '#dcfce7' : '#fee2e2',
+                color: feedback.isCorrect ? '#166534' : '#991b1b',
+                border: `1px solid ${feedback.isCorrect ? '#86efac' : '#fca5a5'}`
               }}>
                 {feedback.text}
               </div>
@@ -634,57 +749,24 @@ export default function TrickOrThinkGame({ onBack }: GameProps) {
           </div>
         )}
 
-        {/* STEP COMPLETE VICTORY STATE */}
-        {step === 'complete' && (
-          <div className="anim-pop" style={{
-            background: 'var(--clr-correct-bg)',
-            border: '2px solid var(--clr-correct)',
-            borderRadius: 'var(--radius)',
-            padding: '24px',
-            textAlign: 'center',
-            marginBottom: '20px'
-          }}>
-            <h3 style={{ color: 'var(--clr-correct)', fontSize: '1.4rem', margin: '0 0 8px 0' }}>
-              🎉 Incredible Regrouping Mastery!
-            </h3>
-            <p style={{ fontSize: '1.1rem', color: 'var(--clr-text)', margin: '0 0 16px 0' }}>
-              You solved <strong>{minuend} − {subtrahend} = {diff}</strong> through step-by-step place-value borrowing across zeros!
-            </p>
-
-            <button
-              onClick={handleNextLevel}
-              className="tenali-btn-primary"
-              style={{
-                fontSize: '1.15rem',
-                padding: '12px 30px',
-                borderRadius: 'var(--radius-pill)',
-                margin: '0 auto',
-                cursor: 'pointer'
-              }}
-            >
-              <span>{level < 5 ? `Next Level (${level + 1}) ➔` : 'Play Again 🔄'}</span>
-            </button>
-          </div>
-        )}
-
       </div>
 
-      {/* Story Modal */}
+      {/* Story Modal with Mini Speaker & Read Aloud */}
       <GameStoryModal
         isOpen={storyOpen}
         onClose={() => setStoryOpen(false)}
-        title="The Mystery of 500 − 53"
-        badge="Regrouping Story"
-        icon="🏰"
-        story={`Three friendly houses along Sweet Street hold ${minuend} candies! But when trick-or-treaters need ${subtrahend} candies, the Ones house and Tens house discover their bowls have 0 candies! How can they borrow from Hundreds without losing a single sweet? Join the houses on an exciting borrowing adventure!`}
-        buttonText="Next ➔ Start Borrowing!"
+        title="Gubbarewala at the Sunday Mela!"
+        badge="Story Time"
+        icon="🎈"
+        story="Welcome to the Sunday Village Mela! Kaka the balloon seller is here with the most colorful bunches of balloons you have ever seen! But oh ho—a playful summer breeze keeps blowing across the fairgrounds! Watch the balloons float high into the clouds, count what remains in Kaka's hand, and master subtraction together!"
+        buttonText="Next ➔ Visit the Mela!"
       />
 
-      {/* Level Complete Celebration Modal */}
+      {/* Celebration Modal on Level Complete */}
       {showCelebration && (
         <CelebrationModal
-          title="Place Value Master!"
-          subtitle={`You successfully solved ${minuend} − ${subtrahend} = ${diff} through place-value borrowing!`}
+          title="Balloon Champion! 🎈✨"
+          subtitle={`You mastered all the balloon challenges in ${currentLevel.name}! You know exactly how many balloons fly away and how many stay!`}
           stars={3}
           onNextLevel={handleNextLevel}
           onReplay={handleReplay}
@@ -692,6 +774,15 @@ export default function TrickOrThinkGame({ onBack }: GameProps) {
           hasNextLevel={level < 5}
         />
       )}
+
+      {/* CSS Keyframes for Gentle Balloon Floating Wobble */}
+      <style>{`
+        @keyframes wobbleBalloon {
+          0% { transform: translateY(0px) rotate(-3deg); }
+          50% { transform: translateY(-8px) rotate(3deg); }
+          100% { transform: translateY(0px) rotate(-3deg); }
+        }
+      `}</style>
     </QuizLayout>
   );
 }
