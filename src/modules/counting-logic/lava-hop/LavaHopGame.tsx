@@ -60,11 +60,11 @@ export default function LavaHopGame({ onBack }: GameProps) {
   // Episodic Story Chapters: Story says something -> Activity happens -> Story continues!
   const [storyChapter, setStoryChapter] = useState<StoryChapterState>({
     isOpen: true,
-    title: "The Secret Street Lava Game!",
-    icon: "🌋",
-    badge: "Chapter 1: The Volcano Footpath",
-    story: "Have you ever walked down a street or footpath? Every child knows the legendary game! You imagine that the red textured pavement bricks have turned into boiling VOLCANO LAVA! To keep your shoes from burning, you can only step on the cool white stones! Ready to hop across?",
-    buttonText: "Next ➔ Hop on Stone 1!",
+    title: "Gali Ka Stapoo (Kit-Kit)!",
+    icon: "🦶",
+    badge: "Childhood Nostalgia • स्टापू / कित-कित",
+    story: "Remember those summer afternoons in our mohalla lane? With a piece of chalk or charcoal, we drew numbered squares for STAPOO (Kit-Kit)! The golden childhood rule: only land on the safe numbered stones, and if your shoe touches the red tiles—'Out'! Hop on one foot, count each stone in order, and cross to the finish line!",
+    buttonText: "Next ➔ Chhalang Lagao!",
     onProceed: () => {}
   });
 
@@ -299,9 +299,9 @@ export default function LavaHopGame({ onBack }: GameProps) {
 
   return (
     <QuizLayout
-      title="Lava Hop Adventure"
-      subtitle="Hop on the white footpath stones, dodge the red volcano tiles, and count 1, 2, 3 as you go!"
-      category="Counting & Number Line"
+      title="Gali Ka Stapoo (Kit-Kit)"
+      subtitle="Hop on the safe numbered stones, avoid the red tiles, and count 1, 2, 3 to victory!"
+      category="Counting & Indian Childhood Games"
       level={level}
       stars={stars}
       onBack={onBack}

@@ -1,124 +1,177 @@
 /**
  * MODULE REGISTRY
- * Aggregates all game modules with clean, friendly titles and strict TypeScript types
+ * Aggregates all game modules with relatable, authentic Indian/Hindi titles and strict TypeScript types
  */
 
 import React from 'react';
 import GulabJamunEmoji from './components/GulabJamunEmoji';
+
+// Addition Modules
 import aaravJamunModule from './modules/addition/aarav-jamun';
 import riyaBraceletModule from './modules/addition/riya-bracelet';
 import sunChariotModule from './modules/addition/sun-chariot';
 import marigoldMagicModule from './modules/addition/marigold-magic';
 
+// Subtraction Modules
 import vanishingButtonsModule from './modules/subtraction/vanishing-buttons';
 import schoolBusModule from './modules/subtraction/school-bus';
 import trickOrThinkModule from './modules/subtraction/trick-or-think';
 import frogHopModule from './modules/subtraction/math-o-lantern';
 
+// Counting & Logic Modules
 import lavaHopModule from './modules/counting-logic/lava-hop';
 import sum7DiceModule from './modules/counting-logic/sum7-dice';
 import feedMonsterModule from './modules/counting-logic/feed-monster';
 
+// Coordinate Geometry Modules (Stories 1 to 4)
+import classroomGridModule from './modules/coordinate-geometry/classroom-grid';
+import rahulExamModule from './modules/coordinate-geometry/rahul-exam';
+import rajuKiranaModule from './modules/coordinate-geometry/raju-kirana';
+import samosaBudgetModule from './modules/coordinate-geometry/samosa-budget';
+
 import { GameCard } from './types';
 
 export const MODULE_REGISTRY: GameCard[] = [
+  // --- COUNTING & LOGIC GAMES ---
   {
     id: 'feed-monster',
-    name: "Feed Kumbhakarna!",
+    name: "Kumbhakarna Ki Dawat!",
     component: feedMonsterModule.Component,
     icon: '👹',
     domainId: 'counting-logic',
     levelsCount: 5,
-    tags: ['kumbhakarna', 'multilingual-cuisine', 'puri-sabzi', 'dosa-idli', 'dhokla', 'feast', 'counting']
-  },
-  {
-    id: 'aarav-jamun',
-    name: "Aarav's Gulab Jamuns",
-    component: aaravJamunModule.Component,
-    icon: React.createElement(GulabJamunEmoji, { size: 54, variant: 'bowl' }),
-    domainId: 'addition',
-    levelsCount: 3,
-    tags: ['addition', 'story', 'food', 'sweets', 'gulab jamun', 'gulab-jamun']
-  },
-  {
-    id: 'riya-bracelet',
-    name: "Riya's Bracelet",
-    component: riyaBraceletModule.Component,
-    icon: '📿',
-    domainId: 'addition',
-    levelsCount: 4,
-    tags: ['number bonds', 'making 10', 'beads', 'riya']
-  },
-  {
-    id: 'sun-chariot',
-    name: "Sun Chariot Wheel",
-    component: sunChariotModule.Component,
-    icon: '🎡',
-    domainId: 'addition',
-    levelsCount: 3,
-    tags: ['wheel', 'pairs', 'fact families']
-  },
-  {
-    id: 'marigold-magic',
-    name: "Marigold Magic – Decorate the School!",
-    component: marigoldMagicModule.Component,
-    icon: '🌼',
-    domainId: 'addition',
-    levelsCount: 4,
-    tags: ['addition', 'counting', 'marigold', 'flowers', 'independence day', 'garland', 'laddi', 'school']
-  },
-  {
-    id: 'vanishing-buttons',
-    name: "Vanishing Buttons",
-    component: vanishingButtonsModule.Component,
-    icon: '🐒',
-    domainId: 'subtraction',
-    levelsCount: 3,
-    tags: ['subtraction', 'zero', 'monkey', 'buttons']
-  },
-  {
-    id: 'school-bus',
-    name: "Five Little Children",
-    component: schoolBusModule.Component,
-    icon: '🚌',
-    domainId: 'subtraction',
-    levelsCount: 2,
-    tags: ['subtraction', 'bus', 'school bus', 'five little children', 'countdown', 'poem', 'ncert']
-  },
-  {
-    id: 'trick-or-think',
-    name: "Gubbarewala: The Flying Balloons",
-    component: trickOrThinkModule.Component,
-    icon: '🎈',
-    domainId: 'subtraction',
-    levelsCount: 5,
-    tags: ['subtraction', 'balloons', 'gubbarewala', 'take away', 'flying balloons', 'counting', 'easy', 'mela']
-  },
-  {
-    id: 'frog-hop',
-    name: "Mendhak Hop: Lotus Pond",
-    component: frogHopModule.Component,
-    icon: '🐸',
-    domainId: 'subtraction',
-    levelsCount: 5,
-    tags: ['subtraction', 'frog', 'mendhak', 'pond', 'lily pads', 'lotus', 'number line', 'counting up', 'ncert']
+    tags: ['kumbhakarna', 'dawat', 'feast', 'puri-sabzi', 'dosa-idli', 'dhokla', 'counting', 'desi']
   },
   {
     id: 'lava-hop',
-    name: "Lava Hop",
+    name: "Gali Ka Stapoo (Kit-Kit)",
     component: lavaHopModule.Component,
-    icon: '🌋',
+    icon: '🦶',
     domainId: 'counting-logic',
     levelsCount: 3,
-    tags: ['counting', 'lava', 'hopscotch']
+    tags: ['stapoo', 'kit-kit', 'kith-kith', 'gali', 'childhood', 'street', 'hopscotch', 'counting']
   },
   {
     id: 'sum7-dice',
-    name: "Magic Seven Discovery",
+    name: "Ludo Ka Jaadui Paasa",
     component: sum7DiceModule.Component,
     icon: '🎲',
     domainId: 'counting-logic',
     levelsCount: 3,
-    tags: ['dice', 'magic 7', 'mystery', 'logic']
+    tags: ['paasa', 'dice', 'ludo', 'saap-seedhi', 'magic 7', 'mystery', 'logic']
+  },
+
+  // --- ADDITION GAMES ---
+  {
+    id: 'aarav-jamun',
+    name: "Aarav Ke Gulab Jamun",
+    component: aaravJamunModule.Component,
+    icon: React.createElement(GulabJamunEmoji, { size: 54, variant: 'bowl' }),
+    domainId: 'addition',
+    levelsCount: 3,
+    tags: ['aarav', 'gulab jamun', 'sweets', 'mithai', 'birthday', 'addition', 'feeding']
+  },
+  {
+    id: 'riya-bracelet',
+    name: "Riya Ki Moti Mala",
+    component: riyaBraceletModule.Component,
+    icon: '📿',
+    domainId: 'addition',
+    levelsCount: 4,
+    tags: ['riya', 'moti', 'mala', 'bracelet', 'kangan', 'making 10', 'number bonds']
+  },
+  {
+    id: 'sun-chariot',
+    name: "Surya Rath Ka Pahiya",
+    component: sunChariotModule.Component,
+    icon: '🎡',
+    domainId: 'addition',
+    levelsCount: 3,
+    tags: ['surya rath', 'konark', 'chakra', 'wheel', 'pairs', 'fact families']
+  },
+  {
+    id: 'marigold-magic',
+    name: "Genda Phool – School Ki Sajawat",
+    component: marigoldMagicModule.Component,
+    icon: '🌼',
+    domainId: 'addition',
+    levelsCount: 4,
+    tags: ['genda phool', 'marigold', 'laddi', 'mala', 'independence day', 'school', 'addition']
+  },
+
+  // --- SUBTRACTION GAMES ---
+  {
+    id: 'vanishing-buttons',
+    name: "Natkhat Bandar Aur Button",
+    component: vanishingButtonsModule.Component,
+    icon: '🐒',
+    domainId: 'subtraction',
+    levelsCount: 3,
+    tags: ['bandar', 'natkhat', 'monkey', 'buttons', 'kurta', 'subtraction', 'zero']
+  },
+  {
+    id: 'school-bus',
+    name: "Chhuk-Chhuk School Bus",
+    component: schoolBusModule.Component,
+    icon: '🚌',
+    domainId: 'subtraction',
+    levelsCount: 2,
+    tags: ['school bus', 'panch bachhe', 'five children', 'countdown', 'subtraction', 'poem']
+  },
+  {
+    id: 'trick-or-think',
+    name: "Gubbarewala Chacha",
+    component: trickOrThinkModule.Component,
+    icon: '🎈',
+    domainId: 'subtraction',
+    levelsCount: 5,
+    tags: ['gubbarewala', 'balloons', 'mela', 'take away', 'flying balloons', 'counting', 'subtraction']
+  },
+  {
+    id: 'frog-hop',
+    name: "Mendhak Ki Chhalang",
+    component: frogHopModule.Component,
+    icon: '🐸',
+    domainId: 'subtraction',
+    levelsCount: 5,
+    tags: ['mendhak', 'chhalang', 'frog hop', 'lotus pond', 'lily pads', 'kamal', 'number line']
+  },
+
+  // --- COORDINATE GEOMETRY GAMES (STORIES 1 TO 4) ---
+  {
+    id: 'classroom-grid',
+    name: "Classroom Ka Fish Market",
+    component: classroomGridModule.Component,
+    icon: '🏫',
+    domainId: 'coordinate-geometry',
+    levelsCount: 3,
+    tags: ['classroom', 'fish market', 'pt teacher', 'paper bullet', 'coordinates', 'rows', 'seats', 'straight line', 'collinear']
+  },
+  {
+    id: 'rahul-exam',
+    name: "Rahul Ki Night-Before Strategy",
+    component: rahulExamModule.Component,
+    icon: '📈',
+    domainId: 'coordinate-geometry',
+    levelsCount: 3,
+    tags: ['rahul', 'exam', 'topper', 'pyq', 'linear equations', 'y=mx+c', 'slope', 'sleep']
+  },
+  {
+    id: 'raju-kirana',
+    name: "Raju Kirana Robbery Mystery",
+    component: rajuKiranaModule.Component,
+    icon: '🔍',
+    domainId: 'coordinate-geometry',
+    levelsCount: 1,
+    tags: ['raju kirana', 'bank robbery', 'detective', 'chips', 'juice', 'intersection', 'linear system']
+  },
+  {
+    id: 'samosa-budget',
+    name: "Canteen Ki Samosa Party",
+    component: samosaBudgetModule.Component,
+    icon: '🥟',
+    domainId: 'coordinate-geometry',
+    levelsCount: 4,
+    tags: ['samosa', 'canteen', 'cost function', 'c(x)', 'budget', 'inequality', 'maths in real life']
   }
 ];

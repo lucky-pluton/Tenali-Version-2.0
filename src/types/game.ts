@@ -11,14 +11,14 @@ export interface StoryChapter {
   text: string;
 }
 
-export type DomainCategory = 'addition' | 'subtraction' | 'counting-logic' | 'all';
+export type DomainCategory = 'addition' | 'subtraction' | 'counting-logic' | 'coordinate-geometry' | 'all';
 
 export interface GameCard {
   id: string;
   name: string;
   component: React.ComponentType<GameProps>;
   icon: string | React.ReactNode;
-  domainId: 'addition' | 'subtraction' | 'counting-logic';
+  domainId: 'addition' | 'subtraction' | 'counting-logic' | 'coordinate-geometry';
   levelsCount: number;
   tags: string[];
 }

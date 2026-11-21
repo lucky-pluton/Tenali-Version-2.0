@@ -10,7 +10,8 @@ import {
   VolumeX,
   BookOpen,
   Gamepad2,
-  Play
+  Play,
+  Compass
 } from 'lucide-react';
 import { toggleSound, isSoundEnabled } from './core/soundEffects';
 import { MODULE_REGISTRY } from './registry';
@@ -211,10 +212,11 @@ export default function App() {
             maxWidth: '100%'
           }}>
             {[
-              { id: 'all' as DomainCategory, label: 'All Games', icon: <Gamepad2 size={16} /> },
-              { id: 'counting-logic' as DomainCategory, label: 'Counting', icon: <Dices size={16} /> },
-              { id: 'addition' as DomainCategory, label: 'Addition', icon: <PlusCircle size={16} /> },
-              { id: 'subtraction' as DomainCategory, label: 'Subtraction', icon: <MinusCircle size={16} /> }
+              { id: 'all' as DomainCategory, label: 'All / सब खेल', icon: <Gamepad2 size={16} /> },
+              { id: 'counting-logic' as DomainCategory, label: 'Counting / गिनती', icon: <Dices size={16} /> },
+              { id: 'addition' as DomainCategory, label: 'Addition / जोड़', icon: <PlusCircle size={16} /> },
+              { id: 'subtraction' as DomainCategory, label: 'Subtraction / घटाव', icon: <MinusCircle size={16} /> },
+              { id: 'coordinate-geometry' as DomainCategory, label: 'Coordinate Geometry / निर्देशांक', icon: <Compass size={16} /> }
             ].map(tab => (
               <button
                 key={tab.id}
