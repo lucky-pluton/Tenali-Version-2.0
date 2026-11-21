@@ -17,7 +17,7 @@ export interface GameCard {
   id: string;
   name: string;
   component: React.ComponentType<GameProps>;
-  icon: string;
+  icon: string | React.ReactNode;
   domainId: 'addition' | 'subtraction' | 'counting-logic';
   levelsCount: number;
   tags: string[];

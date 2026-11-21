@@ -7,7 +7,7 @@ export interface GameStoryModalProps {
   onClose: () => void;
   title: string;
   story: string;
-  icon?: string;
+  icon?: string | React.ReactNode;
   badge?: string;
   buttonText?: string;
 }

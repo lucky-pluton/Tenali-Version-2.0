@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import QuizLayout from '../../../components/QuizLayout';
 import CelebrationModal from '../../../components/CelebrationModal';
 import GameStoryModal from '../../../components/GameStoryModal';
+import GulabJamunEmoji from '../../../components/GulabJamunEmoji';
 import { playSuccessChime, playGentleBoing, playMunch } from '../../../core/soundEffects';
 import { Utensils, CheckCircle } from 'lucide-react';
 import { GameProps } from '../../../types';
@@ -20,7 +21,7 @@ interface Scenario {
 interface StoryChapterState {
   isOpen: boolean;
   title: string;
-  icon: string;
+  icon: string | React.ReactNode;
   badge: string;
   story: string;
   buttonText: string;
@@ -56,7 +57,7 @@ export default function AaravGulabJamunGame({ onBack }: GameProps) {
   const [storyChapter, setStoryChapter] = useState<StoryChapterState>({
     isOpen: true,
     title: "Aarav's Sweet Birthday Surprise",
-    icon: "🍬",
+    icon: <GulabJamunEmoji size={72} variant="bowl" />,
     badge: "Chapter 1: The Birthday Morning",
     story: "Today is Aarav's birthday! He is sitting at the dining table with a big smile on his face. His Mother arrives first carrying a warm plate of fresh sweets!",
     buttonText: "Next ➔ Feed Mother's Sweets!",
@@ -232,7 +233,7 @@ export default function AaravGulabJamunGame({ onBack }: GameProps) {
     setStoryChapter({
       isOpen: true,
       title: "Family Sweet Feast!",
-      icon: "🍬",
+      icon: <GulabJamunEmoji size={72} variant="bowl" />,
       badge: `Level ${nextLvl} • Chapter 1`,
       story: `Aarav's family is back with an even bigger batch of sweets! Help feed Aarav and count each treat!`,
       buttonText: "Next ➔ Feed Mother's Sweets!",
@@ -252,7 +253,7 @@ export default function AaravGulabJamunGame({ onBack }: GameProps) {
     setStoryChapter({
       isOpen: true,
       title: "Aarav's Sweet Birthday Surprise",
-      icon: "🍬",
+      icon: <GulabJamunEmoji size={72} variant="bowl" />,
       badge: `Level ${level} • Chapter 1`,
       story: `Ready to count all of Aarav's birthday sweets again? Mother is ready with the first plate!`,
       buttonText: "Next ➔ Feed Mother's Sweets!",
@@ -415,14 +416,15 @@ export default function AaravGulabJamunGame({ onBack }: GameProps) {
                     onClick={() => speakNumber(i + 1)}
                     className="anim-pop"
                     style={{
-                      fontSize: '1.9rem',
-                      display: 'inline-block',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
                       cursor: 'pointer',
-                      filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.4))'
+                      padding: '3px'
                     }}
-                    title={`Sweet ${i + 1} - click to count`}
+                    title={`Gulab Jamun ${i + 1} - click to count`}
                   >
-                    🟤
+                    <GulabJamunEmoji size={38} variant="piece" />
                   </span>
                 ))}
                 {totalEaten === 0 && (

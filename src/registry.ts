@@ -3,6 +3,8 @@
  * Aggregates all game modules with clean, friendly titles and strict TypeScript types
  */
 
+import React from 'react';
+import GulabJamunEmoji from './components/GulabJamunEmoji';
 import aaravJamunModule from './modules/addition/aarav-jamun';
 import riyaBraceletModule from './modules/addition/riya-bracelet';
 import sunChariotModule from './modules/addition/sun-chariot';
@@ -34,10 +36,10 @@ export const MODULE_REGISTRY: GameCard[] = [
     id: 'aarav-jamun',
     name: "Aarav's Gulab Jamuns",
     component: aaravJamunModule.Component,
-    icon: '🍬',
+    icon: React.createElement(GulabJamunEmoji, { size: 54, variant: 'bowl' }),
     domainId: 'addition',
     levelsCount: 3,
-    tags: ['addition', 'story', 'food', 'sweets']
+    tags: ['addition', 'story', 'food', 'sweets', 'gulab jamun', 'gulab-jamun']
   },
   {
     id: 'riya-bracelet',
