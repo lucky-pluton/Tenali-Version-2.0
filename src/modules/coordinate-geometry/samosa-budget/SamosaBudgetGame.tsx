@@ -34,7 +34,7 @@ export interface SamosaBudgetGameProps extends GameProps {
 export default function SamosaBudgetGame({ onBack, isEmbedded, onNextChapter, onChapterStars }: SamosaBudgetGameProps) {
   const [stage, setStage] = useState<1 | 2 | 3 | 4>(1);
   const [stars, setStars] = useState<number>(0);
-  const [storyOpen, setStoryOpen] = useState<boolean>(true);
+  const [storyOpen, setStoryOpen] = useState<boolean>(!isEmbedded);
   const [showCelebration, setShowCelebration] = useState<boolean>(false);
 
   // Samosa parameters
@@ -430,7 +430,7 @@ export default function SamosaBudgetGame({ onBack, isEmbedded, onNextChapter, on
               onClick={() => {
                 playSuccessChime();
                 setStage(3);
-                speak(`Now, try the ultimate budget challenge! With only 200 rupees, what is the maximum number of samosas you can buy?`);
+                speak(`Now test the samosa calculator using the slider above!`);
               }}
               style={{
                 background: 'var(--clr-accent)',
@@ -446,13 +446,64 @@ export default function SamosaBudgetGame({ onBack, isEmbedded, onNextChapter, on
                 gap: '8px'
               }}
             >
-              <span>Next ➔ Solve the ₹200 Budget Challenge</span>
+              <span>Next ➔ Try the Samosa Calculator Machine</span>
               <ArrowRight size={18} />
             </button>
           </div>
         )}
 
-        {(stage === 3 || stage === 4) && (
+        {stage === 3 && (
+          <div className="anim-pop" style={{
+            background: 'var(--clr-card)',
+            border: '2px solid #f59e0b',
+            borderRadius: '20px',
+            padding: '24px 20px',
+            textAlign: 'center',
+            boxShadow: 'var(--shadow-card)',
+            marginBottom: '20px'
+          }}>
+            <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--clr-text)', margin: '0 0 10px 0' }}>
+              Stage 3: Test the Samosa Machine with the Slider Above!
+            </h3>
+            <p style={{ fontSize: '1.05rem', color: 'var(--clr-text)', maxWidth: '600px', margin: '0 auto 16px auto', lineHeight: 1.5 }}>
+              Currently selected: <strong>{samosaCount} samosas</strong>.
+              <br />
+              Total Bill: 12 × {samosaCount} + 20 = <strong>₹{totalCost}</strong>!
+              <br />
+              {isOverBudget ? (
+                <span style={{ color: '#ef4444', fontWeight: 800 }}>⚠️ Over the ₹200 budget by ₹{totalCost - TOTAL_BUDGET}!</span>
+              ) : (
+                <span style={{ color: '#10b981', fontWeight: 800 }}>✅ Within budget! Remaining: ₹{remainingBudget}</span>
+              )}
+            </p>
+
+            <button
+              onClick={() => {
+                playSuccessChime();
+                setStage(4);
+                speak(`Now solve the budget inequality: with only 200 rupees, what is the maximum number of samosas you can buy?`);
+              }}
+              style={{
+                background: '#10b981',
+                color: '#ffffff',
+                border: 'none',
+                borderRadius: 'var(--radius-pill)',
+                padding: '12px 30px',
+                fontSize: '1.05rem',
+                fontWeight: 800,
+                cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px'
+              }}
+            >
+              <span>Ready for Final Budget Challenge ➔</span>
+              <ArrowRight size={18} />
+            </button>
+          </div>
+        )}
+
+        {stage === 4 && (
           <div className="anim-pop" style={{
             background: 'var(--clr-card)',
             border: '2px solid #ef4444',
@@ -463,7 +514,7 @@ export default function SamosaBudgetGame({ onBack, isEmbedded, onNextChapter, on
             marginBottom: '20px'
           }}>
             <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--clr-text)', margin: '0 0 10px 0' }}>
-              Stage 4: "Can we buy 20 samosas? Our budget is only ₹200!"
+              Stage 4: "What is the maximum number of samosas we can buy with ₹200?"
             </h3>
             <p style={{ fontSize: '1.05rem', color: 'var(--clr-text)', maxWidth: '600px', margin: '0 auto 16px auto', lineHeight: 1.5 }}>
               The inequality rule is: <strong>12x + 20 ≤ 200</strong>.

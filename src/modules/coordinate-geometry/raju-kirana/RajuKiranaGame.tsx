@@ -42,7 +42,7 @@ export interface RajuKiranaGameProps extends GameProps {
 
 export default function RajuKiranaGame({ onBack, isEmbedded, onNextChapter, onChapterStars }: RajuKiranaGameProps) {
   const [stars, setStars] = useState<number>(0);
-  const [storyOpen, setStoryOpen] = useState<boolean>(true);
+  const [storyOpen, setStoryOpen] = useState<boolean>(!isEmbedded);
   const [showCelebration, setShowCelebration] = useState<boolean>(false);
 
   // 3 Lines for Monday, Tuesday, Wednesday
@@ -256,10 +256,17 @@ export default function RajuKiranaGame({ onBack, isEmbedded, onNextChapter, onCh
                   onClick={() => handleSelectIntersection(4, 0)}
                   style={{ cursor: 'pointer' }}
                 >
+                  {/* Invisible generous hit target for mobile/tablet/touch */}
                   <circle
                     cx={60 + 4 * 55}
                     cy={200}
-                    r={identifiedIntersection ? 9 : 8}
+                    r={28}
+                    fill="transparent"
+                  />
+                  <circle
+                    cx={60 + 4 * 55}
+                    cy={200}
+                    r={identifiedIntersection ? 11 : 9}
                     fill={identifiedIntersection ? '#10b981' : '#ef4444'}
                     stroke="#ffffff"
                     strokeWidth="2.5"
@@ -267,7 +274,7 @@ export default function RajuKiranaGame({ onBack, isEmbedded, onNextChapter, onCh
                   />
                   <text
                     x={60 + 4 * 55}
-                    y={180}
+                    y={178}
                     fill={identifiedIntersection ? '#34d399' : '#f87171'}
                     fontSize="11"
                     fontWeight="900"
@@ -316,6 +323,29 @@ export default function RajuKiranaGame({ onBack, isEmbedded, onNextChapter, onCh
               >
                 <span>Plot {lines[activeStep].day} Line ➔</span>
                 <ArrowRight size={16} />
+              </button>
+            )}
+
+            {activeStep >= 3 && !identifiedIntersection && (
+              <button
+                onClick={() => handleSelectIntersection(4, 0)}
+                style={{
+                  background: '#10b981',
+                  color: '#ffffff',
+                  border: 'none',
+                  borderRadius: 'var(--radius-pill)',
+                  padding: '8px 20px',
+                  fontWeight: 800,
+                  fontSize: '0.88rem',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  boxShadow: '0 4px 12px rgba(16, 185, 129, 0.4)'
+                }}
+              >
+                <span>Identify Suspect at (4, 0) ➔</span>
+                <CheckCircle2 size={16} />
               </button>
             )}
           </div>

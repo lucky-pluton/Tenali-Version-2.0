@@ -79,7 +79,7 @@ export interface ClassroomGridGameProps extends GameProps {
 export default function ClassroomGridGame({ onBack, isEmbedded, onNextChapter, onChapterStars }: ClassroomGridGameProps) {
   const [roundIdx, setRoundIdx] = useState<number>(0);
   const [stars, setStars] = useState<number>(0);
-  const [storyOpen, setStoryOpen] = useState<boolean>(true);
+  const [storyOpen, setStoryOpen] = useState<boolean>(!isEmbedded);
   const [showCelebration, setShowCelebration] = useState<boolean>(false);
 
   const prob = CLASSROOM_ROUNDS[roundIdx] || CLASSROOM_ROUNDS[0];
@@ -277,12 +277,13 @@ export default function ClassroomGridGame({ onBack, isEmbedded, onNextChapter, o
           </div>
 
           {/* Interactive Classroom Coordinate Grid (Desks) */}
-          <div style={{ overflowX: 'auto', paddingBottom: '10px' }}>
+          <div style={{ overflowX: 'auto', paddingBottom: '10px', WebkitOverflowScrolling: 'touch' }}>
             <div style={{
               display: 'grid',
-              gridTemplateColumns: `40px repeat(${MAX_ROWS}, 1fr)`,
-              gap: '6px',
-              minWidth: '540px'
+              gridTemplateColumns: `36px repeat(${MAX_ROWS}, minmax(46px, 1fr))`,
+              gap: '4px',
+              minWidth: 'min(100%, 460px)',
+              margin: '0 auto'
             }}>
               {/* Header row: Row numbers on X-Axis */}
               <div style={{ fontWeight: 800, fontSize: '0.75rem', color: '#94a3b8', textAlign: 'center' }}>

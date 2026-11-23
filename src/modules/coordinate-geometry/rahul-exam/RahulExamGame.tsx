@@ -35,7 +35,7 @@ export interface RahulExamGameProps extends GameProps {
 export default function RahulExamGame({ onBack, isEmbedded, onNextChapter, onChapterStars }: RahulExamGameProps) {
   const [stage, setStage] = useState<1 | 2 | 3>(1);
   const [stars, setStars] = useState<number>(0);
-  const [storyOpen, setStoryOpen] = useState<boolean>(true);
+  const [storyOpen, setStoryOpen] = useState<boolean>(!isEmbedded);
   const [showCelebration, setShowCelebration] = useState<boolean>(false);
 
   // Stage 1 interactive state: y = 5x
@@ -407,15 +407,14 @@ export default function RahulExamGame({ onBack, isEmbedded, onNextChapter, onCha
               Plan C: The Slope (Speed) vs Sleep Dilemma!
             </h3>
             <p style={{ fontSize: '0.95rem', color: 'var(--clr-text-soft)', margin: '0 0 20px 0' }}>
-              Choose a study speed (Slope m) to see how Rahul can finish the remaining 30 questions faster and get more sleep:
+              Choose a study speed (Slope m) to cover the remaining questions and maximize sleep:
             </p>
 
             <div style={{ display: 'flex', justifyContent: 'center', gap: '12px', flexWrap: 'wrap', marginBottom: '22px' }}>
               {[
-                { speed: 5, label: "5 Qs/hr (m=5)", time: "6 hrs study", sleep: "2 hrs sleep" },
-                { speed: 10, label: "10 Qs/hr (m=10)", time: "3 hrs study", sleep: "5 hrs sleep! ⭐" },
-                { speed: 15, label: "15 Qs/hr (m=15)", time: "2 hrs study", sleep: "6 hrs sleep! 🌟" },
-                { speed: 20, label: "20 Qs/hr (m=20)", time: "1.5 hrs study", sleep: "6.5 hrs sleep! 🚀" }
+                { speed: 5, label: "5 Qs/hr (y = 5x + 10)", time: "Needs 4 hrs study", sleep: "Leaves 4 hrs sleep! 😴" },
+                { speed: 10, label: "10 Qs/hr (y = 10x + 10)", time: "Needs 2 hrs study", sleep: "Leaves 6 hrs sleep! ⭐" },
+                { speed: 20, label: "20 Qs/hr (y = 20x + 10)", time: "Needs 1 hr study", sleep: "Leaves 7 hrs sleep! 🚀" }
               ].map((opt) => (
                 <button
                   key={opt.speed}

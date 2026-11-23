@@ -88,7 +88,8 @@ export default function CoordinateGeometryFromZeroGame({ onBack }: GameProps) {
     3: 0,
     4: 0
   });
-  const [masterStoryOpen, setMasterStoryOpen] = useState<boolean>(true);
+  // Default to false so module opens immediately to Chapter 1 without a blocking popup
+  const [masterStoryOpen, setMasterStoryOpen] = useState<boolean>(false);
   const [showGrandCelebration, setShowGrandCelebration] = useState<boolean>(false);
 
   // Total stars across all 4 chapters
@@ -315,24 +316,14 @@ export default function CoordinateGeometryFromZeroGame({ onBack }: GameProps) {
         title="Coordinate Geometry: From Zero!"
         badge="Complete Learning Journey • शून्य से शिखर"
         icon="📐"
-        story={`Welcome to Coordinate Geometry From Zero! Coordinate geometry isn't just formulas in a book—it is the math of real life, patterns, and mystery-solving!
+        story={`Coordinate geometry connects numbers, lines, and real-life mystery solving!
 
-Through 4 captivating stories, you will build concepts step-by-step from scratch:
-
-🏫 Story 1: Classroom Ka "Fish Market"
-The PT teacher stands at Origin (0,0). Can you plot Parth (2,7) and Anish (3,9) on the grid, and discover which seat Amit was sitting at when the eraser hit him in a straight line? (y = 2x + 3)
-
-📈 Story 2: Rahul Ki Night-Before Strategy
-Rahul hasn't prepared until 8 PM! He models his study plan with a linear equation y = mx + c. Discover how changing the slope (questions/hour) gives him hours of peaceful sleep and helps him top the class!
-
-🔍 Story 3: Raju Kirana Robbery Mystery
-A detective cracks a small-town bank robbery without fingerprints or CCTV! By graphing 3 sales equations from Raju Kirana Store, he finds their single point of intersection (4, 0) to catch the suspect!
-
-🥟 Story 4: Canteen Ki Samosa Party
-You have ₹200 for a group party. Samosas cost ₹12 each with a ₹20 packaging charge. Formulate the cost function C(x) = 12x + 20 and solve the budget inequality to maximize party food!
-
-Are you ready to journey from zero to hero?`}
-        buttonText="Start Chapter 1: Classroom Grid ➔"
+Explore 4 exciting real-life stories:
+• 🏫 Story 1 (Classroom Grid): Plot Parth (2,7) & Anish (3,9) from Origin (0,0) and find Amit's seat on the straight line!
+• 📈 Story 2 (Rahul's Exam): Model study speed with y = mx + c to finish 40 questions and get peaceful sleep!
+• 🔍 Story 3 (Raju Kirana Robbery): Graph 3 daily receipts and find their unique intersection point (4, 0) to catch the thief!
+• 🥟 Story 4 (Samosa Party): Model canteen costs with C(x) = 12x + 20 and solve the budget inequality (≤ ₹200)!`}
+        buttonText="Let's Play ➔"
       />
 
       {/* ============================================================== */}
