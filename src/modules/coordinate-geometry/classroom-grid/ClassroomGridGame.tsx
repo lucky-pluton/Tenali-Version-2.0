@@ -16,7 +16,8 @@ import {
   Volume2,
   HelpCircle,
   TrendingUp,
-  Compass
+  Compass,
+  BookOpen
 } from 'lucide-react';
 import { GameProps } from '../../../types';
 
@@ -102,12 +103,14 @@ export default function ClassroomGridGame({
   const prob = CLASSROOM_ROUNDS[roundIdx] || CLASSROOM_ROUNDS[0];
 
   // Stage in round:
+  // 0: Comic Story Prologue & Why Pointing Fails (Basic Intuition)
   // 1: Plot Parth (Row 2, Seat 7)
   // 2: Plot Anish (Row 3, Seat 9)
   // 3: Identify Amit's Seat in Row 1 (Where the eraser hit)
   // 4: The Collinear Pattern Question (Do they form a line?)
   // 5: Collinear Line Revealed & Explained!
-  const [stage, setStage] = useState<1 | 2 | 3 | 4 | 5>(1);
+  const [stage, setStage] = useState<0 | 1 | 2 | 3 | 4 | 5>(0);
+  const [prologueAns, setPrologueAns] = useState<string | null>(null);
   const [selectedSeat, setSelectedSeat] = useState<[number, number] | null>(null);
   const [feedback, setFeedback] = useState<{ text: string; isCorrect: boolean } | null>(null);
   const [hoveredDesk, setHoveredDesk] = useState<[number, number] | null>(null);
@@ -266,6 +269,30 @@ export default function ClassroomGridGame({
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <button
+                onClick={() => {
+                  playPop();
+                  setStage(s => (s === 0 ? 1 : 0));
+                }}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  background: stage === 0 ? '#f59e0b' : 'rgba(255, 255, 255, 0.1)',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  color: '#ffffff',
+                  padding: '6px 14px',
+                  borderRadius: 'var(--radius-pill)',
+                  fontSize: '0.82rem',
+                  fontWeight: 700,
+                  cursor: 'pointer'
+                }}
+                title="Toggle Story Intro & Basic Concept"
+              >
+                <BookOpen size={16} />
+                <span>{stage === 0 ? "Floor Plan Grid ➔" : "Story & Basic Idea"}</span>
+              </button>
+
+              <button
                 onClick={() => speak(`PT Teacher stands at Origin (0,0). ${prob.storyHint}`)}
                 style={{
                   display: 'flex',
@@ -325,8 +352,177 @@ export default function ClassroomGridGame({
         </div>
 
         {/* ============================================================== */}
-        {/* GEOGEBRA-STYLE CLASSROOM COORDINATE FLOOR PLAN                 */}
+        {/* STAGE 0: PROLOGUE - THE FISH MARKET & WHY POINTING FAILS       */}
         {/* ============================================================== */}
+        {stage === 0 && (
+          <div className="anim-pop" style={{
+            background: 'var(--clr-card)',
+            border: '2px solid #6366f1',
+            borderRadius: '24px',
+            padding: '24px 20px',
+            marginBottom: '20px',
+            boxShadow: 'var(--shadow-card)'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px' }}>
+              <span style={{ fontSize: '1.5rem' }}>📖</span>
+              <h3 style={{ margin: 0, fontFamily: 'var(--font-kids)', fontSize: '1.35rem', color: 'var(--clr-text)' }}>
+                How Coordinates Were Born: The Fish Market Incident
+              </h3>
+            </div>
+
+            {/* Story Chapters Cards */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '14px', marginBottom: '18px' }}>
+              <div style={{ background: 'var(--clr-surface)', border: '1px solid var(--clr-border)', borderRadius: '16px', padding: '16px' }}>
+                <div style={{ fontSize: '1.8rem', marginBottom: '8px' }}>🐟 👨‍🏫</div>
+                <h4 style={{ margin: '0 0 6px 0', fontSize: '1rem', color: '#6366f1' }}>1. "Kya Yeh Koi Fish Market Hai?!"</h4>
+                <p style={{ margin: 0, fontSize: '0.86rem', color: 'var(--clr-text-soft)', lineHeight: 1.45 }}>
+                  In Class 9A, the teacher was absent. Children were creating total chaos until the strict PT teacher walked in with a whistle and uttered that classic teacher line: <em>"Is this a fish market?!"</em>
+                </p>
+              </div>
+
+              <div style={{ background: 'var(--clr-surface)', border: '1px solid var(--clr-border)', borderRadius: '16px', padding: '16px' }}>
+                <div style={{ fontSize: '1.8rem', marginBottom: '8px' }}>🎯 💥</div>
+                <h4 style={{ margin: '0 0 6px 0', fontSize: '1rem', color: '#f59e0b' }}>2. The Flying Bullet & Eraser</h4>
+                <p style={{ margin: 0, fontSize: '0.86rem', color: 'var(--clr-text-soft)', lineHeight: 1.45 }}>
+                  Anish made a paper bullet and aimed at his best friend Parth: <strong>SHOOT!</strong> Direct hit! Parth retaliated by throwing an eraser back. Anish ducked, and the eraser hit innocent Amit on the front bench!
+                </p>
+              </div>
+
+              <div style={{ background: 'var(--clr-surface)', border: '1px solid var(--clr-border)', borderRadius: '16px', padding: '16px' }}>
+                <div style={{ fontSize: '1.8rem', marginBottom: '8px' }}>👈 ❓</div>
+                <h4 style={{ margin: '0 0 6px 0', fontSize: '1rem', color: '#ec4899' }}>3. Why Pointing Fails!</h4>
+                <p style={{ margin: 0, fontSize: '0.86rem', color: 'var(--clr-text-soft)', lineHeight: 1.45 }}>
+                  Amit was furious and complained to PT Sir: <em>"Sir! Wo dekho usne maara!"</em> pointing his finger across 50 students. But PT Sir didn't know their names! Pointing a finger in a crowded 2D room is ambiguous—PT Sir looked at the wrong student!
+                </p>
+              </div>
+
+              <div style={{ background: 'var(--clr-surface)', border: '1px solid var(--clr-border)', borderRadius: '16px', padding: '16px' }}>
+                <div style={{ fontSize: '1.8rem', marginBottom: '8px' }}>💡 📍</div>
+                <h4 style={{ margin: '0 0 6px 0', fontSize: '1rem', color: '#10b981' }}>4. The 2-Number Breakthrough!</h4>
+                <p style={{ margin: 0, fontSize: '0.86rem', color: 'var(--clr-text-soft)', lineHeight: 1.45 }}>
+                  Amit realized a finger isn't enough: <em>"Sir, the second row's seventh child is Parth!"</em> In ONE second, Parth was spotted! Why? Because <strong>two numbers</strong> give an exact coordinate address!
+                </p>
+              </div>
+            </div>
+
+            {/* The Concept Breakdown Card */}
+            <div style={{
+              background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(59, 130, 246, 0.05) 100%)',
+              border: '2px solid #6366f1',
+              borderRadius: '16px',
+              padding: '16px 20px',
+              marginBottom: '18px'
+            }}>
+              <h4 style={{ margin: '0 0 8px 0', fontSize: '1rem', color: '#6366f1', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span>📐</span>
+                <span>What Does This Teach Us About Coordinate Geometry?</span>
+              </h4>
+              <div style={{ fontSize: '0.88rem', color: 'var(--clr-text)', lineHeight: 1.5 }}>
+                • <strong>Origin (0, 0):</strong> The reference starting point (PT Sir standing at the front door/podium).<br />
+                • <strong>X-Axis (Horizontal):</strong> The Row number (Row 1, Row 2, Row 3...).<br />
+                • <strong>Y-Axis (Vertical):</strong> The Seat depth down that row (Seat 1 to 10).<br />
+                • <strong>Ordered Pair (x, y):</strong> Parth sits at <strong>(2, 7)</strong> = Row 2, Seat 7. Anish sits at <strong>(3, 9)</strong> = Row 3, Seat 9.
+              </div>
+            </div>
+
+            {/* Mini Intuition Check */}
+            <div style={{
+              background: 'var(--clr-surface)',
+              border: '1px solid var(--clr-border)',
+              borderRadius: '16px',
+              padding: '16px',
+              marginBottom: '18px'
+            }}>
+              <div style={{ fontWeight: 800, fontSize: '0.92rem', color: 'var(--clr-text)', marginBottom: '8px' }}>
+                🤔 Quick Concept Check: If Anish is at Row 3, Seat 9, how do we write his coordinates?
+              </div>
+              <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                <button
+                  onClick={() => {
+                    playSuccessChime();
+                    setPrologueAns('correct');
+                    speak("Spot on! Row 3 on the X axis, Seat 9 on the Y axis! Coordinates are (3, 9)!");
+                  }}
+                  style={{
+                    padding: '8px 18px',
+                    borderRadius: 'var(--radius-pill)',
+                    background: prologueAns === 'correct' ? '#10b981' : 'var(--clr-card)',
+                    color: prologueAns === 'correct' ? '#ffffff' : 'var(--clr-text)',
+                    border: `2px solid ${prologueAns === 'correct' ? '#10b981' : 'var(--clr-border)'}`,
+                    fontWeight: 800,
+                    cursor: 'pointer'
+                  }}
+                >
+                  (3, 9)
+                </button>
+
+                <button
+                  onClick={() => {
+                    playGentleBoing();
+                    setPrologueAns('reversed');
+                    speak("Careful! In coordinate geometry, the horizontal Row comes first (X), then the Seat (Y)!");
+                  }}
+                  style={{
+                    padding: '8px 18px',
+                    borderRadius: 'var(--radius-pill)',
+                    background: prologueAns === 'reversed' ? '#ef4444' : 'var(--clr-card)',
+                    color: prologueAns === 'reversed' ? '#ffffff' : 'var(--clr-text)',
+                    border: `2px solid ${prologueAns === 'reversed' ? '#ef4444' : 'var(--clr-border)'}`,
+                    fontWeight: 800,
+                    cursor: 'pointer'
+                  }}
+                >
+                  (9, 3)
+                </button>
+              </div>
+
+              {prologueAns === 'reversed' && (
+                <div style={{ marginTop: '8px', fontSize: '0.82rem', color: '#ef4444', fontWeight: 700 }}>
+                  ⚠️ Notice the convention: The horizontal Row (X-axis) always comes first! So it is (3, 9).
+                </div>
+              )}
+              {prologueAns === 'correct' && (
+                <div style={{ marginTop: '8px', fontSize: '0.82rem', color: '#10b981', fontWeight: 700 }}>
+                  ✅ Exactly right! (Row, Seat) = (3, 9).
+                </div>
+              )}
+            </div>
+
+            {/* Step into Classroom Button */}
+            <div style={{ textAlign: 'center' }}>
+              <button
+                onClick={() => {
+                  playPop(600);
+                  setStage(1);
+                  speak("Now let's step into the classroom floor plan! Find and click Parth's seat at Row 2, Seat 7!");
+                }}
+                style={{
+                  background: '#6366f1',
+                  color: '#ffffff',
+                  border: 'none',
+                  borderRadius: 'var(--radius-pill)',
+                  padding: '14px 28px',
+                  fontSize: '1rem',
+                  fontWeight: 800,
+                  cursor: 'pointer',
+                  boxShadow: '0 4px 18px rgba(99, 102, 241, 0.4)',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px'
+                }}
+              >
+                <span>Enter Classroom & Spot Parth (2, 7) ➔</span>
+                <ArrowRight size={18} />
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* ============================================================== */}
+        {/* GEOGEBRA-STYLE CLASSROOM COORDINATE FLOOR PLAN (STAGES 1..5)   */}
+        {/* ============================================================== */}
+        {stage > 0 && (
+          <>
         <div style={{
           background: '#090d16',
           borderRadius: '24px',
@@ -834,6 +1030,8 @@ export default function ClassroomGridGame({
           }}>
             {feedback.text}
           </div>
+        )}
+        </>
         )}
 
       </div>

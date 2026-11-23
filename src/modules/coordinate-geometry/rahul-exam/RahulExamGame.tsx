@@ -9,7 +9,7 @@ import {
   playHop,
   playVictoryFanfare
 } from '../../../core/soundEffects';
-import { Sparkles, ArrowRight, RotateCcw, Clock, Moon, BookOpen, TrendingUp } from 'lucide-react';
+import { Sparkles, ArrowRight, RotateCcw, Clock, Moon, BookOpen, TrendingUp, Volume2 } from 'lucide-react';
 import { GameProps } from '../../../types';
 
 function speak(text: string | number, rate: number = 0.82): void {
@@ -33,7 +33,9 @@ export interface RahulExamGameProps extends GameProps {
 }
 
 export default function RahulExamGame({ onBack, isEmbedded, onNextChapter, onChapterStars }: RahulExamGameProps) {
-  const [stage, setStage] = useState<1 | 2 | 3>(1);
+  // 0 = Story Prologue & Basic Intuition, 1 = Plan A (y=5x), 2 = Plan B (y=5x+10), 3 = Plan C (Sleep optimization)
+  const [stage, setStage] = useState<0 | 1 | 2 | 3>(0);
+  const [prologueAns, setPrologueAns] = useState<number | null>(null);
   const [stars, setStars] = useState<number>(0);
   const [storyOpen, setStoryOpen] = useState<boolean>(false);
   const [showCelebration, setShowCelebration] = useState<boolean>(false);
@@ -116,26 +118,227 @@ export default function RahulExamGame({ onBack, isEmbedded, onNextChapter, onCha
               Story 2 • Linear Equations in Real Life
             </span>
             <div style={{ fontSize: '1.25rem', fontWeight: 900, color: 'var(--clr-text)', fontFamily: 'var(--font-kids)' }}>
+              {stage === 0 && "Prologue: The 8 PM Exam Eve Dilemma"}
               {stage === 1 && "Plan A: Pure Speed (y = 5x)"}
               {stage === 2 && "Plan B: The Y-Intercept Shift (y = 5x + 10)"}
               {stage === 3 && "Plan C: Slope & Sleep Optimization (y = mx + 10)"}
             </div>
           </div>
 
-          <div style={{
-            background: 'var(--clr-surface)',
-            border: '1px solid var(--clr-border)',
-            borderRadius: 'var(--radius-pill)',
-            padding: '6px 16px',
-            fontSize: '0.9rem',
-            fontWeight: 800,
-            color: 'var(--clr-accent)'
-          }}>
-            Target: 40 PYQ Questions 🏆
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+            <button
+              onClick={() => {
+                playPop();
+                setStage(s => (s === 0 ? 1 : 0));
+              }}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                padding: '6px 14px',
+                borderRadius: 'var(--radius-pill)',
+                fontSize: '0.82rem',
+                fontWeight: 800,
+                background: stage === 0 ? '#8b5cf6' : 'var(--clr-surface)',
+                color: stage === 0 ? '#ffffff' : 'var(--clr-text)',
+                border: '1px solid var(--clr-border)',
+                cursor: 'pointer'
+              }}
+            >
+              <BookOpen size={14} />
+              <span>{stage === 0 ? "Graph & Study Desk ➔" : "Story & Basic Idea"}</span>
+            </button>
+
+            <div style={{
+              background: 'var(--clr-surface)',
+              border: '1px solid var(--clr-border)',
+              borderRadius: 'var(--radius-pill)',
+              padding: '6px 16px',
+              fontSize: '0.9rem',
+              fontWeight: 800,
+              color: 'var(--clr-accent)'
+            }}>
+              Target: 40 PYQ Questions 🏆
+            </div>
           </div>
         </div>
 
-        {/* INTERACTIVE COORDINATE GRAPH (TIME VS QUESTIONS) */}
+        {/* ============================================================== */}
+        {/* STAGE 0: PROLOGUE - THE EXAM NIGHT DILEMMA & RATE/SLOPE INTUITION */}
+        {/* ============================================================== */}
+        {stage === 0 && (
+          <div className="anim-pop" style={{
+            background: 'var(--clr-card)',
+            border: '2px solid #8b5cf6',
+            borderRadius: '24px',
+            padding: '24px 20px',
+            marginBottom: '20px',
+            boxShadow: 'var(--shadow-card)'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px' }}>
+              <span style={{ fontSize: '1.5rem' }}>🌙</span>
+              <h3 style={{ margin: 0, fontFamily: 'var(--font-kids)', fontSize: '1.35rem', color: 'var(--clr-text)' }}>
+                How Linear Equations Saved Rahul's Exam (And His Sleep!)
+              </h3>
+            </div>
+
+            {/* 4 Comic Cards */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '14px', marginBottom: '18px' }}>
+              <div style={{ background: 'var(--clr-surface)', border: '1px solid var(--clr-border)', borderRadius: '16px', padding: '16px' }}>
+                <div style={{ fontSize: '1.8rem', marginBottom: '8px' }}>⏰ 😨</div>
+                <h4 style={{ margin: '0 0 6px 0', fontSize: '1rem', color: '#ef4444' }}>1. The 8:00 PM Crisis</h4>
+                <p style={{ margin: 0, fontSize: '0.86rem', color: 'var(--clr-text-soft)', lineHeight: 1.45 }}>
+                  It was 8 PM, the night before the exam. Rahul opened his textbook and realized something terrifying: <strong>he hadn't studied anything!</strong> His friends had been prepping for days, but Rahul decided not to panic.
+                </p>
+              </div>
+
+              <div style={{ background: 'var(--clr-surface)', border: '1px solid var(--clr-border)', borderRadius: '16px', padding: '16px' }}>
+                <div style={{ fontSize: '1.8rem', marginBottom: '8px' }}>📑 🎯</div>
+                <h4 style={{ margin: '0 0 6px 0', fontSize: '1rem', color: '#f59e0b' }}>2. The 40 Core Questions</h4>
+                <p style={{ margin: 0, fontSize: '0.86rem', color: 'var(--clr-text-soft)', lineHeight: 1.45 }}>
+                  He analyzed previous year papers (PYQs) and discovered <strong>40 high-yield questions</strong> covering almost the entire exam. He had only 8 hours left before morning (8 PM to 4 AM).
+                </p>
+              </div>
+
+              <div style={{ background: 'var(--clr-surface)', border: '1px solid var(--clr-border)', borderRadius: '16px', padding: '16px' }}>
+                <div style={{ fontSize: '1.8rem', marginBottom: '8px' }}>⏱️ 📈</div>
+                <h4 style={{ margin: '0 0 6px 0', fontSize: '1rem', color: '#3b82f6' }}>3. The Rate Plan: y = 5x</h4>
+                <p style={{ margin: 0, fontSize: '0.86rem', color: 'var(--clr-text-soft)', lineHeight: 1.45 }}>
+                  He planned: <em>"If I solve 5 questions every hour, then in 1 hr = 5, in 2 hrs = 10, in x hrs = 5x!"</em>
+                  <br />
+                  Total questions solved: <strong style={{ color: '#3b82f6' }}>y = 5x</strong>. The speed (5 Qs/hr) is called the <strong>Slope (m)</strong>!
+                </p>
+              </div>
+
+              <div style={{ background: 'var(--clr-surface)', border: '1px solid var(--clr-border)', borderRadius: '16px', padding: '16px' }}>
+                <div style={{ fontSize: '1.8rem', marginBottom: '8px' }}>💡 😴</div>
+                <h4 style={{ margin: '0 0 6px 0', fontSize: '1rem', color: '#10b981' }}>4. The 10-Question Bonus & Sleep!</h4>
+                <p style={{ margin: 0, fontSize: '0.86rem', color: 'var(--clr-text-soft)', lineHeight: 1.45 }}>
+                  Then Rahul realized: <em>He already practiced 10 questions last week!</em>
+                  <br />
+                  So at 0 hours tonight (x=0), he already has 10! That starting headstart is the <strong>Y-Intercept (c = 10)</strong> ➔ <strong style={{ color: '#10b981' }}>y = 5x + 10</strong>!
+                </p>
+              </div>
+            </div>
+
+            {/* Intuition Concept Box */}
+            <div style={{
+              background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(59, 130, 246, 0.05) 100%)',
+              border: '2px solid #8b5cf6',
+              borderRadius: '16px',
+              padding: '16px 20px',
+              marginBottom: '18px'
+            }}>
+              <h4 style={{ margin: '0 0 8px 0', fontSize: '1rem', color: '#8b5cf6', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span>📐</span>
+                <span>The Anatomy of Linear Equation: y = mx + c</span>
+              </h4>
+              <div style={{ fontSize: '0.88rem', color: 'var(--clr-text)', lineHeight: 1.5 }}>
+                • <strong>y (Output):</strong> Total questions finished.<br />
+                • <strong>x (Input):</strong> Number of hours studied.<br />
+                • <strong>m (Slope / Rate):</strong> Study speed in questions per hour! Steeper slope = faster prep = more sleep!<br />
+                • <strong>c (Y-Intercept):</strong> Starting value at x = 0 (the 10 questions already known).
+              </div>
+            </div>
+
+            {/* Quick Intuition Check */}
+            <div style={{
+              background: 'var(--clr-surface)',
+              border: '1px solid var(--clr-border)',
+              borderRadius: '16px',
+              padding: '16px',
+              marginBottom: '18px'
+            }}>
+              <div style={{ fontWeight: 800, fontSize: '0.92rem', color: 'var(--clr-text)', marginBottom: '8px' }}>
+                🤔 Quick Concept Check: If Rahul solves 5 questions each hour, how many questions does he finish in 3 hours?
+              </div>
+              <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                <button
+                  onClick={() => {
+                    playSuccessChime();
+                    setPrologueAns(15);
+                    speak("Spot on! 5 times 3 equals 15 questions! That's why y = 5x!");
+                  }}
+                  style={{
+                    padding: '8px 18px',
+                    borderRadius: 'var(--radius-pill)',
+                    background: prologueAns === 15 ? '#10b981' : 'var(--clr-card)',
+                    color: prologueAns === 15 ? '#ffffff' : 'var(--clr-text)',
+                    border: `2px solid ${prologueAns === 15 ? '#10b981' : 'var(--clr-border)'}`,
+                    fontWeight: 800,
+                    cursor: 'pointer'
+                  }}
+                >
+                  15 questions (5 × 3)
+                </button>
+
+                <button
+                  onClick={() => {
+                    playGentleBoing();
+                    setPrologueAns(8);
+                    speak("Multiply, don't add! 5 questions per hour times 3 hours!");
+                  }}
+                  style={{
+                    padding: '8px 18px',
+                    borderRadius: 'var(--radius-pill)',
+                    background: prologueAns === 8 ? '#ef4444' : 'var(--clr-card)',
+                    color: prologueAns === 8 ? '#ffffff' : 'var(--clr-text)',
+                    border: `2px solid ${prologueAns === 8 ? '#ef4444' : 'var(--clr-border)'}`,
+                    fontWeight: 800,
+                    cursor: 'pointer'
+                  }}
+                >
+                  8 questions (5 + 3)
+                </button>
+              </div>
+
+              {prologueAns === 8 && (
+                <div style={{ marginTop: '8px', fontSize: '0.82rem', color: '#ef4444', fontWeight: 700 }}>
+                  ⚠️ Rate means multiplication! 5 questions/hr × 3 hrs = 15 questions.
+                </div>
+              )}
+              {prologueAns === 15 && (
+                <div style={{ marginTop: '8px', fontSize: '0.82rem', color: '#10b981', fontWeight: 700 }}>
+                  ✅ Exactly! y = 5(3) = 15 questions!
+                </div>
+              )}
+            </div>
+
+            {/* Proceed to Desk Button */}
+            <div style={{ textAlign: 'center' }}>
+              <button
+                onClick={() => {
+                  playPop(600);
+                  setStage(1);
+                  speak("Now let's enter Rahul's study desk and see his linear equation graph in action!");
+                }}
+                style={{
+                  background: '#8b5cf6',
+                  color: '#ffffff',
+                  border: 'none',
+                  borderRadius: 'var(--radius-pill)',
+                  padding: '14px 28px',
+                  fontSize: '1rem',
+                  fontWeight: 800,
+                  cursor: 'pointer',
+                  boxShadow: '0 4px 18px rgba(139, 92, 246, 0.4)',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px'
+                }}
+              >
+                <span>Enter Rahul's Study Desk & Graph Plan A ➔</span>
+                <ArrowRight size={18} />
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* ============================================================== */}
+        {/* INTERACTIVE COORDINATE GRAPH (STAGES 1, 2, 3)                  */}
+        {/* ============================================================== */}
+        {stage > 0 && (
+          <>
         <div style={{
           background: 'linear-gradient(180deg, #090d16 0%, #111827 100%)',
           borderRadius: '24px',
@@ -478,6 +681,8 @@ export default function RahulExamGame({ onBack, isEmbedded, onNextChapter, onCha
           }}>
             {feedback.text}
           </div>
+        )}
+        </>
         )}
 
       </div>

@@ -8,7 +8,7 @@ import {
   playGentleBoing,
   playVictoryFanfare
 } from '../../../core/soundEffects';
-import { Sparkles, ArrowRight, RotateCcw, Wallet, AlertTriangle, Calculator, CheckCircle2 } from 'lucide-react';
+import { Sparkles, ArrowRight, RotateCcw, Wallet, AlertTriangle, Calculator, CheckCircle2, BookOpen, Volume2 } from 'lucide-react';
 import { GameProps } from '../../../types';
 
 function speak(text: string | number, rate: number = 0.82): void {
@@ -32,7 +32,9 @@ export interface SamosaBudgetGameProps extends GameProps {
 }
 
 export default function SamosaBudgetGame({ onBack, isEmbedded, onNextChapter, onChapterStars }: SamosaBudgetGameProps) {
-  const [stage, setStage] = useState<1 | 2 | 3 | 4>(1);
+  // 0 = Story Prologue & Function Intuition, 1 = Cost Investigation, 2 = Cost Function, 3 = Calculator, 4 = Budget Inequality
+  const [stage, setStage] = useState<0 | 1 | 2 | 3 | 4>(0);
+  const [prologueAns, setPrologueAns] = useState<boolean | null>(null);
   const [stars, setStars] = useState<number>(0);
   const [storyOpen, setStoryOpen] = useState<boolean>(false);
   const [showCelebration, setShowCelebration] = useState<boolean>(false);
@@ -119,6 +121,7 @@ export default function SamosaBudgetGame({ onBack, isEmbedded, onNextChapter, on
               Story 4 • Functions & Budget Inequalities
             </span>
             <div style={{ fontSize: '1.25rem', fontWeight: 900, color: 'var(--clr-text)', fontFamily: 'var(--font-kids)' }}>
+              {stage === 0 && "Prologue: Canteen Samosa Party Dilemma"}
               {stage === 1 && "Stage 1: Let's Investigate Samosa Costs!"}
               {stage === 2 && "Stage 2: What is a Cost Function C(x)?"}
               {stage === 3 && "Stage 3: The Interactive Samosa Calculator"}
@@ -126,24 +129,226 @@ export default function SamosaBudgetGame({ onBack, isEmbedded, onNextChapter, on
             </div>
           </div>
 
-          <div style={{
-            background: isOverBudget ? '#fee2e2' : '#dcfce7',
-            border: `1px solid ${isOverBudget ? '#ef4444' : '#10b981'}`,
-            borderRadius: 'var(--radius-pill)',
-            padding: '6px 16px',
-            fontSize: '0.9rem',
-            fontWeight: 800,
-            color: isOverBudget ? '#991b1b' : '#166534',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '6px'
-          }}>
-            <Wallet size={16} />
-            <span>Budget: ₹{TOTAL_BUDGET} • Bill: ₹{totalCost}</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+            <button
+              onClick={() => {
+                playPop();
+                setStage(s => (s === 0 ? 1 : 0));
+              }}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                padding: '6px 14px',
+                borderRadius: 'var(--radius-pill)',
+                fontSize: '0.82rem',
+                fontWeight: 800,
+                background: stage === 0 ? '#10b981' : 'var(--clr-surface)',
+                color: stage === 0 ? '#ffffff' : 'var(--clr-text)',
+                border: '1px solid var(--clr-border)',
+                cursor: 'pointer'
+              }}
+            >
+              <BookOpen size={14} />
+              <span>{stage === 0 ? "Canteen & Graph ➔" : "Story & Basic Idea"}</span>
+            </button>
+
+            <div style={{
+              background: isOverBudget ? '#fee2e2' : '#dcfce7',
+              border: `1px solid ${isOverBudget ? '#ef4444' : '#10b981'}`,
+              borderRadius: 'var(--radius-pill)',
+              padding: '6px 16px',
+              fontSize: '0.9rem',
+              fontWeight: 800,
+              color: isOverBudget ? '#991b1b' : '#166534',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px'
+            }}>
+              <Wallet size={16} />
+              <span>Budget: ₹{TOTAL_BUDGET} • Bill: ₹{totalCost}</span>
+            </div>
           </div>
         </div>
 
-        {/* INTERACTIVE CANTEEN GRAPH & SAMOSA DISPLAY */}
+        {/* ============================================================== */}
+        {/* STAGE 0: PROLOGUE - THE CANTEEN SAMOSA PARTY DILEMMA           */}
+        {/* ============================================================== */}
+        {stage === 0 && (
+          <div className="anim-pop" style={{
+            background: 'var(--clr-card)',
+            border: '2px solid #10b981',
+            borderRadius: '24px',
+            padding: '24px 20px',
+            marginBottom: '20px',
+            boxShadow: 'var(--shadow-card)'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px' }}>
+              <span style={{ fontSize: '1.5rem' }}>🥟</span>
+              <h3 style={{ margin: 0, fontFamily: 'var(--font-kids)', fontSize: '1.35rem', color: 'var(--clr-text)' }}>
+                Can ₹200 Feed the Whole Group? The Samosa Budget Story
+              </h3>
+            </div>
+
+            {/* 4 Comic Narrative Cards */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '14px', marginBottom: '18px' }}>
+              <div style={{ background: 'var(--clr-surface)', border: '1px solid var(--clr-border)', borderRadius: '16px', padding: '16px' }}>
+                <div style={{ fontSize: '1.8rem', marginBottom: '8px' }}>🥟 🎉</div>
+                <h4 style={{ margin: '0 0 6px 0', fontSize: '1rem', color: '#10b981' }}>1. The Samosa Craving</h4>
+                <p style={{ margin: 0, fontSize: '0.86rem', color: 'var(--clr-text-soft)', lineHeight: 1.45 }}>
+                  You and your friends are planning a school event. Everyone is starving and craving hot, crispy canteen samosas with sweet tamarind and spicy mint chutney!
+                </p>
+              </div>
+
+              <div style={{ background: 'var(--clr-surface)', border: '1px solid var(--clr-border)', borderRadius: '16px', padding: '16px' }}>
+                <div style={{ fontSize: '1.8rem', marginBottom: '8px' }}>👛 💰</div>
+                <h4 style={{ margin: '0 0 6px 0', fontSize: '1rem', color: '#f59e0b' }}>2. The Pooled ₹200</h4>
+                <p style={{ margin: 0, fontSize: '0.86rem', color: 'var(--clr-text-soft)', lineHeight: 1.45 }}>
+                  Everyone chips in their pocket money. In total, the group wallet holds exactly <strong>₹200</strong>. One friend asks: <em>"How many samosas can we buy without going broke?!"</em>
+                </p>
+              </div>
+
+              <div style={{ background: 'var(--clr-surface)', border: '1px solid var(--clr-border)', borderRadius: '16px', padding: '16px' }}>
+                <div style={{ fontSize: '1.8rem', marginBottom: '8px' }}>📦 🏷️</div>
+                <h4 style={{ margin: '0 0 6px 0', fontSize: '1rem', color: '#3b82f6' }}>3. The Price Formula</h4>
+                <p style={{ margin: 0, fontSize: '0.86rem', color: 'var(--clr-text-soft)', lineHeight: 1.45 }}>
+                  Canteen bhaiya says: Each samosa is <strong>₹12</strong>, plus a one-time packaging box fee of <strong>₹20</strong>.
+                  <br />
+                  Cost Function: <strong style={{ color: '#3b82f6' }}>C(x) = 12x + 20</strong>!
+                </p>
+              </div>
+
+              <div style={{ background: 'var(--clr-surface)', border: '1px solid var(--clr-border)', borderRadius: '16px', padding: '16px' }}>
+                <div style={{ fontSize: '1.8rem', marginBottom: '8px' }}>⚖️ 🎯</div>
+                <h4 style={{ margin: '0 0 6px 0', fontSize: '1rem', color: '#ec4899' }}>4. The Budget Inequality</h4>
+                <p style={{ margin: 0, fontSize: '0.86rem', color: 'var(--clr-text-soft)', lineHeight: 1.45 }}>
+                  We cannot spend more than ₹200:
+                  <br />
+                  <strong style={{ color: '#ec4899' }}>12x + 20 ≤ 200</strong>
+                  <br />
+                  Subtract 20: 12x ≤ 180 ➔ Divide 12: <strong style={{ color: '#10b981' }}>x ≤ 15 samosas</strong>!
+                </p>
+              </div>
+            </div>
+
+            {/* Concept Box */}
+            <div style={{
+              background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(59, 130, 246, 0.05) 100%)',
+              border: '2px solid #10b981',
+              borderRadius: '16px',
+              padding: '16px 20px',
+              marginBottom: '18px'
+            }}>
+              <h4 style={{ margin: '0 0 8px 0', fontSize: '1rem', color: '#10b981', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span>📐</span>
+                <span>Connecting Canteen Costs to Linear Functions</span>
+              </h4>
+              <div style={{ fontSize: '0.88rem', color: 'var(--clr-text)', lineHeight: 1.5 }}>
+                • <strong>x:</strong> Quantity of samosas ordered.<br />
+                • <strong>Rate (Slope m = 12):</strong> Each additional samosa adds ₹12 to the bill.<br />
+                • <strong>Fixed Cost (Y-Intercept c = 20):</strong> The one-time packaging charge paid even before eating.<br />
+                • <strong>Constraint:</strong> C(x) ≤ 200 defines the maximum boundary of what we can afford!
+              </div>
+            </div>
+
+            {/* Quick Check */}
+            <div style={{
+              background: 'var(--clr-surface)',
+              border: '1px solid var(--clr-border)',
+              borderRadius: '16px',
+              padding: '16px',
+              marginBottom: '18px'
+            }}>
+              <div style={{ fontWeight: 800, fontSize: '0.92rem', color: 'var(--clr-text)', marginBottom: '8px' }}>
+                🤔 Quick Concept Check: In C(x) = 12x + 20, what is the ₹20?
+              </div>
+              <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                <button
+                  onClick={() => {
+                    playSuccessChime();
+                    setPrologueAns(true);
+                    speak("Spot on! The 20 rupees is the one-time fixed packaging charge, which is the Y-intercept!");
+                  }}
+                  style={{
+                    padding: '8px 18px',
+                    borderRadius: 'var(--radius-pill)',
+                    background: prologueAns === true ? '#10b981' : 'var(--clr-card)',
+                    color: prologueAns === true ? '#ffffff' : 'var(--clr-text)',
+                    border: `2px solid ${prologueAns === true ? '#10b981' : 'var(--clr-border)'}`,
+                    fontWeight: 800,
+                    cursor: 'pointer'
+                  }}
+                >
+                  The one-time fixed packaging charge (Y-Intercept)
+                </button>
+
+                <button
+                  onClick={() => {
+                    playGentleBoing();
+                    setPrologueAns(false);
+                    speak("No, 20 is not the price of 20 samosas! It is the packaging fee!");
+                  }}
+                  style={{
+                    padding: '8px 18px',
+                    borderRadius: 'var(--radius-pill)',
+                    background: prologueAns === false ? '#ef4444' : 'var(--clr-card)',
+                    color: prologueAns === false ? '#ffffff' : 'var(--clr-text)',
+                    border: `2px solid ${prologueAns === false ? '#ef4444' : 'var(--clr-border)'}`,
+                    fontWeight: 800,
+                    cursor: 'pointer'
+                  }}
+                >
+                  The cost of 20 samosas
+                </button>
+              </div>
+
+              {prologueAns === false && (
+                <div style={{ marginTop: '8px', fontSize: '0.82rem', color: '#ef4444', fontWeight: 700 }}>
+                  ⚠️ Remember: x is the number of samosas. ₹20 is the fixed packaging box charge!
+                </div>
+              )}
+              {prologueAns === true && (
+                <div style={{ marginTop: '8px', fontSize: '0.82rem', color: '#10b981', fontWeight: 700 }}>
+                  ✅ Exactly right! It is the constant term (Y-intercept) added to the variable cost!
+                </div>
+              )}
+            </div>
+
+            {/* Enter Canteen Button */}
+            <div style={{ textAlign: 'center' }}>
+              <button
+                onClick={() => {
+                  playPop(600);
+                  setStage(1);
+                  speak("Welcome to the Canteen! Let's calculate the cost for 2, 5, and 10 samosas!");
+                }}
+                style={{
+                  background: '#10b981',
+                  color: '#ffffff',
+                  border: 'none',
+                  borderRadius: 'var(--radius-pill)',
+                  padding: '14px 28px',
+                  fontSize: '1rem',
+                  fontWeight: 800,
+                  cursor: 'pointer',
+                  boxShadow: '0 4px 18px rgba(16, 185, 129, 0.4)',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px'
+                }}
+              >
+                <span>Enter Canteen & Investigate Costs ➔</span>
+                <ArrowRight size={18} />
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* ============================================================== */}
+        {/* INTERACTIVE CANTEEN GRAPH & SAMOSA DISPLAY (STAGES 1..4)       */}
+        {/* ============================================================== */}
+        {stage > 0 && (
+          <>
         <div style={{
           background: 'linear-gradient(180deg, #18181b 0%, #27272a 100%)',
           borderRadius: '24px',
@@ -562,6 +767,8 @@ export default function SamosaBudgetGame({ onBack, isEmbedded, onNextChapter, on
           }}>
             {feedback.text}
           </div>
+        )}
+        </>
         )}
 
       </div>

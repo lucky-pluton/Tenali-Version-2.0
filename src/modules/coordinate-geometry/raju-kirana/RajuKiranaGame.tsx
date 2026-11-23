@@ -8,7 +8,7 @@ import {
   playGentleBoing,
   playVictoryFanfare
 } from '../../../core/soundEffects';
-import { Sparkles, ArrowRight, RotateCcw, Search, ShieldCheck, FileText, CheckCircle2 } from 'lucide-react';
+import { Sparkles, ArrowRight, RotateCcw, Search, ShieldCheck, FileText, CheckCircle2, BookOpen, Volume2 } from 'lucide-react';
 import { GameProps } from '../../../types';
 
 function speak(text: string | number, rate: number = 0.82): void {
@@ -41,6 +41,8 @@ export interface RajuKiranaGameProps extends GameProps {
 }
 
 export default function RajuKiranaGame({ onBack, isEmbedded, onNextChapter, onChapterStars }: RajuKiranaGameProps) {
+  const [showStoryPrologue, setShowStoryPrologue] = useState<boolean>(true);
+  const [prologueAns, setPrologueAns] = useState<boolean | null>(null);
   const [stars, setStars] = useState<number>(0);
   const [storyOpen, setStoryOpen] = useState<boolean>(false);
   const [showCelebration, setShowCelebration] = useState<boolean>(false);
@@ -130,20 +132,221 @@ export default function RajuKiranaGame({ onBack, isEmbedded, onNextChapter, onCh
             </div>
           </div>
 
-          <div style={{
-            background: 'var(--clr-surface)',
-            border: '1px solid var(--clr-border)',
-            borderRadius: 'var(--radius-pill)',
-            padding: '6px 16px',
-            fontSize: '0.9rem',
-            fontWeight: 800,
-            color: '#38bdf8'
-          }}>
-            Status: {activeStep < 3 ? `Analyzing Evidence (${activeStep}/3)` : (identifiedIntersection ? "Suspect Caught! 🚨" : "Find Intersection!")}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+            <button
+              onClick={() => {
+                playPop();
+                setShowStoryPrologue(p => !p);
+              }}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                padding: '6px 14px',
+                borderRadius: 'var(--radius-pill)',
+                fontSize: '0.82rem',
+                fontWeight: 800,
+                background: showStoryPrologue ? '#ec4899' : 'var(--clr-surface)',
+                color: showStoryPrologue ? '#ffffff' : 'var(--clr-text)',
+                border: '1px solid var(--clr-border)',
+                cursor: 'pointer'
+              }}
+            >
+              <BookOpen size={14} />
+              <span>{showStoryPrologue ? "Evidence Graph Board ➔" : "Story & Case File"}</span>
+            </button>
+
+            <div style={{
+              background: 'var(--clr-surface)',
+              border: '1px solid var(--clr-border)',
+              borderRadius: 'var(--radius-pill)',
+              padding: '6px 16px',
+              fontSize: '0.9rem',
+              fontWeight: 800,
+              color: '#38bdf8'
+            }}>
+              Status: {showStoryPrologue ? "Case Briefing 📋" : (activeStep < 3 ? `Analyzing Evidence (${activeStep}/3)` : (identifiedIntersection ? "Suspect Caught! 🚨" : "Find Intersection!"))}
+            </div>
           </div>
         </div>
 
-        {/* COORDINATE GRAPH (CHIPS X VS JUICE Y) */}
+        {/* ============================================================== */}
+        {/* PROLOGUE: THE CHIPS & JUICE ROBBERY MYSTERY BRIEFING           */}
+        {/* ============================================================== */}
+        {showStoryPrologue && (
+          <div className="anim-pop" style={{
+            background: 'var(--clr-card)',
+            border: '2px solid #ec4899',
+            borderRadius: '24px',
+            padding: '24px 20px',
+            marginBottom: '20px',
+            boxShadow: 'var(--shadow-card)'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px' }}>
+              <span style={{ fontSize: '1.5rem' }}>🔍</span>
+              <h3 style={{ margin: 0, fontFamily: 'var(--font-kids)', fontSize: '1.35rem', color: 'var(--clr-text)' }}>
+                Case File #401: The Chips & Juice Robbery Mystery
+              </h3>
+            </div>
+
+            {/* 4 Comic Narrative Cards */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '14px', marginBottom: '18px' }}>
+              <div style={{ background: 'var(--clr-surface)', border: '1px solid var(--clr-border)', borderRadius: '16px', padding: '16px' }}>
+                <div style={{ fontSize: '1.8rem', marginBottom: '8px' }}>🏦 🚨</div>
+                <h4 style={{ margin: '0 0 6px 0', fontSize: '1rem', color: '#ef4444' }}>1. The Small Town Robbery</h4>
+                <p style={{ margin: 0, fontSize: '0.86rem', color: 'var(--clr-text-soft)', lineHeight: 1.45 }}>
+                  A small town bank was robbed of massive cash by 4 unknown thieves. The town was in chaos, but the police were stuck with zero fingerprints, no CCTV footage, and no witnesses!
+                </p>
+              </div>
+
+              <div style={{ background: 'var(--clr-surface)', border: '1px solid var(--clr-border)', borderRadius: '16px', padding: '16px' }}>
+                <div style={{ fontSize: '1.8rem', marginBottom: '8px' }}>✉️ 🕵️</div>
+                <h4 style={{ margin: '0 0 6px 0', fontSize: '1rem', color: '#f59e0b' }}>2. The Well-Wisher's Chit</h4>
+                <p style={{ margin: 0, fontSize: '0.86rem', color: 'var(--clr-text-soft)', lineHeight: 1.45 }}>
+                  A shadowy man slipped a note to the inspector and vanished: <em>"You can catch all four if you catch one... He likes chips and juice. He visits Raju Kirana Store. Find him."</em>
+                </p>
+              </div>
+
+              <div style={{ background: 'var(--clr-surface)', border: '1px solid var(--clr-border)', borderRadius: '16px', padding: '16px' }}>
+                <div style={{ fontSize: '1.8rem', marginBottom: '8px' }}>🧾 🍟</div>
+                <h4 style={{ margin: '0 0 6px 0', fontSize: '1rem', color: '#38bdf8' }}>3. Why One Equation Fails!</h4>
+                <p style={{ margin: 0, fontSize: '0.86rem', color: 'var(--clr-text-soft)', lineHeight: 1.45 }}>
+                  At Raju Kirana, Monday's receipt showed: <strong style={{ color: '#38bdf8' }}>x + y = 4</strong> (x = chips, y = juice).
+                  <br />
+                  Could he have bought (0,4), (1,3), (2,2), (3,1), or (4,0)? A single equation has too many possibilities!
+                </p>
+              </div>
+
+              <div style={{ background: 'var(--clr-surface)', border: '1px solid var(--clr-border)', borderRadius: '16px', padding: '16px' }}>
+                <div style={{ fontSize: '1.8rem', marginBottom: '8px' }}>🎯 📍</div>
+                <h4 style={{ margin: '0 0 6px 0', fontSize: '1rem', color: '#10b981' }}>4. The Intersection Point (4, 0)!</h4>
+                <p style={{ margin: 0, fontSize: '0.86rem', color: 'var(--clr-text-soft)', lineHeight: 1.45 }}>
+                  Tuesday's receipt: <strong style={{ color: '#f59e0b' }}>2x + y = 8</strong>.
+                  <br />
+                  Wednesday's receipt: <strong style={{ color: '#ec4899' }}>3x + y = 12</strong>.
+                  <br />
+                  When the detective entered these into GeoGebra, all three lines met at <strong style={{ color: '#10b981' }}>(4, 0)</strong>! 4 chips, 0 juice—his exact mathematical fingerprint!
+                </p>
+              </div>
+            </div>
+
+            {/* Intuition Concept Box */}
+            <div style={{
+              background: 'linear-gradient(135deg, rgba(236, 72, 153, 0.1) 0%, rgba(2, 132, 199, 0.05) 100%)',
+              border: '2px solid #ec4899',
+              borderRadius: '16px',
+              padding: '16px 20px',
+              marginBottom: '18px'
+            }}>
+              <h4 style={{ margin: '0 0 8px 0', fontSize: '1rem', color: '#ec4899', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span>📐</span>
+                <span>The Core Mathematical Insight: Systems of Linear Equations</span>
+              </h4>
+              <div style={{ fontSize: '0.88rem', color: 'var(--clr-text)', lineHeight: 1.5 }}>
+                • <strong>A Single Line:</strong> Represents all pairs of (x, y) that satisfy one receipt. Infinite points!<br />
+                • <strong>The Intersection Point:</strong> The UNIQUE point where all 3 receipts agree simultaneously.<br />
+                • The thief deliberately avoided juice to look normal, but (4, 0) appeared on every single receipt line!
+              </div>
+            </div>
+
+            {/* Quick Intuition Check */}
+            <div style={{
+              background: 'var(--clr-surface)',
+              border: '1px solid var(--clr-border)',
+              borderRadius: '16px',
+              padding: '16px',
+              marginBottom: '18px'
+            }}>
+              <div style={{ fontWeight: 800, fontSize: '0.92rem', color: 'var(--clr-text)', marginBottom: '8px' }}>
+                🤔 Quick Detective Check: Why did the detective need more than one day's receipt?
+              </div>
+              <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                <button
+                  onClick={() => {
+                    playSuccessChime();
+                    setPrologueAns(true);
+                    speak("Correct! One line has many pairs, but intersecting lines isolate the single truth!");
+                  }}
+                  style={{
+                    padding: '8px 18px',
+                    borderRadius: 'var(--radius-pill)',
+                    background: prologueAns === true ? '#10b981' : 'var(--clr-card)',
+                    color: prologueAns === true ? '#ffffff' : 'var(--clr-text)',
+                    border: `2px solid ${prologueAns === true ? '#10b981' : 'var(--clr-border)'}`,
+                    fontWeight: 800,
+                    cursor: 'pointer'
+                  }}
+                >
+                  One equation gives many possibilities; intersecting lines isolate the unique answer!
+                </button>
+
+                <button
+                  onClick={() => {
+                    playGentleBoing();
+                    setPrologueAns(false);
+                    speak("No, multiple lines are needed to find the single point that satisfies all conditions!");
+                  }}
+                  style={{
+                    padding: '8px 18px',
+                    borderRadius: 'var(--radius-pill)',
+                    background: prologueAns === false ? '#ef4444' : 'var(--clr-card)',
+                    color: prologueAns === false ? '#ffffff' : 'var(--clr-text)',
+                    border: `2px solid ${prologueAns === false ? '#ef4444' : 'var(--clr-border)'}`,
+                    fontWeight: 800,
+                    cursor: 'pointer'
+                  }}
+                >
+                  One equation alone is enough to catch a thief
+                </button>
+              </div>
+
+              {prologueAns === false && (
+                <div style={{ marginTop: '8px', fontSize: '0.82rem', color: '#ef4444', fontWeight: 700 }}>
+                  ⚠️ Remember: x + y = 4 can be (0,4), (1,3), (2,2), (3,1), or (4,0)! You need intersecting lines!
+                </div>
+              )}
+              {prologueAns === true && (
+                <div style={{ marginTop: '8px', fontSize: '0.82rem', color: '#10b981', fontWeight: 700 }}>
+                  ✅ Exactly! The intersection point of the lines gives the unique solution!
+                </div>
+              )}
+            </div>
+
+            {/* Enter Board Button */}
+            <div style={{ textAlign: 'center' }}>
+              <button
+                onClick={() => {
+                  playPop(600);
+                  setShowStoryPrologue(false);
+                  speak("Opening Detective Evidence Board! Plot Monday's receipt line to begin!");
+                }}
+                style={{
+                  background: '#ec4899',
+                  color: '#ffffff',
+                  border: 'none',
+                  borderRadius: 'var(--radius-pill)',
+                  padding: '14px 28px',
+                  fontSize: '1rem',
+                  fontWeight: 800,
+                  cursor: 'pointer',
+                  boxShadow: '0 4px 18px rgba(236, 72, 153, 0.4)',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px'
+                }}
+              >
+                <span>Open Detective Board & Plot Evidence Lines ➔</span>
+                <ArrowRight size={18} />
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* ============================================================== */}
+        {/* COORDINATE GRAPH (EVIDENCE BOARD)                              */}
+        {/* ============================================================== */}
+        {!showStoryPrologue && (
+          <>
         <div style={{
           background: '#0a0f1d',
           borderRadius: '24px',
@@ -437,6 +640,8 @@ export default function RajuKiranaGame({ onBack, isEmbedded, onNextChapter, onCh
               ✉️ Mysterious Note: "You can catch all four of them if you catch one..." TO BE CONTINUED!
             </div>
           </div>
+        )}
+        </>
         )}
 
       </div>
