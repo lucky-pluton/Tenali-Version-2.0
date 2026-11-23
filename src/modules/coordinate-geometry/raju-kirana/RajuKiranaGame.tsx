@@ -42,7 +42,7 @@ export interface RajuKiranaGameProps extends GameProps {
 
 export default function RajuKiranaGame({ onBack, isEmbedded, onNextChapter, onChapterStars }: RajuKiranaGameProps) {
   const [stars, setStars] = useState<number>(0);
-  const [storyOpen, setStoryOpen] = useState<boolean>(!isEmbedded);
+  const [storyOpen, setStoryOpen] = useState<boolean>(false);
   const [showCelebration, setShowCelebration] = useState<boolean>(false);
 
   // 3 Lines for Monday, Tuesday, Wednesday

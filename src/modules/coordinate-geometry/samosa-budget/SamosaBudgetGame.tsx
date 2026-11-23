@@ -34,7 +34,7 @@ export interface SamosaBudgetGameProps extends GameProps {
 export default function SamosaBudgetGame({ onBack, isEmbedded, onNextChapter, onChapterStars }: SamosaBudgetGameProps) {
   const [stage, setStage] = useState<1 | 2 | 3 | 4>(1);
   const [stars, setStars] = useState<number>(0);
-  const [storyOpen, setStoryOpen] = useState<boolean>(!isEmbedded);
+  const [storyOpen, setStoryOpen] = useState<boolean>(false);
   const [showCelebration, setShowCelebration] = useState<boolean>(false);
 
   // Samosa parameters

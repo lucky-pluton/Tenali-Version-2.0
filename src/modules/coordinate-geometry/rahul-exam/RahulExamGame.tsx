@@ -35,7 +35,7 @@ export interface RahulExamGameProps extends GameProps {
 export default function RahulExamGame({ onBack, isEmbedded, onNextChapter, onChapterStars }: RahulExamGameProps) {
   const [stage, setStage] = useState<1 | 2 | 3>(1);
   const [stars, setStars] = useState<number>(0);
-  const [storyOpen, setStoryOpen] = useState<boolean>(!isEmbedded);
+  const [storyOpen, setStoryOpen] = useState<boolean>(false);
   const [showCelebration, setShowCelebration] = useState<boolean>(false);
 
   // Stage 1 interactive state: y = 5x
